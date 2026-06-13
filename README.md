@@ -1,9 +1,24 @@
-# Sanity Clean Content Studio
+# Nathan Rhys - Project Monorepo
 
-Congratulations, you have now installed the Sanity Content Studio, an open-source real-time content editing environment connected to the Sanity backend.
+This repository contains both the **Sanity Studio** and the **Astro Frontend**.
 
-Now you can do the following things:
+## Structure
+- `/studio`: The Sanity Studio for managing content.
+- `/web`: The Astro frontend for displaying the site.
 
-- [Read “getting started” in the docs](https://www.sanity.io/docs/introduction/getting-started?utm_source=readme)
-- [Join the Sanity community](https://www.sanity.io/community/join?utm_source=readme)
-- [Extend and build plugins](https://www.sanity.io/docs/content-studio/extending?utm_source=readme)
+## Getting Started
+
+### 1. Install Dependencies
+From the root directory, run:
+```bash
+npm install
+```
+
+### 2. Run Development Servers
+You can run both or either from the root:
+- **Run Studio:** `npm run dev:studio` (default: localhost:3333)
+- **Run Web:** `npm run dev:web` (default: localhost:4321)
+
+## Deployment
+- **Frontend:** Automatically deploys to GitHub Pages via GitHub Actions on every push to `main`.
+- **Studio:** Can be deployed to Sanity's hosting by running `npm run build:studio` and then `npx sanity deploy` from the `studio` directory.

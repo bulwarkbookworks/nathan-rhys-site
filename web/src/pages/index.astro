@@ -1,0 +1,29 @@
+---
+import { client } from '../lib/sanity';
+
+const home = await client.fetch(`*[_type == "home"][0]`);
+const books = await client.fetch(`*[_type == "book"] | order(title asc)`);
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{home?.title || 'Nathan Rhys'}</title>
+	</head>
+	<body>
+		<h1>{home?.title || 'Welcome'}</h1>
+		{home?.blurb && <p>{home.blurb}</p>}
+
+		<h2>Books</h2>
+		<ul>
+			{books.map((book: any) => (
+				<li>
+					<strong>{book.title}</strong> {book.status && <span>({book.status})</span>}
+				</li>
+			))}
+		</ul>
+	</body>
+</html>
