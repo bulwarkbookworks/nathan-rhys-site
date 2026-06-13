@@ -1,0 +1,74 @@
+@font-face {
+  font-family: 'Marcellus';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/marcellus-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Literata';
+  font-style: normal;
+  font-weight: 400 900; // Variable font support
+  font-display: swap;
+  src: url('/fonts/literata-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Literata';
+  font-style: italic;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url('/fonts/literata-italic.woff2') format('woff2');
+}
+
+:root {
+  --color-bg: #071512;
+  --color-surface: #0f2f26;
+  --color-surface-soft: #183f34;
+  --color-text: #f2eadc;
+  --color-muted: #b8c8bb;
+  --color-accent: #75d7d0;
+  --color-gold: #d6b15f;
+  --color-danger: #7b2f24;
+
+  --font-heading: "Marcellus", serif;
+  --font-body: "Literata", serif;
+
+  --radius-card: 18px;
+  --shadow-soft: 0 24px 80px rgba(0, 0, 0, 0.35);
+
+  --ink: #071512;
+  --deep-green: #0f2f26;
+  --verdant: #2f7d5a;
+  --aqua-glow: #75d7d0;
+  --gold: #d6b15f;
+  --bone: #f2eadc;
+  --blood-rust: #7b2f24;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body), serif;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-heading), serif;
+  letter-spacing: 0.02em;
+}
+
+.button-primary {
+  background: linear-gradient(135deg, var(--color-gold), #f3df9c);
+  color: #071512;
+  border-radius: 999px;
+  padding: 0.85rem 1.25rem;
+  font-weight: 700;
+}
+
+.button-secondary {
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
+  border-radius: 999px;
+  padding: 0.85rem 1.25rem;
+}
