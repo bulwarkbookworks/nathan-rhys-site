@@ -1,0 +1,5 @@
+// Enable Bootstrap negative margins (e.g., mt-n1, m-n2, etc.)
+$enable-negative-margins: true;
+
+// Bootstrap grid utilities ONLY
+@import "bootstrap/scss/bootstrap-grid";

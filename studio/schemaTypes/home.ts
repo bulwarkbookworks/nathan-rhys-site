@@ -25,5 +25,11 @@ export default defineType({
         hotspot: true,
       },
     }),
+    defineField({
+      name: 'series',
+      title: 'Series',
+      type: 'array',
+      of: [{type: 'reference', to: [{type: 'series'}]}],
+    }),
   ],
 })
