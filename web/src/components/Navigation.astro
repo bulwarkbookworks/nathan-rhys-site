@@ -1,0 +1,24 @@
+---
+import { resolveLink } from '../lib/sanity';
+
+interface Props {
+  items: Array<{ label: string; link: any }>;
+  variant?: 'home' | 'top';
+}
+
+const { items, variant = 'top' } = Astro.props;
+---
+
+<nav class={`site-nav site-nav--${variant}`}>
+  <div class="container">
+    <ul class="site-nav__list">
+      {items.map((item) => (
+        <li class="site-nav__item">
+          <a href={resolveLink(item.link)} class="site-nav__link">
+            {item.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</nav>

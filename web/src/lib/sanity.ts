@@ -13,3 +13,35 @@ const builder = imageUrlBuilder(client);
 export function urlFor(source: any) {
   return builder.image(source);
 }
+
+export function resolveLink(link: any): string {
+  if (!link) return '';
+  if (typeof link === 'string') return link;
+  
+  if (link.type === 'external') {
+    return link.external || '';
+  }
+  
+  if (link.type === 'internal' && link.internal) {
+    const doc = link.internal;
+    let url = '/';
+    
+    if (doc._type === 'book' && doc.slug?.current) {
+      url = `/books/${doc.slug.current}`;
+    } else if (doc._type === 'home') {
+      url = '/';
+    } else if (doc._type === 'series' && doc.slug?.current) {
+      // Assuming series might have pages later
+      url = `/series/${doc.slug.current}`;
+    }
+    
+    if (link.anchor) {
+      const anchor = link.anchor.startsWith('#') ? link.anchor : `#${link.anchor}`;
+      url += anchor;
+    }
+    
+    return url;
+  }
+  
+  return '';
+}

@@ -1,134 +1,229 @@
 ---
-import { client, urlFor } from '../lib/sanity';
-import '../styles/global.css';
-import '../styles/main.scss';
+import { client, urlFor, resolveLink } from '../lib/sanity';
+import Navigation from '../components/Navigation.astro';
+import Layout from '../layouts/Layout.astro';
+
+const linkField = `
+  link {
+    ...,
+    internal->{ _type, slug }
+  }
+`;
+
+const ctasField = `
+  ctas[]{
+    label,
+    style,
+    ${linkField}
+  }
+`;
 
 const home = await client.fetch(`*[_type == "home"][0]{
-	title,
-	blurb,
-	heroImage,
-	series[]->{
-		name,
-		books[]->{
-			title,
-			slug,
-			cover,
-			status,
-			releaseDate,
-			projectedRelease,
-			releaseDateTbd,
-			blurb
-		}
-	}
+  ...,
+  ${ctasField},
+  featuredBook->{
+    title,
+    subtitle,
+    slug,
+    cover,
+    status,
+    releaseDate,
+    projectedRelease,
+    releaseDateTbd,
+    blurb,
+    ${ctasField},
+    featureKicker
+  },
+  brandPillars[]->{title, body},
+  series[]->{
+    name,
+    books[]->{
+      title,
+      subtitle,
+      slug,
+      cover,
+      status,
+      releaseDate,
+      projectedRelease,
+      releaseDateTbd,
+      blurb,
+      ${ctasField},
+      featureKicker
+    }
+  }
 }`);
 
+const navigation = await client.fetch(`*[_type == "navigation"][0]{ 
+  items[]{
+    label,
+    ${linkField}
+  } 
+}`);
+
+const fallbackBook = home?.featuredBook || home?.series?.[0]?.books?.[0];
+
 const generateSrcset = (image: any, widths: number[], ratio?: number) => {
-	if (!image) return '';
-	return widths
-		.map(w => {
-			let builder = urlFor(image).width(w).auto('format');
-			if (ratio) builder = builder.height(Math.round(w * ratio));
-			return `${builder.url()} ${w}w`;
-		})
-		.join(', ');
+  if (!image) return '';
+  return widths
+    .map((w) => {
+      let builder = urlFor(image).width(w).auto('format');
+      if (ratio) builder = builder.height(Math.round(w * ratio));
+      return `${builder.url()} ${w}w`;
+    })
+    .join(', ');
 };
 
-const heroWidths = [400, 800, 1200, 1600, 2000];
-const bookWidths = [300, 600, 900];
+const formatRelease = (book: any) => {
+  if (!book) return '';
+  if (book.releaseDate) {
+    return new Date(book.releaseDate).toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  }
+  if (book.projectedRelease) return book.projectedRelease;
+  if (book.releaseDateTbd) return 'Release date to be announced';
+  return '';
+};
+
+const heroWidths = [640, 960, 1280, 1600, 2200];
+const coverWidths = [360, 540, 720, 900];
+
+const siteTitle = home?.title || 'Nathan Rhys';
+const eyebrow = home?.eyebrow || 'Nathan Rhys';
+const tagline = home?.tagline || 'Fantasy where meaning has weight.';
+const blurb = home?.blurb || 'Modern fantasy about hidden beauty, costly courage, and the burden of protecting what is good.';
+
+const navItems = navigation?.items?.length ? navigation.items : [
+  { label: 'Home', link: '/' },
+  { label: 'Books', link: '#featured-book' },
+  { label: 'About', link: '#author' },
+];
+
+const homeCtas = home?.ctas?.length ? home.ctas.map((cta: any) => ({
+  ...cta,
+  link: resolveLink(cta.link)
+})) : [
+  { 
+    label: 'Read the Sample', 
+    link: fallbackBook?.slug?.current ? `/books/${fallbackBook.slug.current}` : '#featured-book', 
+    style: 'primary' 
+  },
+  { 
+    label: 'Explore the Book', 
+    link: '#featured-book', 
+    style: 'secondary' 
+  }
+];
+
+const pillars = home?.brandPillars?.length ? home.brandPillars : [
+  { title: 'Beauty with consequence', body: 'Wonder matters more when the world is broken enough to need it.' },
+  { title: 'Courage under burden', body: 'The strongest characters are not untouched by fear; they choose anyway.' },
+  { title: 'Hope with teeth', body: 'The darkness is real, but it does not get the final word.' },
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{home?.title || 'Nathan Rhys'}</title>
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
-	</head>
-	<body>
-		<header class="relative">
-			{home?.heroImage && (
-				<div class="relative w-full overflow-hidden">
-					<img 
-						src={urlFor(home.heroImage).width(1200).auto('format').url()} 
-						srcset={generateSrcset(home.heroImage, heroWidths)}
-						sizes="100vw"
-						alt="" 
-						class="w-full h-auto block scale-[1.25] md:scale-100 transition-transform duration-700"
-					/>
-					<div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent"></div>
-				</div>
-			)}
-			<div class="relative z-10 mt-n2 mt-md-n5 mt-sm-n3">
-				<div class="bg-primary/40 backdrop-blur-xl px-10 py-12 md:py-16 border-white/10 shadow-2xl w-full">
-					<div class="container">
-						<h1 class="text-6xl md:text-8xl font-bold mb-4 tracking-tight text-white leading-none">{home?.title || 'Welcome'}</h1>
-						{home?.blurb && <p class="text-xl md:text-2xl text-text-muted italic leading-relaxed">{home.blurb}</p>}
-					</div>
-				</div>
-			</div>
-		</header>
+<Layout 
+  title={siteTitle} 
+  metadata={home?.metadata} 
+  showTopNav={false}
+>
+    <header class="site-hero">
+      {home?.heroImage && (
+        <picture class="site-hero__media" aria-hidden="true">
+          <img
+            src={urlFor(home.heroImage).width(1600).auto('format').url()}
+            srcset={generateSrcset(home.heroImage, heroWidths)}
+            sizes="100vw"
+            alt=""
+            class="site-hero__image"
+          />
+        </picture>
+      )}
 
-		<main class="container pt-16 md:pt-24 pb-20">
-			{home?.series && home.series.length > 0 && home.series.map((s: any) => (
-				<section class="mb-24 last:mb-0">
-					<h2 class="text-4xl font-serif font-bold mb-12 text-secondary border-b border-secondary/20 pb-4">{s.name}</h2>
-					<div class="row g-5">
-						{s.books?.map((book: any) => (
-							<div class="col-md-6 col-lg-4">
-								<a href={`/books/${book.slug?.current}`} class="block h-full no-underline group">
-									<div class="flex flex-col h-full bg-surface/50 rounded-xl overflow-hidden border border-white/5 hover:border-accent/40 hover:bg-surface/80 transition-all duration-300 shadow-lg hover:shadow-accent/5">
-										{book.cover && (
-											<div class="aspect-[2/3] overflow-hidden">
-												<img 
-													src={urlFor(book.cover).width(600).height(900).auto('format').url()} 
-													srcset={generateSrcset(book.cover, bookWidths, 1.5)}
-													sizes="(max-width: 768px) 90vw, (max-width: 1024px) 45vw, 400px"
-													alt={book.title}
-													class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-												/>
-											</div>
-										)}
-										<div class="p-5 flex flex-col flex-grow">
-											<h3 class="text-2xl font-serif font-bold mb-1 text-white group-hover:text-accent transition-colors">{book.title}</h3>
-											
-											<div class="flex flex-wrap gap-2 mb-3">
-												{book.status && (
-													<span class="px-2 py-1 bg-accent/10 text-accent text-xs font-semibold uppercase tracking-wider rounded">
-														{book.status}
-													</span>
-												)}
-												
-												<span class="px-2 py-1 bg-secondary/10 text-secondary text-xs font-semibold uppercase tracking-wider rounded">
-													{book.releaseDate ? new Date(book.releaseDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 
-													 book.projectedRelease ? book.projectedRelease : 
-													 book.releaseDateTbd ? 'TBD' : 'Unknown'}
-												</span>
-											</div>
+      <div class="site-hero__shade"></div>
 
-											{book.blurb && (
-												<p class="text-text-muted line-clamp-3 text-sm leading-relaxed mb-0">
-													{book.blurb}
-												</p>
-											)}
-										</div>
-									</div>
-								</a>
-							</div>
-						))}
-					</div>
-				</section>
-			))}
-		</main>
+      <div class="container site-hero__content">
+        <p class="eyebrow">{eyebrow}</p>
+        <h1>{tagline}</h1>
+        <p class="lede">{blurb}</p>
+        <div class="cta-row" aria-label="Primary actions">
+          {homeCtas.map((cta: any) => (
+            <a class={`button button--${cta.style || 'primary'}`} href={cta.link}>{cta.label}</a>
+          ))}
+        </div>
+      </div>
+    </header>
 
-		<footer class="py-12 border-t border-secondary/20 bg-background/80 text-center text-text-muted text-sm">
-			<div class="container">
-				<p class="tracking-widest uppercase mb-2">Nathan Rhys</p>
-				<p>&copy; {new Date().getFullYear()} Nathan Rhys. All rights reserved.</p>
-			</div>
-		</footer>
-	</body>
-</html>
+    <Navigation items={navItems} variant="home" />
+
+    <main>
+      {fallbackBook && (
+        <section id="featured-book" class="section section--featured">
+          <div class="container">
+            <div class="feature-card">
+              {fallbackBook.cover && (
+                <a class="book-cover-link" href={fallbackBook.slug?.current ? `/books/${fallbackBook.slug.current}` : '#'} aria-label={`View ${fallbackBook.title}`}>
+                  <img
+                    src={urlFor(fallbackBook.cover).width(720).height(1080).auto('format').url()}
+                    srcset={generateSrcset(fallbackBook.cover, coverWidths, 1.5)}
+                    sizes="(max-width: 768px) 70vw, 360px"
+                    alt={`${fallbackBook.title} cover`}
+                    class="book-cover"
+                  />
+                </a>
+              )}
+
+              <div class="feature-card__body">
+                <p class="section-kicker">{fallbackBook.featureKicker || home?.featuredBookKicker || 'Featured Novel'}</p>
+                <h2>{fallbackBook.title}</h2>
+                {fallbackBook.subtitle && <p class="book-subtitle">{fallbackBook.subtitle}</p>}
+                {formatRelease(fallbackBook) && <p class="release-note">{formatRelease(fallbackBook)}</p>}
+                {fallbackBook.blurb && <p class="book-blurb">{fallbackBook.blurb}</p>}
+                <div class="cta-row cta-row--compact">
+                  {fallbackBook.ctas?.length ? (
+                    fallbackBook.ctas.map((cta: any) => (
+                      <a class={`button button--${cta.style || 'primary'}`} href={resolveLink(cta.link)}>{cta.label}</a>
+                    ))
+                  ) : (
+                    <>
+                      <a class="button button--primary" href={fallbackBook.slug?.current ? `/books/${fallbackBook.slug.current}` : '#'}>Read the Sample</a>
+                      <a class="button button--ghost" href="#">Buy the Book</a>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section class="section section--pillars">
+        <div class="container">
+          <div class="section-heading">
+            <p class="section-kicker">{home?.pillarsKicker || 'What you’ll find here'}</p>
+            <h2>{home?.pillarsHeading || 'Modern fantasy with a moral spine.'}</h2>
+          </div>
+          <div class="row g-4">
+            {pillars.map((pillar: any) => (
+              <div class="col-md-4">
+                <article class="pillar-card">
+                  <h3>{pillar.title}</h3>
+                  <p>{pillar.body}</p>
+                </article>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="author" class="section section--author">
+        <div class="container container--narrow">
+          <p class="section-kicker">{home?.authorKicker || 'Author Note'}</p>
+          <h2>{home?.authorHeading || 'Nathan Rhys writes stories about hidden beauty, costly courage, and the choice to protect what is good.'}</h2>
+          <p>{home?.authorStatement || 'I write modern fantasy for readers who want wonder without weightlessness: stories where choices matter, power has a cost, and hope is earned rather than handed out.'}</p>
+        </div>
+      </section>
+    </main>
+</Layout>

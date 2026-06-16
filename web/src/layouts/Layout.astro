@@ -1,0 +1,67 @@
+---
+import { client, urlFor } from '../lib/sanity';
+import Navigation from '../components/Navigation.astro';
+import '../styles/global.css';
+import '../styles/main.scss';
+
+interface Props {
+  title: string;
+  metadata?: any;
+  showTopNav?: boolean;
+}
+
+const { title, metadata, showTopNav = true } = Astro.props;
+
+const navigation = await client.fetch(`*[_type == "navigation"][0]{ 
+  items[]{
+    label,
+    link{
+      ...,
+      internal->{ _type, slug }
+    }
+  }
+}`);
+const navItems = navigation?.items?.length ? navigation.items : [
+  { label: 'Home', link: '/' },
+  { label: 'Books', link: '/#featured-book' },
+  { label: 'About', link: '/#author' },
+];
+
+const home = await client.fetch(`*[_type == "home"][0]{ footerBrand, footerCopyright }`);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{metadata?.metaTitle || title}</title>
+    <meta name="description" content={metadata?.metaDescription || ""} />
+
+    {metadata?.ogTitle && <meta property="og:title" content={metadata.ogTitle} />}
+    {metadata?.ogDescription && <meta property="og:description" content={metadata.ogDescription} />}
+    {metadata?.ogImage && <meta property="og:image" content={urlFor(metadata.ogImage).width(1200).height(630).url()} />}
+    {metadata?.ogType && <meta property="og:type" content={metadata.ogType} />}
+
+    {metadata?.twitterCard && <meta name="twitter:card" content={metadata.twitterCard} />}
+    {metadata?.twitterTitle && <meta name="twitter:title" content={metadata.twitterTitle} />}
+    {metadata?.twitterDescription && <meta name="twitter:description" content={metadata.twitterDescription} />}
+    {metadata?.twitterImage && <meta name="twitter:image" content={urlFor(metadata.twitterImage).width(1200).height(600).url()} />}
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,650;14..32,750&family=Literata:opsz,wght@7..72,400;7..72,500;7..72,650&family=Marcellus&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    {showTopNav && <Navigation items={navItems} variant="top" />}
+    <slot />
+    <footer class="site-footer">
+      <div class="container site-footer__inner">
+        <p class="site-footer__brand">{home?.footerBrand || 'Nathan Rhys'}</p>
+        <p>&copy; {new Date().getFullYear()} {home?.footerCopyright || 'Nathan Rhys. All rights reserved.'}</p>
+      </div>
+    </footer>
+  </body>
+</html>
