@@ -7,5 +7,6 @@ import metadata from './metadata'
 import cta from './cta'
 import navigation from './navigation'
 import link from './link'
+import layout from './layout'
 
-export const schemaTypes = [book, chapter, home, series, pillar, metadata, cta, navigation, link]
+export const schemaTypes = [book, chapter, home, series, pillar, metadata, cta, navigation, link, layout]

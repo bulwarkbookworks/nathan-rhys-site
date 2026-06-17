@@ -19,6 +19,13 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'layout',
+      title: 'Layout',
+      type: 'reference',
+      to: [{type: 'layout'}],
+      description: 'The shared navigation and footer layout for this page.',
+    }),
+    defineField({
       name: 'books',
       title: 'Books',
       type: 'array',

@@ -52,6 +52,14 @@ export default defineType({
       group: 'content',
     }),
     defineField({
+      name: 'layout',
+      title: 'Layout',
+      type: 'reference',
+      to: [{type: 'layout'}],
+      description: 'The shared navigation and footer layout for this page.',
+      group: 'content',
+    }),
+    defineField({
       name: 'metadata',
       title: 'Page Metadata',
       type: 'metadata',

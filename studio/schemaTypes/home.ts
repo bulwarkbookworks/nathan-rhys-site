@@ -10,6 +10,14 @@ export default defineType({
   ],
   fields: [
     defineField({
+      name: 'layout',
+      title: 'Layout',
+      type: 'reference',
+      to: [{type: 'layout'}],
+      description: 'The shared navigation and footer layout for this page.',
+      group: 'content',
+    }),
+    defineField({
       name: 'eyebrow',
       title: 'Hero Eyebrow',
       type: 'string',
