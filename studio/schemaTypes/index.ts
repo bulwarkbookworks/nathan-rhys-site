@@ -8,5 +8,9 @@ import cta from './cta'
 import navigation from './navigation'
 import link from './link'
 import layout from './layout'
+import standardPage from './standardPage'
+import listItem from './listItem'
+import richTextSection from './richTextSection'
+import listSection from './listSection'
 
-export const schemaTypes = [book, chapter, home, series, pillar, metadata, cta, navigation, link, layout]
+export const schemaTypes = [book, chapter, home, series, pillar, metadata, cta, navigation, link, layout, standardPage, listItem, richTextSection, listSection]

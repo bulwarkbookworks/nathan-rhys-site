@@ -3,3 +3,10 @@ $enable-negative-margins: true;
 
 // Bootstrap grid utilities ONLY
 @import "bootstrap/scss/bootstrap-grid";
+
+.list-section-content {
+  .list-item::marker {
+    content: none;
+    display: none;
+  }
+}

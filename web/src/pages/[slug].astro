@@ -1,0 +1,147 @@
+---
+import { client } from '../lib/sanity';
+import Layout from '../layouts/Layout.astro';
+import { PortableText } from 'astro-portabletext';
+
+export async function getStaticPaths() {
+  const pages = await client.fetch(`*[_type == "standardPage"]{ "slug": slug.current }`);
+  return pages.map((page: any) => ({
+    params: { slug: page.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+
+const page = await client.fetch(`*[_type == "standardPage" && slug.current == $slug][0]{
+  ...,
+  sections[]{
+    ...,
+    _type == "listSection" => {
+      items[]{
+        ...,
+        content[],
+        glyphiconColor
+      }
+    },
+    _type == "richTextSection" => {
+      content[]
+    }
+  },
+  "layout": layout->{
+    ...,
+    topNavigation->{
+      items[]{
+        label,
+        link{
+          ...,
+          internal->{ _type, slug }
+        }
+      }
+    }
+  }
+}`, { slug });
+
+if (!page) {
+  return Astro.redirect('/404');
+}
+---
+
+<Layout title={page.title} metadata={page.metadata}>
+  <main class="container py-24">
+    <div class="standard-page">
+      <header class="mb-16">
+        <h1 class="text-5xl md:text-7xl mb-4">{page.title}</h1>
+      </header>
+      
+      <div class="standard-page__sections space-y-24">
+        {page.sections?.map((section: any) => (
+          <section class="page-section">
+            {section.kicker && <p class="section-kicker">{section.kicker}</p>}
+            {section.heading && <h2 class="mb-8">{section.heading}</h2>}
+            
+            {section._type === 'richTextSection' && (
+              <div class="standard-page__content">
+                <PortableText value={section.content} />
+              </div>
+            )}
+            
+            {section._type === 'listSection' && (
+              <div class="list-section-content space-y-12">
+                {section.items?.map((item: any) => (
+                  <div class="list-item">
+                    <div class="list-item__header flex items-baseline gap-4 mb-3">
+                      {item.glyphicon && (
+                        <i class:list={[
+                          'bi', 
+                          item.glyphicon, 
+                          'text-2xl',
+                          item.glyphiconColor === 'red' && 'text-red-500',
+                          item.glyphiconColor === 'blue' && 'text-blue-500',
+                          item.glyphiconColor === 'green' && 'text-green-500',
+                          item.glyphiconColor === 'yellow' && 'text-yellow-500',
+                          item.glyphiconColor === 'purple' && 'text-purple-500',
+                          item.glyphiconColor === 'orange' && 'text-orange-500',
+                          (!item.glyphiconColor || ['secondary', 'accent', 'rust', 'text-main', 'text-muted'].includes(item.glyphiconColor)) && `text-${item.glyphiconColor || 'secondary'}`
+                        ]}></i>
+                      )}
+                      <h3 class="font-bold text-2xl m-0 text-text-main">{item.heading}</h3>
+                    </div>
+                    {item.content && (
+                      <div class="list-item__content pl-10 opacity-90">
+                         <PortableText value={item.content} />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        ))}
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style is:global>
+  .standard-page__content {
+    line-height: 1.75;
+    font-size: 1.125rem;
+    font-family: var(--font-serif);
+    color: var(--color-text-muted);
+  }
+  .standard-page__content p {
+    margin-bottom: 1.5rem;
+  }
+  .standard-page__content h3 {
+    font-size: 1.75rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1.25rem;
+    font-family: var(--font-display);
+    color: var(--color-text-main);
+  }
+  .standard-page__content ul, .standard-page__content ol,
+  .list-item__content ul, .list-item__content ol {
+    margin-bottom: 1.5rem;
+    padding-left: 0;
+    list-style: none;
+  }
+  .standard-page__content li::marker,
+  .list-item__content li::marker,
+  .list-item ::marker {
+    content: none;
+    display: none;
+  }
+  .standard-page__content li,
+  .list-item__content li {
+    margin-bottom: 0.75rem;
+  }
+  
+  .list-item__content {
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+  .list-item__content p {
+    margin-bottom: 1rem;
+  }
+</style>

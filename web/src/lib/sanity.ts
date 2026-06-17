@@ -30,6 +30,8 @@ export function resolveLink(link: any): string {
       url = `/books/${doc.slug.current}`;
     } else if (doc._type === 'home') {
       url = '/';
+    } else if (doc._type === 'standardPage' && doc.slug?.current) {
+      url = `/${doc.slug.current}`;
     } else if (doc._type === 'series' && doc.slug?.current) {
       // Assuming series might have pages later
       url = `/series/${doc.slug.current}`;
