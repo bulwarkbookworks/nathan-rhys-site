@@ -23,10 +23,32 @@ export default defineConfig({
               .id('home')
               .child(S.document().schemaType('home').documentId('home')),
             S.divider(),
-            // Regular document types
-            ...S.documentTypeListItems().filter(
-              (listItem) => !['home'].includes(listItem.getId() || ''),
-            ),
+            // Pages Group
+            S.listItem()
+              .title('Pages')
+              .child(
+                S.list()
+                  .title('Pages')
+                  .items([
+                    S.documentTypeListItem('book'),
+                    S.documentTypeListItem('series'),
+                    S.documentTypeListItem('standardPage'),
+                    S.documentTypeListItem('chapter'),
+                  ]),
+              ),
+            // Site Configuration Group
+            S.listItem()
+              .title('Site Configuration')
+              .child(
+                S.list()
+                  .title('Site Configuration')
+                  .items([
+                    S.documentTypeListItem('pillar'),
+                    S.documentTypeListItem('navigation'),
+                    S.documentTypeListItem('layout'),
+                    S.documentTypeListItem('buttondownEmbed'),
+                  ]),
+              ),
           ]),
     }),
     visionTool(),
