@@ -22,7 +22,7 @@ export default defineType({
       name: 'internal',
       title: 'Internal Page',
       type: 'reference',
-      to: [{type: 'home'}, {type: 'book'}, {type: 'series'}],
+      to: [{type: 'home'}, {type: 'book'}, {type: 'series'}, {type: 'buttondownEmbed'}],
       hidden: ({parent}) => parent?.type !== 'internal',
     }),
     defineField({

@@ -22,23 +22,48 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 const { type } = Astro.props;
 
+const SECTION_QUERY = `
+  sections[]{
+    ...,
+    ctas[]{
+      ...,
+      link{
+        ...,
+        internal->{
+          ...,
+          _type == "book" => {
+            series->{ "slug": slug.current }
+          },
+          _type == "buttondownEmbed" => {
+            "username": username.current
+          }
+        }
+      }
+    },
+    _type == "listSection" => {
+      items[]{
+        ...,
+        content[],
+        glyphiconColor
+      }
+    },
+    _type == "richTextSection" => {
+      content[]
+    },
+    _type == "buttondownEmbedSection" => {
+      embed->{
+        "username": username.current,
+        emailLabel
+      }
+    }
+  }
+`;
+
 let data;
 if (type === 'standardPage') {
   data = await client.fetch(`*[_type == "standardPage" && slug.current == $slug][0]{
     ...,
-    sections[]{
-      ...,
-      _type == "listSection" => {
-        items[]{
-          ...,
-          content[],
-          glyphiconColor
-        }
-      },
-      _type == "richTextSection" => {
-        content[]
-      }
-    },
+    ${SECTION_QUERY},
     "layout": layout->{
       ...,
       topNavigation->{
@@ -50,7 +75,10 @@ if (type === 'standardPage') {
               _type, 
               slug,
               _type == "book" => {
-                series->{ "slug": slug }
+                series->{ "slug": slug.current }
+              },
+              _type == "buttondownEmbed" => {
+                "username": username.current
               }
             }
           }
@@ -62,7 +90,8 @@ if (type === 'standardPage') {
   data = await client.fetch(`*[_type == "book" && slug.current == $slug][0]{ 
     ..., 
     series->{ name, slug }, 
-    chapters[]->{ title, slug } 
+    chapters[]->{ title, slug },
+    ${SECTION_QUERY}
   }`, { slug });
 }
 

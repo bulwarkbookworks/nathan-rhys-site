@@ -1,0 +1,134 @@
+---
+import { PortableText } from 'astro-portabletext';
+import { resolveLink } from '../lib/sanity';
+import ButtondownEmbed from './ButtondownEmbed.astro';
+
+interface Props {
+  section: any;
+}
+
+const { section } = Astro.props;
+---
+
+<section class="page-section">
+  <!-- Section Header -->
+  <div class="section-header mb-10">
+    {section.kicker && <p class="section-kicker">{section.kicker}</p>}
+    {section.heading && <h2 class="text-4xl md:text-5xl">{section.heading}</h2>}
+  </div>
+
+  <!-- Section Content -->
+  <div class="section-content">
+    {section._type === 'richTextSection' && (
+      <div class="rich-text-content">
+        <PortableText value={section.content} />
+      </div>
+    )}
+
+    {section._type === 'listSection' && (
+      <div class="list-section-content space-y-12">
+        {section.items?.map((item: any) => (
+          <div class="list-item">
+            <div class="list-item__header flex items-baseline gap-4 mb-3">
+              {item.glyphicon && (
+                <i class:list={[
+                  'bi', 
+                  item.glyphicon, 
+                  'text-2xl',
+                  item.glyphiconColor === 'red' && 'text-red-500',
+                  item.glyphiconColor === 'blue' && 'text-blue-500',
+                  item.glyphiconColor === 'green' && 'text-green-500',
+                  item.glyphiconColor === 'yellow' && 'text-yellow-500',
+                  item.glyphiconColor === 'purple' && 'text-purple-500',
+                  item.glyphiconColor === 'orange' && 'text-orange-500',
+                  (!item.glyphiconColor || ['secondary', 'accent', 'rust', 'text-main', 'text-muted'].includes(item.glyphiconColor)) && `text-${item.glyphiconColor || 'secondary'}`
+                ]}></i>
+              )}
+              <h3 class="font-bold text-2xl m-0 text-text-main">{item.heading}</h3>
+            </div>
+            {item.content && (
+              <div class="list-item__content pl-10 opacity-90">
+                 <PortableText value={item.content} />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    )}
+
+    {section._type === 'buttondownEmbedSection' && section.embed && (
+      <div class="buttondown-section-content">
+        <ButtondownEmbed 
+          username={section.embed.username} 
+          emailLabel={section.embed.emailLabel} 
+          displayType={section.displayType} 
+        />
+      </div>
+    )}
+  </div>
+
+  <!-- Section CTAs -->
+  {section.ctas && section.ctas.length > 0 && (
+    <div class="section-ctas flex flex-wrap gap-4 mt-12">
+      {section.ctas.map((cta: any) => (
+        <a 
+          href={resolveLink(cta.link)} 
+          class:list={[
+            'inline-block px-8 py-3 rounded-full font-bold transition-all',
+            cta.style === 'primary' ? 'bg-secondary text-background-deep hover:bg-accent' : 
+            cta.style === 'secondary' ? 'bg-surface-soft text-text-main border border-white/10 hover:border-secondary' :
+            'border border-secondary text-secondary hover:bg-secondary hover:text-background-deep'
+          ]}
+        >
+          {cta.label}
+        </a>
+      ))}
+    </div>
+  )}
+</section>
+
+<style is:global>
+  .rich-text-content {
+    line-height: 1.75;
+    font-size: 1.125rem;
+    font-family: var(--font-serif);
+    color: var(--color-text-muted);
+  }
+  .rich-text-content p {
+    margin-bottom: 1.5rem;
+  }
+  .rich-text-content h3 {
+    font-size: 1.75rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1.25rem;
+    font-family: var(--font-display);
+    color: var(--color-text-main);
+  }
+
+  .rich-text-content ul, .rich-text-content ol,
+  .list-item__content ul, .list-item__content ol {
+    margin-bottom: 1.5rem;
+    padding-left: 0;
+    list-style: none;
+  }
+  .rich-text-content li,
+  .list-item__content li {
+    margin-bottom: 0.75rem;
+  }
+  .rich-text-content li::marker,
+  .list-item__content li::marker,
+  .list-item ::marker {
+    content: none;
+    display: none;
+  }
+
+  .list-item__content {
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--color-text-muted);
+  }
+  .list-item__content p {
+    margin-bottom: 1rem;
+  }
+</style>

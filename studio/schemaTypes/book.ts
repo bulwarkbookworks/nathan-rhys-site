@@ -166,5 +166,16 @@ export default defineType({
       of: [{type: 'reference', to: [{type: 'chapter'}]}],
       group: 'content',
     }),
+    defineField({
+      name: 'sections',
+      title: 'Sections',
+      type: 'array',
+      of: [
+        {type: 'richTextSection'},
+        {type: 'listSection'},
+        {type: 'buttondownEmbedSection'},
+      ],
+      group: 'content',
+    }),
   ],
 })

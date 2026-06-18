@@ -1,8 +1,8 @@
 import {defineField, defineType} from 'sanity'
 
 export default defineType({
-  name: 'richTextSection',
-  title: 'Rich Text Section',
+  name: 'buttondownEmbedSection',
+  title: 'Buttondown Embed Section',
   type: 'object',
   groups: [
     { name: 'header', title: 'Header' },
@@ -23,10 +23,24 @@ export default defineType({
       group: 'header',
     }),
     defineField({
-      name: 'content',
-      title: 'Content',
-      type: 'array',
-      of: [{type: 'block'}],
+      name: 'embed',
+      title: 'Buttondown Embed',
+      type: 'reference',
+      to: [{type: 'buttondownEmbed'}],
+      group: 'content',
+    }),
+    defineField({
+      name: 'displayType',
+      title: 'Display Type',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'Form', value: 'form'},
+          {title: 'Iframe', value: 'iframe'},
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'form',
       group: 'content',
     }),
     defineField({

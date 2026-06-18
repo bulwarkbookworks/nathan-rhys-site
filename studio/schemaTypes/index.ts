@@ -12,5 +12,7 @@ import standardPage from './standardPage'
 import listItem from './listItem'
 import richTextSection from './richTextSection'
 import listSection from './listSection'
+import buttondownEmbed from './buttondownEmbed'
+import buttondownEmbedSection from './buttondownEmbedSection'
 
-export const schemaTypes = [book, chapter, home, series, pillar, metadata, cta, navigation, link, layout, standardPage, listItem, richTextSection, listSection]
+export const schemaTypes = [book, chapter, home, series, pillar, metadata, cta, navigation, link, layout, standardPage, listItem, richTextSection, listSection, buttondownEmbed, buttondownEmbedSection]

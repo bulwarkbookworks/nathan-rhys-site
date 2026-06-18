@@ -19,10 +19,48 @@ export async function getStaticPaths() {
 
 const { series, slug } = Astro.params;
 
+const SECTION_QUERY = `
+  sections[]{
+    ...,
+    ctas[]{
+      ...,
+      link{
+        ...,
+        internal->{
+          ...,
+          _type == "book" => {
+            series->{ "slug": slug.current }
+          },
+          _type == "buttondownEmbed" => {
+            "username": username.current
+          }
+        }
+      }
+    },
+    _type == "listSection" => {
+      items[]{
+        ...,
+        content[],
+        glyphiconColor
+      }
+    },
+    _type == "richTextSection" => {
+      content[]
+    },
+    _type == "buttondownEmbedSection" => {
+      embed->{
+        "username": username.current,
+        emailLabel
+      }
+    }
+  }
+`;
+
 const data = await client.fetch(`*[_type == "book" && slug.current == $slug && series->slug.current == $series][0]{ 
   ..., 
   series->{ name, slug }, 
-  chapters[]->{ title, slug } 
+  chapters[]->{ title, slug },
+  ${SECTION_QUERY}
 }`, { series, slug });
 
 if (!data) {

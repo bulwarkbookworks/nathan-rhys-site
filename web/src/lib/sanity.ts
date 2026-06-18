@@ -44,6 +44,11 @@ export function resolveLink(link: any): string {
     } else if (doc._type === 'series' && doc.slug?.current) {
       // Assuming series might have pages later
       url = `/series/${doc.slug.current}`;
+    } else if (doc._type === 'buttondownEmbed') {
+      const username = doc.username?.current || doc.username;
+      if (username) {
+        url = `https://buttondown.com/${username}`;
+      }
     }
     
     if (link.anchor) {
