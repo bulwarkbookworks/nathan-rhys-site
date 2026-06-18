@@ -84,6 +84,13 @@ export default defineType({
       group: 'content',
     }),
     defineField({
+      name: 'series',
+      title: 'Series',
+      type: 'reference',
+      to: [{type: 'series'}],
+      group: 'content',
+    }),
+    defineField({
       name: 'featureKicker',
       title: 'Feature Section Kicker',
       type: 'string',

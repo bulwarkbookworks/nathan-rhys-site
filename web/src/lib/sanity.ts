@@ -14,6 +14,15 @@ export function urlFor(source: any) {
   return builder.image(source);
 }
 
+export function getBookUrl(book: any): string {
+  if (!book?.slug?.current) return '';
+  const seriesSlug = book.series?.slug?.current || book.seriesSlug;
+  if (seriesSlug) {
+    return `/${seriesSlug}/${book.slug.current}`;
+  }
+  return `/${book.slug.current}`;
+}
+
 export function resolveLink(link: any): string {
   if (!link) return '';
   if (typeof link === 'string') return link;
@@ -26,8 +35,8 @@ export function resolveLink(link: any): string {
     const doc = link.internal;
     let url = '/';
     
-    if (doc._type === 'book' && doc.slug?.current) {
-      url = `/books/${doc.slug.current}`;
+    if (doc._type === 'book') {
+      url = getBookUrl(doc);
     } else if (doc._type === 'home') {
       url = '/';
     } else if (doc._type === 'standardPage' && doc.slug?.current) {

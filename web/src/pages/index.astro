@@ -1,12 +1,18 @@
 ---
-import { client, urlFor, resolveLink } from '../lib/sanity';
+import { client, urlFor, resolveLink, getBookUrl } from '../lib/sanity';
 import Navigation from '../components/Navigation.astro';
 import Layout from '../layouts/Layout.astro';
 
 const linkField = `
   link {
     ...,
-    internal->{ _type, slug }
+    internal->{ 
+      _type, 
+      slug,
+      _type == "book" => {
+        series->{ "slug": slug.current }
+      }
+    }
   }
 `;
 
@@ -18,37 +24,32 @@ const ctasField = `
   }
 `;
 
+const bookFields = `
+  title,
+  subtitle,
+  slug,
+  cover,
+  status,
+  releaseDate,
+  projectedRelease,
+  releaseDateTbd,
+  blurb,
+  ${ctasField},
+  featureKicker,
+  series->{ "slug": slug.current }
+`;
+
 const home = await client.fetch(`*[_type == "home"][0]{
   ...,
   ${ctasField},
   featuredBook->{
-    title,
-    subtitle,
-    slug,
-    cover,
-    status,
-    releaseDate,
-    projectedRelease,
-    releaseDateTbd,
-    blurb,
-    ${ctasField},
-    featureKicker
+    ${bookFields}
   },
   brandPillars[]->{title, body},
   series[]->{
     name,
     books[]->{
-      title,
-      subtitle,
-      slug,
-      cover,
-      status,
-      releaseDate,
-      projectedRelease,
-      releaseDateTbd,
-      blurb,
-      ${ctasField},
-      featureKicker
+      ${bookFields}
     }
   }
 }`);
@@ -107,7 +108,7 @@ const homeCtas = home?.ctas?.length ? home.ctas.map((cta: any) => ({
 })) : [
   { 
     label: 'Read the Sample', 
-    link: fallbackBook?.slug?.current ? `/books/${fallbackBook.slug.current}` : '#featured-book', 
+    link: getBookUrl(fallbackBook) || '#featured-book', 
     style: 'primary' 
   },
   { 
@@ -164,7 +165,7 @@ const pillars = home?.brandPillars?.length ? home.brandPillars : [
           <div class="container">
             <div class="feature-card">
               {fallbackBook.cover && (
-                <a class="book-cover-link" href={fallbackBook.slug?.current ? `/books/${fallbackBook.slug.current}` : '#'} aria-label={`View ${fallbackBook.title}`}>
+                <a class="book-cover-link" href={getBookUrl(fallbackBook) || '#'} aria-label={`View ${fallbackBook.title}`}>
                   <img
                     src={urlFor(fallbackBook.cover).width(720).height(1080).auto('format').url()}
                     srcset={generateSrcset(fallbackBook.cover, coverWidths, 1.5)}
@@ -188,7 +189,7 @@ const pillars = home?.brandPillars?.length ? home.brandPillars : [
                     ))
                   ) : (
                     <>
-                      <a class="button button--primary" href={fallbackBook.slug?.current ? `/books/${fallbackBook.slug.current}` : '#'}>Read the Sample</a>
+                      <a class="button button--primary" href={getBookUrl(fallbackBook) || '#'}>Read the Sample</a>
                       <a class="button button--ghost" href="#">Buy the Book</a>
                     </>
                   )}

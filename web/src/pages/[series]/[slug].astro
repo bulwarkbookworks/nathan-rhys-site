@@ -1,0 +1,33 @@
+---
+import { client } from '../../lib/sanity';
+import BookTemplate from '../../components/BookTemplate.astro';
+
+export async function getStaticPaths() {
+  const booksWithSeries = await client.fetch(`*[_type == "book" && defined(series)]{ 
+    "slug": slug.current, 
+    "seriesSlug": series->slug.current 
+  }`);
+  
+  // Filter out any where series slug might be missing
+  return booksWithSeries
+    .filter((b: any) => b.seriesSlug && b.slug)
+    .map((b: any) => ({ 
+      params: { series: b.seriesSlug, slug: b.slug },
+      props: { type: 'book' }
+    }));
+}
+
+const { series, slug } = Astro.params;
+
+const data = await client.fetch(`*[_type == "book" && slug.current == $slug && series->slug.current == $series][0]{ 
+  ..., 
+  series->{ name, slug }, 
+  chapters[]->{ title, slug } 
+}`, { series, slug });
+
+if (!data) {
+  return Astro.redirect('/404');
+}
+---
+
+<BookTemplate book={data} />

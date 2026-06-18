@@ -1,0 +1,117 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { urlFor, resolveLink } from '../lib/sanity';
+
+const { book } = Astro.props;
+---
+
+<Layout title={book.title} metadata={book.metadata}>
+  <main class="container py-24">
+    <div class="book-page">
+      <div class="grid md:grid-cols-12 gap-12 lg:gap-20 items-start">
+        <!-- Cover Image -->
+        <div class="md:col-span-5 lg:col-span-4">
+          <div class="book-cover-wrapper">
+            {book.cover && (
+              <img 
+                src={urlFor(book.cover).width(800).url()} 
+                alt={book.title}
+                class="book-cover-image"
+              />
+            )}
+          </div>
+        </div>
+
+        <!-- Book Info -->
+        <div class="md:col-span-7 lg:col-span-8">
+          <header class="book-header mb-10">
+            {book.series && (
+              <p class="book-subtitle mb-4">
+                {book.series.name}
+              </p>
+            )}
+            <h1 class="text-5xl md:text-7xl lg:text-8xl mb-6">{book.title}</h1>
+            
+            <div class="release-info mb-8">
+              {book.releaseDateTbd ? (
+                <p class="release-note">Release Date TBD</p>
+              ) : (
+                <>
+                  {book.projectedRelease && <p class="release-note">{book.projectedRelease}</p>}
+                  {!book.projectedRelease && book.releaseDate && (
+                    <p class="text-text-muted">Released {new Date(book.releaseDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                  )}
+                </>
+              )}
+            </div>
+          </header>
+
+          <div class="book-blurb mb-12">
+            {book.blurb && (
+              <div class="book-blurb-content text-text-muted font-serif leading-relaxed text-xl space-y-6">
+                {book.blurb.split('\n').map((para: string) => para && <p>{para}</p>)}
+              </div>
+            )}
+          </div>
+
+          {book.ctas && book.ctas.length > 0 && (
+            <div class="flex flex-wrap gap-4 mb-16">
+              {book.ctas.map((cta: any) => (
+                <a 
+                  href={resolveLink(cta.link)} 
+                  class:list={[
+                    'inline-block px-8 py-3 rounded-full font-bold transition-all',
+                    cta.style === 'primary' ? 'bg-secondary text-background-deep hover:bg-accent' : 
+                    cta.style === 'secondary' ? 'bg-surface-soft text-text-main border border-white/10 hover:border-secondary' :
+                    'border border-secondary text-secondary hover:bg-secondary hover:text-background-deep'
+                  ]}
+                >
+                  {cta.label}
+                </a>
+              ))}
+            </div>
+          )}
+
+          {book.chapters && book.chapters.length > 0 && (
+            <section class="chapters-section border-t border-white/10 pt-12">
+              <h2 class="text-3xl mb-8">Free Preview Chapters</h2>
+              <div class="grid gap-4">
+                {book.chapters.map((chapter: any, index: number) => (
+                  <a 
+                    href={`/chapters/${chapter.slug.current}`}
+                    class="group flex items-center justify-between p-6 rounded-xl bg-surface/40 border border-white/5 hover:border-secondary/30 hover:bg-surface/60 transition-all"
+                  >
+                    <div class="flex items-center gap-6">
+                      <span class="text-secondary/50 font-display text-2xl w-8">
+                        {(index + 1).toString().padStart(2, '0')}
+                      </span>
+                      <span class="text-xl group-hover:text-secondary transition-colors text-text-main">
+                        {chapter.title}
+                      </span>
+                    </div>
+                    <i class="bi bi-arrow-right text-secondary opacity-0 group-hover:opacity-100 transition-all translate-x-[-10px] group-hover:translate-x-0"></i>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .book-cover-image {
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border-radius: 0.55rem;
+    box-shadow: var(--shadow-lifted);
+  }
+
+  .chapters-section h2 {
+    color: var(--color-text-main);
+    letter-spacing: -0.02em;
+  }
+</style>

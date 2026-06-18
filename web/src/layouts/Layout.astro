@@ -17,7 +17,13 @@ const navigation = await client.fetch(`*[_type == "navigation"][0]{
     label,
     link{
       ...,
-      internal->{ _type, slug }
+      internal->{ 
+        _type, 
+        slug,
+        _type == "book" => {
+          series->{ "slug": slug }
+        }
+      }
     }
   }
 }`);
