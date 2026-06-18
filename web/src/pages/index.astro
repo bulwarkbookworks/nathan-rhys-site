@@ -105,18 +105,7 @@ const navItems = navigation?.items?.length ? navigation.items : [
 const homeCtas = home?.ctas?.length ? home.ctas.map((cta: any) => ({
   ...cta,
   link: resolveLink(cta.link)
-})) : [
-  { 
-    label: 'Read the Sample', 
-    link: getBookUrl(fallbackBook) || '#featured-book', 
-    style: 'primary' 
-  },
-  { 
-    label: 'Explore the Book', 
-    link: '#featured-book', 
-    style: 'secondary' 
-  }
-];
+})) : [];
 
 const pillars = home?.brandPillars?.length ? home.brandPillars : [
   { title: 'Beauty with consequence', body: 'Wonder matters more when the world is broken enough to need it.' },
@@ -149,11 +138,13 @@ const pillars = home?.brandPillars?.length ? home.brandPillars : [
         <p class="eyebrow">{eyebrow}</p>
         <h1>{tagline}</h1>
         <p class="lede">{blurb}</p>
-        <div class="cta-row" aria-label="Primary actions">
-          {homeCtas.map((cta: any) => (
-            <a class={`button button--${cta.style || 'primary'}`} href={cta.link}>{cta.label}</a>
-          ))}
-        </div>
+        {homeCtas.length > 0 && (
+          <div class="cta-row" aria-label="Primary actions">
+            {homeCtas.map((cta: any) => (
+              <a class={`button button--${cta.style || 'primary'}`} href={cta.link}>{cta.label}</a>
+            ))}
+          </div>
+        )}
       </div>
     </header>
 
@@ -182,18 +173,13 @@ const pillars = home?.brandPillars?.length ? home.brandPillars : [
                 {fallbackBook.subtitle && <p class="book-subtitle">{fallbackBook.subtitle}</p>}
                 {formatRelease(fallbackBook) && <p class="release-note">{formatRelease(fallbackBook)}</p>}
                 {fallbackBook.blurb && <p class="book-blurb">{fallbackBook.blurb}</p>}
-                <div class="cta-row cta-row--compact">
-                  {fallbackBook.ctas?.length ? (
-                    fallbackBook.ctas.map((cta: any) => (
+                {fallbackBook.ctas?.length > 0 && (
+                  <div class="cta-row cta-row--compact">
+                    {fallbackBook.ctas.map((cta: any) => (
                       <a class={`button button--${cta.style || 'primary'}`} href={resolveLink(cta.link)}>{cta.label}</a>
-                    ))
-                  ) : (
-                    <>
-                      <a class="button button--primary" href={getBookUrl(fallbackBook) || '#'}>Read the Sample</a>
-                      <a class="button button--ghost" href="#">Buy the Book</a>
-                    </>
-                  )}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
