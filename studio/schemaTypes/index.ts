@@ -14,5 +14,7 @@ import richTextSection from './richTextSection'
 import listSection from './listSection'
 import buttondownEmbed from './buttondownEmbed'
 import buttondownEmbedSection from './buttondownEmbedSection'
+import artist from './artist'
+import galleryItem from './galleryItem'
 
-export const schemaTypes = [book, chapter, home, series, pillar, metadata, cta, navigation, link, layout, standardPage, listItem, richTextSection, listSection, buttondownEmbed, buttondownEmbedSection]
+export const schemaTypes = [book, chapter, home, series, pillar, metadata, cta, navigation, link, layout, standardPage, listItem, richTextSection, listSection, buttondownEmbed, buttondownEmbedSection, artist, galleryItem]

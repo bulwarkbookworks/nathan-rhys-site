@@ -59,39 +59,44 @@ const SECTION_QUERY = `
   }
 `;
 
-let data;
-if (type === 'standardPage') {
-  data = await client.fetch(`*[_type == "standardPage" && slug.current == $slug][0]{
+const LAYOUT_QUERY = `
+  "layout": layout->{
     ...,
-    ${SECTION_QUERY},
-    "layout": layout->{
-      ...,
-      topNavigation->{
-        items[]{
-          label,
-          link{
-            ...,
-            internal->{ 
-              _type, 
-              slug,
-              _type == "book" => {
-                series->{ "slug": slug.current }
-              },
-              _type == "buttondownEmbed" => {
-                "username": username.current
-              }
+    topNavigation->{
+      items[]{
+        label,
+        link{
+          ...,
+          internal->{ 
+            _type, 
+            slug,
+            _type == "book" => {
+              series->{ slug }
+            },
+            _type == "buttondownEmbed" => {
+              "username": username.current
             }
           }
         }
       }
     }
+  }
+`;
+
+let data;
+if (type === 'standardPage') {
+  data = await client.fetch(`*[_type == "standardPage" && slug.current == $slug][0]{
+    ...,
+    ${SECTION_QUERY},
+    ${LAYOUT_QUERY}
   }`, { slug });
 } else {
   data = await client.fetch(`*[_type == "book" && slug.current == $slug][0]{ 
     ..., 
     series->{ name, slug }, 
     chapters[]->{ title, slug },
-    ${SECTION_QUERY}
+    ${SECTION_QUERY},
+    ${LAYOUT_QUERY}
   }`, { slug });
 }
 

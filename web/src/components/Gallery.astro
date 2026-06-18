@@ -1,0 +1,108 @@
+---
+import { client, urlFor } from '../lib/sanity';
+
+interface Props {
+  artistId?: string;
+  bookId?: string;
+  seriesId?: string;
+}
+
+const { artistId, bookId, seriesId } = Astro.props;
+
+let filter = '*[_type == "galleryItem"';
+if (artistId) filter += ` && artist._ref == "${artistId}"`;
+if (bookId) filter += ` && "${bookId}" in associatedBooks[]._ref`;
+if (seriesId) filter += ` && "${seriesId}" in associatedSeries[]._ref`;
+filter += '] | order(_createdAt desc)';
+
+const items = await client.fetch(filter);
+---
+
+{items.length > 0 && (
+  <div class="gallery-container">
+    <div class="gallery-grid">
+      {items.map((item: any) => (
+        <a href={`/gallery/${item.slug.current}`} target="_blank" class="gallery-item">
+          <img src={urlFor(item.image).width(600).url()} alt={item.title} loading="lazy" />
+          <div class="gallery-item__overlay">
+            <span>{item.title}</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+)}
+
+<style lang="scss">
+  .gallery-container {
+    width: 100%;
+    margin-top: 3rem;
+  }
+
+  .gallery-grid {
+    column-count: 3;
+    column-gap: 1.5rem;
+    width: 100%;
+
+    @media (max-width: 1024px) {
+      column-count: 2;
+    }
+
+    @media (max-width: 640px) {
+      column-count: 1;
+    }
+  }
+
+  .gallery-item {
+    display: block;
+    break-inside: avoid;
+    margin-bottom: 1.5rem;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      border-color: var(--color-secondary, #d4af37);
+      
+      .gallery-item__overlay {
+        opacity: 1;
+      }
+    }
+
+    img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+
+    &:hover img {
+      transform: scale(1.05);
+    }
+
+    &__overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.85));
+      color: white;
+      padding: 2rem 1rem 1rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      font-family: 'Marcellus', serif;
+      pointer-events: none;
+
+      span {
+        font-size: 1.1rem;
+        font-weight: 500;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      }
+    }
+  }
+</style>

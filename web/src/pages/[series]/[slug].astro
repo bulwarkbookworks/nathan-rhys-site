@@ -29,7 +29,7 @@ const SECTION_QUERY = `
         internal->{
           ...,
           _type == "book" => {
-            series->{ "slug": slug.current }
+            series->{ slug }
           },
           _type == "buttondownEmbed" => {
             "username": username.current

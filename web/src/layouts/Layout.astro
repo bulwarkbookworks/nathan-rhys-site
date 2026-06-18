@@ -8,11 +8,12 @@ interface Props {
   title: string;
   metadata?: any;
   showTopNav?: boolean;
+  layout?: any;
 }
 
-const { title, metadata, showTopNav = true } = Astro.props;
+const { title, metadata, showTopNav = true, layout } = Astro.props;
 
-const navigation = await client.fetch(`*[_type == "navigation"][0]{ 
+const navigation = layout?.topNavigation || await client.fetch(`*[_type == "navigation"][0]{ 
   items[]{
     label,
     link{
@@ -21,7 +22,7 @@ const navigation = await client.fetch(`*[_type == "navigation"][0]{
         _type, 
         slug,
         _type == "book" => {
-          series->{ "slug": slug }
+          series->{ slug }
         }
       }
     }
@@ -34,6 +35,9 @@ const navItems = navigation?.items?.length ? navigation.items : [
 ];
 
 const home = await client.fetch(`*[_type == "home"][0]{ footerBrand, footerCopyright }`);
+
+const footerBrand = layout?.bottomText || home?.footerBrand || 'Nathan Rhys';
+const footerCopyright = layout?.copyrightText || home?.footerCopyright || 'Nathan Rhys. All rights reserved.';
 ---
 
 <!doctype html>
@@ -63,11 +67,13 @@ const home = await client.fetch(`*[_type == "home"][0]{ footerBrand, footerCopyr
   </head>
   <body>
     {showTopNav && <Navigation items={navItems} variant="top" />}
-    <slot />
+    <main class="site-main">
+      <slot />
+    </main>
     <footer class="site-footer">
       <div class="container site-footer__inner">
-        <p class="site-footer__brand">{home?.footerBrand || 'Nathan Rhys'}</p>
-        <p>&copy; {new Date().getFullYear()} {home?.footerCopyright || 'Nathan Rhys. All rights reserved.'}</p>
+        <p class="site-footer__brand">{footerBrand}</p>
+        <p>&copy; {new Date().getFullYear()} {footerCopyright}</p>
       </div>
     </footer>
   </body>

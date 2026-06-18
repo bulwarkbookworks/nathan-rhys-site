@@ -85,6 +85,7 @@ export default defineType({
           { title: 'Website', value: 'website' },
           { title: 'Article', value: 'article' },
           { title: 'Book', value: 'book' },
+          { title: 'Profile', value: 'profile' },
         ],
       },
       group: 'og',

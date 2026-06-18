@@ -1,0 +1,263 @@
+---
+import { client, urlFor } from '../../lib/sanity';
+import Layout from '../../layouts/Layout.astro';
+import { PortableText } from 'astro-portabletext';
+
+export async function getStaticPaths() {
+  const items = await client.fetch(`*[_type == "galleryItem"]{ "slug": slug.current }`);
+  return items.map((item: any) => ({
+    params: { slug: item.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+
+const item = await client.fetch(`*[_type == "galleryItem" && slug.current == $slug][0]{
+  ...,
+  artist->{
+    name,
+    slug,
+    profileImage,
+    description
+  },
+  associatedSeries[]->{
+    name,
+    slug
+  },
+  associatedBooks[]->{
+    title,
+    slug,
+    series->{ slug }
+  }
+}`, { slug });
+
+if (!item) {
+  return Astro.redirect('/404');
+}
+
+// Extract text for description
+const descriptionText = item.description 
+  ? item.description.map((block: any) => block.children?.map((child: any) => child.text).join('')).join(' ')
+  : `Gallery item by ${item.artist?.name || 'Artist'}`;
+
+// Standardize Metadata
+const metadata = {
+  metaTitle: `${item.title} | Gallery`,
+  metaDescription: descriptionText.substring(0, 160),
+  ogTitle: `${item.title} by ${item.artist?.name || 'Unknown Artist'}`,
+  ogDescription: descriptionText.substring(0, 200),
+  ogImage: item.image,
+  ogType: 'article',
+  twitterCard: 'summary_large_image'
+};
+
+---
+
+<Layout title={item.title} metadata={metadata}>
+  <div class="container py-10">
+    <div class="gallery-detail">
+      <!-- Zoomable Image Control -->
+      <div class="gallery-detail__image-container">
+        <div class="gallery-detail__image-wrapper">
+          <input type="checkbox" id="zoom-check" class="d-none" />
+          <label for="zoom-check" class="zoom-label">
+            <img 
+              src={urlFor(item.image).url()} 
+              alt={item.title} 
+              class="gallery-detail__image"
+            />
+          </label>
+        </div>
+        <p class="text-muted text-center mt-3 small">
+          <i class="bi bi-zoom-in"></i> Click image to zoom
+        </p>
+      </div>
+
+      <div class="gallery-detail__content mt-12">
+        <div class="row g-4">
+          <div class="col-12 col-lg-8 offset-lg-2">
+             <!-- Artist Card -->
+            {item.artist && (
+              <div class="artist-card mb-4">
+                <div class="artist-card__inner">
+                  <div class="artist-card__image">
+                    {item.artist.profileImage ? (
+                      <img src={urlFor(item.artist.profileImage).width(120).height(120).url()} alt={item.artist.name} />
+                    ) : (
+                      <div class="artist-card__placeholder">
+                         <i class="bi bi-person-fill"></i>
+                      </div>
+                    )}
+                  </div>
+                  <div class="artist-card__info">
+                    <span class="text-muted small text-uppercase fw-bold">About the Artist</span>
+                    <h2 class="h3 mb-2">{item.artist.name}</h2>
+                    <div class="artist-card__bio mb-3 line-clamp-2">
+                       {item.artist.description && <PortableText value={item.artist.description} />}
+                    </div>
+                    <a href={`/artists/${item.artist.slug.current}`} class="btn btn-primary btn-sm px-4">View Artist Profile</a>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <!-- Image Info Card -->
+            <div class="image-info-card">
+              <div class="image-info-card__header mb-4">
+                <h1 class="h2 mb-2">{item.title}</h1>
+                <div class="d-flex flex-wrap gap-2">
+                    {item.usageCategory?.map((cat: string) => (
+                        <span class="badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle text-capitalize">{cat}</span>
+                    ))}
+                </div>
+              </div>
+              
+              {item.description && (
+                <div class="image-info-card__description mb-5 fs-5">
+                  <PortableText value={item.description} />
+                </div>
+              )}
+
+              <div class="image-info-card__details py-4 border-top border-bottom">
+                <div class="row g-4">
+                    {item.copyrightDate && (
+                      <div class="col-md-6">
+                        <label class="text-muted small text-uppercase d-block mb-1">Copyright Date</label>
+                        <span>{new Date(item.copyrightDate).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                      </div>
+                    )}
+                    
+                    {(item.associatedSeries?.length > 0 || item.associatedBooks?.length > 0) && (
+                        <div class="col-md-6">
+                             <label class="text-muted small text-uppercase d-block mb-1">Associated With</label>
+                             <ul class="list-unstyled mb-0">
+                                {item.associatedSeries?.map((s: any) => (
+                                    <li><i class="bi bi-collection-play me-1"></i> {s.name} (Series)</li>
+                                ))}
+                                {item.associatedBooks?.map((b: any) => (
+                                    <li><i class="bi bi-book me-1"></i> {b.title}</li>
+                                ))}
+                             </ul>
+                        </div>
+                    )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style lang="scss">
+  .gallery-detail {
+    &__image-container {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 20px;
+      padding: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      margin-bottom: 4rem;
+    }
+
+    &__image-wrapper {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .zoom-label {
+        cursor: zoom-in;
+        transition: transform 0.3s ease;
+        display: block;
+        max-width: 100%;
+    }
+
+    #zoom-check:checked ~ .zoom-label {
+        cursor: zoom-out;
+        transform: scale(1.5);
+        @media (max-width: 768px) {
+            transform: scale(1.2);
+        }
+    }
+
+    &__image {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+
+    .artist-card {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 16px;
+        overflow: hidden;
+        transition: border-color 0.3s ease;
+
+        &:hover {
+            border-color: var(--color-secondary, #d4af37);
+        }
+        
+        &__inner {
+            display: flex;
+            gap: 2rem;
+            padding: 2.5rem;
+            
+            @media (max-width: 576px) {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+        }
+        
+        &__image {
+            flex-shrink: 0;
+            img {
+                width: 120px;
+                height: 120px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 3px solid rgba(255,255,255,0.1);
+            }
+        }
+        
+        &__placeholder {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: rgba(255,255,255,0.2);
+        }
+
+        &__bio {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+    }
+
+    .image-info-card {
+        &__description {
+            color: rgba(255,255,255,0.9);
+            line-height: 1.8;
+        }
+        
+        &__details {
+            border-color: rgba(255,255,255,0.1) !important;
+        }
+    }
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+  }
+</style>

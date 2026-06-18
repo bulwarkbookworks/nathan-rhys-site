@@ -7,8 +7,8 @@ import PageSection from './PageSection.astro';
 const { book } = Astro.props;
 ---
 
-<Layout title={book.title} metadata={book.metadata}>
-  <main class="container py-24">
+<Layout title={book.title} metadata={book.metadata} layout={book.layout}>
+  <div class="container py-24">
     <div class="book-page">
       <div class="grid md:grid-cols-12 gap-12 lg:gap-20 items-start">
         <!-- Cover Image -->
@@ -80,7 +80,7 @@ const { book } = Astro.props;
               <div class="grid gap-4">
                 {book.chapters.map((chapter: any, index: number) => (
                   <a 
-                    href={`/chapters/${chapter.slug.current}`}
+                    href={chapter.slug?.current ? `/chapters/${chapter.slug.current}` : '#'}
                     class="group flex items-center justify-between p-6 rounded-xl bg-surface/40 border border-white/5 hover:border-secondary/30 hover:bg-surface/60 transition-all"
                   >
                     <div class="flex items-center gap-6">
@@ -108,7 +108,7 @@ const { book } = Astro.props;
         </div>
       )}
     </div>
-  </main>
+  </div>
 </Layout>
 
 <style>

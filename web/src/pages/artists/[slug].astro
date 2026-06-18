@@ -1,0 +1,169 @@
+---
+import { client, urlFor } from '../../lib/sanity';
+import Layout from '../../layouts/Layout.astro';
+import { PortableText } from 'astro-portabletext';
+import Gallery from '../../components/Gallery.astro';
+
+export async function getStaticPaths() {
+  const artists = await client.fetch(`*[_type == "artist"]{ "slug": slug.current }`);
+  return artists.map((artist: any) => ({
+    params: { slug: artist.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+
+const artist = await client.fetch(`*[_type == "artist" && slug.current == $slug][0]{
+  ...,
+  _id,
+  "layout": layout->{
+    ...,
+    topNavigation->{
+      items[]{
+        label,
+        link{
+          ...,
+          internal->{ 
+            _type, 
+            slug,
+            _type == "book" => {
+              series->{ slug }
+            },
+            _type == "buttondownEmbed" => {
+              "username": username.current
+            }
+          }
+        }
+      }
+    }
+  }
+}`, { slug });
+
+if (!artist) {
+  return Astro.redirect('/404');
+}
+const iconMap: Record<string, string> = {
+  web: 'bi-globe',
+  artstation: 'bi-brush',
+  instagram: 'bi-instagram',
+  facebook: 'bi-facebook',
+  youtube: 'bi-youtube'
+};
+---
+
+<Layout title={artist.name} metadata={artist.metadata} layout={artist.layout}>
+  <div class="container py-20">
+    <div class="artist-page">
+      <div class="artist-page__header">
+        {artist.profileImage && (
+          <div class="artist-page__image">
+            <img src={urlFor(artist.profileImage).width(400).height(400).url()} alt={artist.name} />
+          </div>
+        )}
+        <div class="artist-page__info">
+          <h1 class="artist-name">{artist.name}</h1>
+          {artist.socialUrls && artist.socialUrls.length > 0 && (
+            <div class="artist-page__socials">
+              {artist.socialUrls.map((social: any) => (
+                <a href={social.url} target="_blank" rel="noopener noreferrer" class="artist-page__social-link">
+                  <i class={`bi ${iconMap[social.platform] || 'bi-link-45deg'} me-2`}></i>
+                  {social.platform === 'artstation' ? 'Art Station' : social.platform}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div class="artist-page__content mt-12">
+        {artist.description && (
+          <div class="artist-page__description fs-5 mb-12">
+            <PortableText value={artist.description} />
+          </div>
+        )}
+
+        <div class="artist-page__gallery">
+          <h2 class="h1 mb-8">Gallery</h2>
+          <Gallery artistId={artist._id} />
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style lang="scss">
+  .artist-page {
+    max-width: 900px;
+    margin: 0 auto;
+
+    &__header {
+      display: flex;
+      gap: 3rem;
+      align-items: center;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    .artist-name {
+      font-size: clamp(3rem, 8vw, 6rem);
+      line-height: 0.95;
+      margin-bottom: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--color-text-main, #f2eadc);
+    }
+
+    &__image {
+      img {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      }
+    }
+
+    &__socials {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+
+      @media (max-width: 768px) {
+        align-items: center;
+      }
+    }
+
+    &__social-link {
+      text-transform: capitalize;
+      font-weight: 500;
+      color: var(--color-text, #ffffff);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      font-size: 1.1rem;
+      transition: color 0.2s;
+
+      i {
+        font-size: 1.25rem;
+        color: var(--color-secondary, #d4af37);
+      }
+
+      &:hover {
+        color: var(--color-secondary, #d4af37);
+        text-decoration: none;
+      }
+    }
+
+    h2 {
+      font-family: 'Marcellus', serif;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 0.5rem;
+    }
+  }
+</style>

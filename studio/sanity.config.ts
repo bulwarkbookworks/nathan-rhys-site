@@ -36,6 +36,17 @@ export default defineConfig({
                     S.documentTypeListItem('chapter'),
                   ]),
               ),
+            // Gallery Group
+            S.listItem()
+              .title('Gallery')
+              .child(
+                S.list()
+                  .title('Gallery')
+                  .items([
+                    S.documentTypeListItem('artist'),
+                    S.documentTypeListItem('galleryItem'),
+                  ]),
+              ),
             // Site Configuration Group
             S.listItem()
               .title('Site Configuration')

@@ -10,7 +10,7 @@ const linkField = `
       _type, 
       slug,
       _type == "book" => {
-        series->{ "slug": slug.current }
+        series->{ slug }
       }
     }
   }
@@ -36,7 +36,7 @@ const bookFields = `
   blurb,
   ${ctasField},
   featureKicker,
-  series->{ "slug": slug.current }
+  series->{ slug }
 `;
 
 const home = await client.fetch(`*[_type == "home"][0]{
@@ -150,7 +150,7 @@ const pillars = home?.brandPillars?.length ? home.brandPillars : [
 
     <Navigation items={navItems} variant="home" />
 
-    <main>
+    <div class="site-content">
       {fallbackBook && (
         <section id="featured-book" class="section section--featured">
           <div class="container">
@@ -212,5 +212,5 @@ const pillars = home?.brandPillars?.length ? home.brandPillars : [
           <p>{home?.authorStatement || 'I write modern fantasy for readers who want wonder without weightlessness: stories where choices matter, power has a cost, and hope is earned rather than handed out.'}</p>
         </div>
       </section>
-    </main>
+    </div>
 </Layout>

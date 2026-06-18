@@ -36,6 +36,12 @@
     @apply bg-background text-text-main font-sans;
     min-height: 100vh;
     overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .site-main {
+    flex: 1 0 auto;
   }
 
   body::before {
