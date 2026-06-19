@@ -22,7 +22,7 @@ const navigation = layout?.topNavigation || await client.fetch(`*[_type == "navi
         _type, 
         slug,
         _type == "book" => {
-          series->{ slug }
+          "seriesSlug": series->slug.current
         }
       }
     }
@@ -52,13 +52,13 @@ const footerCopyright = layout?.copyrightText || home?.footerCopyright || 'Natha
 
     {metadata?.ogTitle && <meta property="og:title" content={metadata.ogTitle} />}
     {metadata?.ogDescription && <meta property="og:description" content={metadata.ogDescription} />}
-    {metadata?.ogImage && <meta property="og:image" content={urlFor(metadata.ogImage).width(1200).height(630).url()} />}
+    {metadata?.ogImage && <meta property="og:image" content={urlFor(metadata.ogImage).width(1200).height(630).auto('format').url()} />}
     {metadata?.ogType && <meta property="og:type" content={metadata.ogType} />}
 
     {metadata?.twitterCard && <meta name="twitter:card" content={metadata.twitterCard} />}
     {metadata?.twitterTitle && <meta name="twitter:title" content={metadata.twitterTitle} />}
     {metadata?.twitterDescription && <meta name="twitter:description" content={metadata.twitterDescription} />}
-    {metadata?.twitterImage && <meta name="twitter:image" content={urlFor(metadata.twitterImage).width(1200).height(600).url()} />}
+    {metadata?.twitterImage && <meta name="twitter:image" content={urlFor(metadata.twitterImage).width(1200).height(600).auto('format').url()} />}
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

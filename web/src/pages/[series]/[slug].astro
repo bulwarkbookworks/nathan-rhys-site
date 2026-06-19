@@ -29,7 +29,7 @@ const SECTION_QUERY = `
         internal->{
           ...,
           _type == "book" => {
-            series->{ slug }
+            "seriesSlug": series->slug.current
           },
           _type == "buttondownEmbed" => {
             "username": username.current
@@ -59,6 +59,7 @@ const SECTION_QUERY = `
 const data = await client.fetch(`*[_type == "book" && slug.current == $slug && series->slug.current == $series][0]{ 
   ..., 
   series->{ name, slug }, 
+  "seriesSlug": series->slug.current,
   chapters[]->{ title, slug },
   ${SECTION_QUERY}
 }`, { series, slug });

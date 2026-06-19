@@ -1,5 +1,5 @@
 ---
-import { client, urlFor } from '../lib/sanity';
+import { client, urlFor, generateSrcset } from '../lib/sanity';
 
 interface Props {
   artistId?: string;
@@ -16,6 +16,8 @@ if (seriesId) filter += ` && "${seriesId}" in associatedSeries[]._ref`;
 filter += '] | order(_createdAt desc)';
 
 const items = await client.fetch(filter);
+
+const thumbWidths = [400, 600, 800];
 ---
 
 {items.length > 0 && (
@@ -23,7 +25,14 @@ const items = await client.fetch(filter);
     <div class="gallery-grid">
       {items.map((item: any) => (
         <a href={`/gallery/${item.slug.current}`} target="_blank" class="gallery-item">
-          <img src={urlFor(item.image).width(600).url()} alt={item.title} loading="lazy" />
+          <img 
+            src={urlFor(item.image).width(600).auto('format').quality(80).url()} 
+            srcset={generateSrcset(item.image, thumbWidths)}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            alt={item.title} 
+            loading="lazy" 
+            decoding="async"
+          />
           <div class="gallery-item__overlay">
             <span>{item.title}</span>
           </div>

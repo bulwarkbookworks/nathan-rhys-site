@@ -1,5 +1,5 @@
 ---
-import { client, urlFor, resolveLink, getBookUrl } from '../lib/sanity';
+import { client, urlFor, resolveLink, getBookUrl, generateSrcset } from '../lib/sanity';
 import Navigation from '../components/Navigation.astro';
 import Layout from '../layouts/Layout.astro';
 
@@ -10,7 +10,7 @@ const linkField = `
       _type, 
       slug,
       _type == "book" => {
-        series->{ slug }
+        "seriesSlug": series->slug.current
       }
     }
   }
@@ -36,7 +36,7 @@ const bookFields = `
   blurb,
   ${ctasField},
   featureKicker,
-  series->{ slug }
+  "seriesSlug": series->slug.current
 `;
 
 const home = await client.fetch(`*[_type == "home"][0]{
@@ -63,16 +63,7 @@ const navigation = await client.fetch(`*[_type == "navigation"][0]{
 
 const fallbackBook = home?.featuredBook || home?.series?.[0]?.books?.[0];
 
-const generateSrcset = (image: any, widths: number[], ratio?: number) => {
-  if (!image) return '';
-  return widths
-    .map((w) => {
-      let builder = urlFor(image).width(w).auto('format');
-      if (ratio) builder = builder.height(Math.round(w * ratio));
-      return `${builder.url()} ${w}w`;
-    })
-    .join(', ');
-};
+const siteTitle = home?.title || 'Nathan Rhys';
 
 const formatRelease = (book: any) => {
   if (!book) return '';
@@ -90,8 +81,6 @@ const formatRelease = (book: any) => {
 
 const heroWidths = [640, 960, 1280, 1600, 2200];
 const coverWidths = [360, 540, 720, 900];
-
-const siteTitle = home?.title || 'Nathan Rhys';
 const eyebrow = home?.eyebrow || 'Nathan Rhys';
 const tagline = home?.tagline || 'Fantasy where meaning has weight.';
 const blurb = home?.blurb || 'Modern fantasy about hidden beauty, costly courage, and the burden of protecting what is good.';

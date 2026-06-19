@@ -16,7 +16,7 @@ const { book } = Astro.props;
           <div class="book-cover-wrapper">
             {book.cover && (
               <img 
-                src={urlFor(book.cover).width(800).url()} 
+                src={urlFor(book.cover).width(800).auto('format').url()} 
                 alt={book.title}
                 class="book-cover-image"
               />

@@ -32,7 +32,7 @@ const SECTION_QUERY = `
         internal->{
           ...,
           _type == "book" => {
-            series->{ "slug": slug.current }
+            "seriesSlug": series->slug.current
           },
           _type == "buttondownEmbed" => {
             "username": username.current
@@ -71,7 +71,7 @@ const LAYOUT_QUERY = `
             _type, 
             slug,
             _type == "book" => {
-              series->{ slug }
+              "seriesSlug": series->slug.current
             },
             _type == "buttondownEmbed" => {
               "username": username.current
@@ -94,6 +94,7 @@ if (type === 'standardPage') {
   data = await client.fetch(`*[_type == "book" && slug.current == $slug][0]{ 
     ..., 
     series->{ name, slug }, 
+    "seriesSlug": series->slug.current,
     chapters[]->{ title, slug },
     ${SECTION_QUERY},
     ${LAYOUT_QUERY}

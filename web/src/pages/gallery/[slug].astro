@@ -1,5 +1,5 @@
 ---
-import { client, urlFor } from '../../lib/sanity';
+import { client, urlFor, generateSrcset, getBookUrl } from '../../lib/sanity';
 import Layout from '../../layouts/Layout.astro';
 import { PortableText } from 'astro-portabletext';
 
@@ -27,7 +27,7 @@ const item = await client.fetch(`*[_type == "galleryItem" && slug.current == $sl
   associatedBooks[]->{
     title,
     slug,
-    series->{ slug }
+    "seriesSlug": series->slug.current
   }
 }`, { slug });
 
@@ -51,6 +51,7 @@ const metadata = {
   twitterCard: 'summary_large_image'
 };
 
+const fullWidths = [800, 1200, 1600, 2000, 2400];
 ---
 
 <Layout title={item.title} metadata={metadata}>
@@ -59,83 +60,67 @@ const metadata = {
       <!-- Zoomable Image Control -->
       <div class="gallery-detail__image-container">
         <div class="gallery-detail__image-wrapper">
-          <input type="checkbox" id="zoom-check" class="d-none" />
-          <label for="zoom-check" class="zoom-label">
+          <button id="zoom-trigger" class="zoom-trigger" aria-label="Zoom image">
             <img 
-              src={urlFor(item.image).url()} 
+              src={urlFor(item.image).width(2000).auto('format').url()} 
+              srcset={generateSrcset(item.image, fullWidths)}
+              sizes="(max-width: 800px) 800px, (max-width: 1600px) 1600px, 2400px"
               alt={item.title} 
               class="gallery-detail__image"
+              decoding="async"
             />
-          </label>
+            <div class="zoom-icon-overlay">
+              <i class="bi bi-zoom-in"></i>
+            </div>
+          </button>
         </div>
-        <p class="text-muted text-center mt-3 small">
-          <i class="bi bi-zoom-in"></i> Click image to zoom
+        <p class="text-muted text-center mt-4 small fw-medium">
+          <i class="bi bi-info-circle me-1"></i> Click the image to view in full resolution
         </p>
       </div>
 
       <div class="gallery-detail__content mt-12">
-        <div class="row g-4">
-          <div class="col-12 col-lg-8 offset-lg-2">
-             <!-- Artist Card -->
-            {item.artist && (
-              <div class="artist-card mb-4">
-                <div class="artist-card__inner">
-                  <div class="artist-card__image">
-                    {item.artist.profileImage ? (
-                      <img src={urlFor(item.artist.profileImage).width(120).height(120).url()} alt={item.artist.name} />
-                    ) : (
-                      <div class="artist-card__placeholder">
-                         <i class="bi bi-person-fill"></i>
-                      </div>
-                    )}
-                  </div>
-                  <div class="artist-card__info">
-                    <span class="text-muted small text-uppercase fw-bold">About the Artist</span>
-                    <h2 class="h3 mb-2">{item.artist.name}</h2>
-                    <div class="artist-card__bio mb-3 line-clamp-2">
-                       {item.artist.description && <PortableText value={item.artist.description} />}
-                    </div>
-                    <a href={`/artists/${item.artist.slug.current}`} class="btn btn-primary btn-sm px-4">View Artist Profile</a>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <!-- Image Info Card -->
+        <div class="row g-5">
+          <!-- Left: Image Info -->
+          <div class="col-12 col-lg-7">
             <div class="image-info-card">
-              <div class="image-info-card__header mb-4">
-                <h1 class="h2 mb-2">{item.title}</h1>
-                <div class="d-flex flex-wrap gap-2">
+              <div class="image-info-card__header mb-6">
+                <h1 class="gallery-title">{item.title}</h1>
+                <div class="d-flex flex-wrap gap-2 mt-4">
                     {item.usageCategory?.map((cat: string) => (
-                        <span class="badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle text-capitalize">{cat}</span>
+                        <span class="usage-badge">{cat}</span>
                     ))}
                 </div>
               </div>
               
               {item.description && (
-                <div class="image-info-card__description mb-5 fs-5">
+                <div class="image-info-card__description mb-8 fs-5">
                   <PortableText value={item.description} />
                 </div>
               )}
 
-              <div class="image-info-card__details py-4 border-top border-bottom">
+              <div class="image-info-card__details py-6 border-top border-bottom">
                 <div class="row g-4">
                     {item.copyrightDate && (
                       <div class="col-md-6">
-                        <label class="text-muted small text-uppercase d-block mb-1">Copyright Date</label>
-                        <span>{new Date(item.copyrightDate).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                        <label class="text-muted small text-uppercase d-block mb-1 tracking-wider fw-bold">Copyright Date</label>
+                        <span class="fs-5">{new Date(item.copyrightDate).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                       </div>
                     )}
                     
                     {(item.associatedSeries?.length > 0 || item.associatedBooks?.length > 0) && (
                         <div class="col-md-6">
-                             <label class="text-muted small text-uppercase d-block mb-1">Associated With</label>
-                             <ul class="list-unstyled mb-0">
+                             <label class="text-muted small text-uppercase d-block mb-1 tracking-wider fw-bold">Associated With</label>
+                             <ul class="list-unstyled mb-0 fs-5">
                                 {item.associatedSeries?.map((s: any) => (
-                                    <li><i class="bi bi-collection-play me-1"></i> {s.name} (Series)</li>
+                                    <li><i class="bi bi-collection-play me-2 text-secondary"></i> {s.name}</li>
                                 ))}
                                 {item.associatedBooks?.map((b: any) => (
-                                    <li><i class="bi bi-book me-1"></i> {b.title}</li>
+                                   <li>
+                                     <a href={getBookUrl(b)} class="hover:text-accent transition-colors">
+                                       <i class="bi bi-book me-2 text-secondary"></i> {b.title}
+                                     </a>
+                                   </li>
                                 ))}
                              </ul>
                         </div>
@@ -144,18 +129,87 @@ const metadata = {
               </div>
             </div>
           </div>
+
+          <!-- Right: Artist Card -->
+          <div class="col-12 col-lg-5">
+            {item.artist && (
+              <div class="artist-card sticky-top" style="top: 2rem;">
+                <div class="artist-card__inner">
+                  <div class="artist-card__image">
+                    {item.artist.profileImage ? (
+                      <img src={urlFor(item.artist.profileImage).width(120).height(120).auto('format').url()} alt={item.artist.name} />
+                    ) : (
+                      <div class="artist-card__placeholder">
+                         <i class="bi bi-person-fill"></i>
+                      </div>
+                    )}
+                  </div>
+                  <div class="artist-card__info">
+                    <span class="text-muted small text-uppercase fw-bold tracking-wider mb-2 d-block">About the Artist</span>
+                    <h2 class="h3 mb-3 text-secondary">{item.artist.name}</h2>
+                    <div class="artist-card__bio mb-4 line-clamp-3">
+                       {item.artist.description && <PortableText value={item.artist.description} />}
+                    </div>
+                    <a href={`/artists/${item.artist.slug.current}`} class="button button--secondary w-100">View Artist Profile</a>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Zoom Dialog -->
+  <dialog id="zoom-dialog" class="zoom-dialog">
+    <div class="zoom-dialog__wrapper">
+      <img 
+        src={urlFor(item.image).width(3000).auto('format').url()} 
+        alt={item.title}
+        class="zoom-dialog__image"
+      />
+      <button id="close-zoom" class="zoom-dialog__close" aria-label="Close zoom">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+  </dialog>
 </Layout>
 
+<script>
+  const dialog = document.getElementById('zoom-dialog') as HTMLDialogElement;
+  const trigger = document.getElementById('zoom-trigger');
+  const closeBtn = document.getElementById('close-zoom');
+
+  trigger?.addEventListener('click', () => {
+    dialog?.showModal();
+    document.body.style.overflow = 'hidden';
+  });
+
+  const closeDialog = () => {
+    dialog?.close();
+    document.body.style.overflow = '';
+  };
+
+  closeBtn?.addEventListener('click', closeDialog);
+
+  dialog?.addEventListener('click', (e) => {
+    if (e.target === dialog) closeDialog();
+  });
+
+  dialog?.addEventListener('close', () => {
+    document.body.style.overflow = '';
+  });
+</script>
+
 <style lang="scss">
+  @reference "../../styles/global.css";
+
   .gallery-detail {
     &__image-container {
       background: rgba(255, 255, 255, 0.02);
       border-radius: 20px;
-      padding: 2rem;
+      padding: clamp(1rem, 5vw, 3rem);
       border: 1px solid rgba(255, 255, 255, 0.05);
       margin-bottom: 4rem;
     }
@@ -167,26 +221,61 @@ const metadata = {
         overflow: hidden;
     }
 
-    .zoom-label {
-        cursor: zoom-in;
-        transition: transform 0.3s ease;
-        display: block;
-        max-width: 100%;
-    }
-
-    #zoom-check:checked ~ .zoom-label {
-        cursor: zoom-out;
-        transform: scale(1.5);
-        @media (max-width: 768px) {
-            transform: scale(1.2);
-        }
-    }
-
     &__image {
       max-width: 100%;
       height: auto;
       border-radius: 8px;
       box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .zoom-trigger {
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: zoom-in;
+        position: relative;
+        display: block;
+        max-width: 100%;
+
+        &:hover {
+            .gallery-detail__image {
+                transform: scale(1.02);
+            }
+            .zoom-icon-overlay {
+                opacity: 1;
+            }
+        }
+    }
+
+    .zoom-icon-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 3rem;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        border-radius: 8px;
+    }
+
+    .gallery-title {
+        font-size: clamp(2.5rem, 8vw, 4.5rem);
+        line-height: 0.95;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        color: var(--color-text-main);
+    }
+
+    .usage-badge {
+        @apply bg-surface-soft text-accent border border-accent/20 px-4 py-1.5 rounded-full;
+        font-size: 0.8rem;
+        text-transform: capitalize;
+        font-weight: 650;
+        letter-spacing: 0.05em;
     }
 
     .artist-card {
@@ -194,58 +283,56 @@ const metadata = {
         border: 1px solid rgba(255,255,255,0.08);
         border-radius: 16px;
         overflow: hidden;
-        transition: border-color 0.3s ease;
+        transition: all 0.3s ease;
 
         &:hover {
-            border-color: var(--color-secondary, #d4af37);
+            border-color: var(--color-secondary);
+            background: rgba(255,255,255,0.04);
+            transform: translateY(-4px);
         }
         
         &__inner {
             display: flex;
+            flex-direction: column;
             gap: 2rem;
             padding: 2.5rem;
-            
-            @media (max-width: 576px) {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
         }
         
         &__image {
-            flex-shrink: 0;
             img {
-                width: 120px;
-                height: 120px;
+                width: 80px;
+                height: 80px;
                 border-radius: 50%;
                 object-fit: cover;
-                border: 3px solid rgba(255,255,255,0.1);
+                border: 2px solid var(--color-secondary);
             }
         }
         
         &__placeholder {
-            width: 120px;
-            height: 120px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             background: rgba(255,255,255,0.05);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
+            font-size: 2rem;
             color: rgba(255,255,255,0.2);
         }
 
         &__bio {
-            color: rgba(255,255,255,0.7);
-            font-size: 0.95rem;
+            color: var(--color-text-muted);
+            font-size: 1rem;
             line-height: 1.6;
+            font-family: var(--font-serif);
         }
     }
 
     .image-info-card {
         &__description {
-            color: rgba(255,255,255,0.9);
+            color: var(--color-text-main);
             line-height: 1.8;
+            font-family: var(--font-serif);
         }
         
         &__details {
@@ -254,9 +341,68 @@ const metadata = {
     }
   }
 
-  .line-clamp-2 {
+  .zoom-dialog {
+    padding: 0;
+    border: none;
+    background: rgba(0, 0, 0, 0.95);
+    max-width: 100vw;
+    max-height: 100vh;
+    width: 100%;
+    height: 100%;
+    
+    &::backdrop {
+      background: rgba(0, 0, 0, 0.95);
+    }
+
+    &__wrapper {
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      cursor: zoom-out;
+      padding: 2rem;
+    }
+
+    &__image {
+      max-width: none;
+      width: auto;
+      height: auto;
+      cursor: zoom-out;
+      box-shadow: 0 0 100px rgba(0,0,0,0.8);
+    }
+
+    &__close {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      width: 3.5rem;
+      height: 3.5rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      z-index: 100;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
+        color: var(--color-secondary);
+      }
+    }
+  }
+
+  .line-clamp-3 {
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;  
     overflow: hidden;
   }

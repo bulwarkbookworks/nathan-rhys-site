@@ -27,7 +27,7 @@ const artist = await client.fetch(`*[_type == "artist" && slug.current == $slug]
             _type, 
             slug,
             _type == "book" => {
-              series->{ slug }
+              "seriesSlug": series->slug.current
             },
             _type == "buttondownEmbed" => {
               "username": username.current
@@ -57,7 +57,7 @@ const iconMap: Record<string, string> = {
       <div class="artist-page__header">
         {artist.profileImage && (
           <div class="artist-page__image">
-            <img src={urlFor(artist.profileImage).width(400).height(400).url()} alt={artist.name} />
+            <img src={urlFor(artist.profileImage).width(400).height(400).auto('format').url()} alt={artist.name} />
           </div>
         )}
         <div class="artist-page__info">
