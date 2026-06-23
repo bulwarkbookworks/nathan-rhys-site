@@ -43,6 +43,15 @@ export default defineConfig({
                 S.list()
                   .title('Gallery')
                   .items([
+                    S.listItem()
+                      .title('Artists Listing Page')
+                      .id('artistsPage')
+                      .child(S.document().schemaType('artistsPage').documentId('artistsPage')),
+                    S.listItem()
+                      .title('Gallery Landing Page')
+                      .id('galleryPage')
+                      .child(S.document().schemaType('galleryPage').documentId('galleryPage')),
+                    S.divider(),
                     S.documentTypeListItem('artist'),
                     S.documentTypeListItem('galleryItem'),
                   ]),
@@ -68,16 +77,17 @@ export default defineConfig({
   schema: {
     types: schemaTypes,
     // Filter out singleton types from the global "Create new" menu
-    templates: (prev) => prev.filter((template) => !['home'].includes(template.id)),
+    templates: (prev) => prev.filter((template) => !['home', 'artistsPage', 'galleryPage'].includes(template.id)),
   },
 
   document: {
     // For singleton types, filter out actions that are not appropriate
     actions: (prev, {schemaType}) => {
-      if (schemaType === 'home') {
+      if (['home', 'artistsPage', 'galleryPage'].includes(schemaType)) {
         return prev.filter(({action}) => action && ['publish', 'discardChanges', 'restore'].includes(action))
       }
       return prev
     },
   },
 })
+

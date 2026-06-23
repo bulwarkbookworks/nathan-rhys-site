@@ -22,7 +22,7 @@ export default defineType({
       name: 'internal',
       title: 'Internal Page',
       type: 'reference',
-      to: [{type: 'home'}, {type: 'book'}, {type: 'series'}, {type: 'buttondownEmbed'}, {type: 'standardPage'}, {type: 'artist'}, {type: 'artistsPage'}],
+      to: [{type: 'home'}, {type: 'book'}, {type: 'series'}, {type: 'buttondownEmbed'}, {type: 'standardPage'}, {type: 'artist'}, {type: 'artistsPage'}, {type: 'galleryPage'}],
       hidden: ({parent}) => parent?.type !== 'internal',
     }),
     defineField({

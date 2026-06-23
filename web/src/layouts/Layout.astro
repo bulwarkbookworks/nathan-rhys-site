@@ -31,6 +31,7 @@ const navigation = layout?.topNavigation || await client.fetch(`*[_type == "navi
 const navItems = navigation?.items?.length ? navigation.items : [
   { label: 'Home', link: '/' },
   { label: 'Books', link: '/#featured-book' },
+  { label: 'Gallery', link: '/gallery' },
   { label: 'Artists', link: '/artists' },
   { label: 'About', link: '/#author' },
 ];

@@ -1,0 +1,191 @@
+---
+import { client, urlFor } from '../../lib/sanity';
+import Layout from '../../layouts/Layout.astro';
+import { PortableText } from 'astro-portabletext';
+
+const pageData = await client.fetch(`*[_type == "galleryPage"][0]{
+  ...,
+  "layout": layout->{
+    ...,
+    topNavigation->{
+      items[]{
+        label,
+        link{
+          ...,
+          internal->{ 
+            _type, 
+            slug,
+            _type == "book" => {
+              "seriesSlug": series->slug.current
+            },
+            _type == "buttondownEmbed" => {
+              "username": username.current
+            }
+          }
+        }
+      }
+    }
+  }
+}`);
+
+const galleryItems = await client.fetch(`*[_type == "galleryItem"] | order(copyrightDate desc) {
+  title,
+  "slug": slug.current,
+  image,
+  artist->{
+    name
+  },
+  copyrightDate,
+  usageCategory
+}`);
+
+const title = pageData?.title || 'The Gallery';
+const kicker = pageData?.kicker || 'Artwork';
+const metadata = pageData?.metadata || {
+  metaTitle: 'Gallery | Nathan Rhys',
+  metaDescription: 'Explore the artwork from Nathan Rhys projects, including cover art, concept illustrations, and more.'
+};
+---
+
+<Layout title={title} metadata={metadata} layout={pageData?.layout}>
+  <section class="section">
+    <div class="container">
+      <header class="section-heading mb-16">
+        <p class="section-kicker">{kicker}</p>
+        <h1 class="text-balance">{title}</h1>
+      </header>
+
+      <div class="gallery-grid">
+        {galleryItems.map((item: any) => (
+          <article class="gallery-card">
+            <a href={`/gallery/${item.slug}`} class="gallery-card__link">
+              <div class="gallery-card__image-wrapper">
+                <img 
+                  src={urlFor(item.image).width(600).auto('format').url()} 
+                  alt={item.title} 
+                  class="gallery-card__image"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div class="gallery-card__overlay">
+                  <div class="gallery-card__info">
+                    <h3 class="gallery-card__title">{item.title}</h3>
+                    {item.artist && <p class="gallery-card__artist">by {item.artist.name}</p>}
+                    {item.copyrightDate && <p class="gallery-card__date">{new Date(item.copyrightDate).getFullYear()}</p>}
+                  </div>
+                </div>
+              </div>
+            </a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style lang="scss">
+  .section {
+    padding-block: var(--section-space);
+  }
+
+  .section-heading h1 {
+    margin: 0;
+    color: var(--color-text-main);
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 1.03;
+    letter-spacing: -0.035em;
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(28rem, 1fr));
+    gap: 2rem;
+
+    @media (max-width: 600px) {
+        grid-template-columns: 1fr;
+    }
+  }
+
+  .gallery-card {
+    position: relative;
+    border-radius: var(--radius-panel);
+    overflow: hidden;
+    background: var(--color-surface);
+    transition: transform 0.3s cubic-bezier(0.2, 0, 0.2, 1);
+
+    &:hover {
+      transform: translateY(-8px);
+      
+      .gallery-card__overlay {
+        opacity: 1;
+      }
+      
+      .gallery-card__image {
+        transform: scale(1.05);
+      }
+    }
+
+    &__link {
+      display: block;
+      text-decoration: none;
+    }
+
+    &__image-wrapper {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      background: var(--color-background);
+    }
+
+    &__image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.2, 0, 0.2, 1);
+    }
+
+    &__overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 60%);
+      display: flex;
+      align-items: flex-end;
+      padding: 2rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+
+      @media (hover: none) {
+        opacity: 1;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
+      }
+    }
+
+    &__info {
+      color: white;
+    }
+
+    &__title {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1.2;
+      color: white;
+    }
+
+    &__artist {
+      margin: 0.25rem 0 0;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.8);
+      font-family: var(--font-serif);
+    }
+
+    &__date {
+      margin: 0.5rem 0 0;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-secondary);
+      font-weight: 700;
+    }
+  }
+</style>
