@@ -53,6 +53,11 @@ const iconMap: Record<string, string> = {
 
 <Layout title={artist.name} metadata={artist.metadata} layout={artist.layout}>
   <div class="container py-20">
+    <div class="mb-12">
+      <a href="/artists" class="button button--ghost">
+        <i class="bi bi-arrow-left me-2"></i> Back to Artists
+      </a>
+    </div>
     <div class="artist-page">
       <div class="artist-page__header">
         {artist.profileImage && (

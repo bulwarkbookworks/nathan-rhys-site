@@ -1,0 +1,193 @@
+---
+import { client, urlFor } from '../../lib/sanity';
+import Layout from '../../layouts/Layout.astro';
+import { PortableText } from 'astro-portabletext';
+
+const pageData = await client.fetch(`*[_type == "artistsPage"][0]{
+  ...,
+  "layout": layout->{
+    ...,
+    topNavigation->{
+      items[]{
+        label,
+        link{
+          ...,
+          internal->{ 
+            _type, 
+            slug,
+            _type == "book" => {
+              "seriesSlug": series->slug.current
+            },
+            _type == "buttondownEmbed" => {
+              "username": username.current
+            }
+          }
+        }
+      }
+    }
+  }
+}`);
+
+const artists = await client.fetch(`*[_type == "artist"] | order(name asc) {
+  name,
+  "slug": slug.current,
+  profileImage,
+  description
+}`);
+
+const title = pageData?.title || 'The Artists';
+const kicker = pageData?.kicker || 'Collaborators';
+const metadata = pageData?.metadata || {
+  metaTitle: 'Artists | Nathan Rhys',
+  metaDescription: 'Meet the talented artists behind the illustrations and designs of Nathan Rhys projects.'
+};
+---
+
+<Layout title={title} metadata={metadata} layout={pageData?.layout}>
+  <section class="section">
+    <div class="container">
+      <header class="section-heading mb-16">
+        <p class="section-kicker">{kicker}</p>
+        <h1 class="text-balance">{title}</h1>
+      </header>
+
+      <div class="artists-grid">
+        {artists.map((artist: any) => (
+          <article class="artist-card">
+            <div class="artist-card__image-wrapper">
+              {artist.profileImage ? (
+                <img 
+                  src={urlFor(artist.profileImage).width(400).height(400).auto('format').url()} 
+                  alt={artist.name} 
+                  class="artist-card__image"
+                />
+              ) : (
+                <div class="artist-card__image-placeholder">
+                  <i class="bi bi-person"></i>
+                </div>
+              )}
+            </div>
+            
+            <div class="artist-card__body">
+              <h3 class="artist-card__title">{artist.name}</h3>
+              {artist.description && (
+                <div class="artist-card__description">
+                  <PortableText value={artist.description} />
+                </div>
+              )}
+              <div class="mt-auto pt-8">
+                <a href={`/artists/${artist.slug}`} class="button button--ghost">
+                  View Profile
+                </a>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style lang="scss">
+  .section-heading h1 {
+    margin: 0;
+    color: var(--color-text-main);
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 1.03;
+    letter-spacing: -0.035em;
+  }
+
+  .artists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(24rem, 1fr));
+    gap: 2.5rem;
+
+    @media (max-width: 480px) {
+        grid-template-columns: 1fr;
+    }
+  }
+
+  .artist-card {
+    display: flex;
+    flex-direction: column;
+    padding: 2.5rem;
+    background: var(--color-surface);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-panel);
+    transition: transform 0.3s cubic-bezier(0.2, 0, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      transform: translateY(-8px);
+      border-color: color-mix(in srgb, var(--color-secondary) 40%, transparent);
+      box-shadow: var(--shadow-lifted);
+    }
+
+    &__image-wrapper {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 2rem;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid var(--color-secondary);
+      box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.4);
+      flex-shrink: 0;
+    }
+
+    &__image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    &__image-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-background);
+      font-size: 3rem;
+      color: var(--color-text-muted);
+    }
+
+    &__body {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    &__title {
+      margin: 0 0 1.25rem;
+      font-size: 2.25rem;
+      color: var(--color-text-main);
+      line-height: 1.1;
+    }
+
+    &__description {
+      color: var(--color-text-muted);
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      line-height: 1.6;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      
+      :global(p) {
+        margin: 0;
+      }
+    }
+  }
+
+  @media (max-width: 767.98px) {
+    .artist-card {
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+      
+      &__image-wrapper {
+        margin-inline: auto;
+      }
+    }
+  }
+</style>

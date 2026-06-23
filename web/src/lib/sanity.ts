@@ -106,6 +106,8 @@ export function resolveLink(link: any): string {
       url = `/series/${doc.slug.current}`;
     } else if (doc._type === 'artist' && doc.slug?.current) {
       url = `/artists/${doc.slug.current}`;
+    } else if (doc._type === 'artistsPage') {
+      url = `/artists`;
     } else if (doc._type === 'buttondownEmbed') {
       const username = doc.username?.current || doc.username;
       if (username) {
