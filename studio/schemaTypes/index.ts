@@ -18,5 +18,6 @@ import artist from './artist'
 import galleryItem from './galleryItem'
 import artistsPage from './artistsPage'
 import galleryPage from './galleryPage'
+import siteMetadata from './siteMetadata'
 
-export const schemaTypes = [book, chapter, home, series, pillar, metadata, cta, navigation, link, layout, standardPage, listItem, richTextSection, listSection, buttondownEmbed, buttondownEmbedSection, artist, galleryItem, artistsPage, galleryPage]
+export const schemaTypes = [book, chapter, home, series, pillar, metadata, cta, navigation, link, layout, standardPage, listItem, richTextSection, listSection, buttondownEmbed, buttondownEmbedSection, artist, galleryItem, artistsPage, galleryPage, siteMetadata]

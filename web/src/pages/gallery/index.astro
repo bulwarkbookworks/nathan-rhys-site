@@ -41,10 +41,7 @@ const galleryItems = await client.fetch(`*[_type == "galleryItem"] | order(copyr
 
 const title = pageData?.title || 'The Gallery';
 const kicker = pageData?.kicker || 'Artwork';
-const metadata = pageData?.metadata || {
-  metaTitle: 'Gallery | Nathan Rhys',
-  metaDescription: 'Explore the artwork from Nathan Rhys projects, including cover art, concept illustrations, and more.'
-};
+const metadata = pageData?.metadata;
 ---
 
 <Layout title={title} metadata={metadata} layout={pageData?.layout}>

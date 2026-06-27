@@ -13,6 +13,8 @@ interface Props {
 
 const { title, metadata, showTopNav = true, layout } = Astro.props;
 
+const siteMetadata = await client.fetch(`*[_type == "siteMetadata"][0].metadata`);
+
 const navigation = layout?.topNavigation || await client.fetch(`*[_type == "navigation"][0]{ 
   items[]{
     label,
@@ -49,18 +51,18 @@ const footerCopyright = layout?.copyrightText || home?.footerCopyright || 'Natha
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <title>{metadata?.metaTitle || title}</title>
-    <meta name="description" content={metadata?.metaDescription || ""} />
+    <title>{metadata?.metaTitle || siteMetadata?.metaTitle || title}</title>
+    <meta name="description" content={metadata?.metaDescription || siteMetadata?.metaDescription || ""} />
 
-    {metadata?.ogTitle && <meta property="og:title" content={metadata.ogTitle} />}
-    {metadata?.ogDescription && <meta property="og:description" content={metadata.ogDescription} />}
-    {metadata?.ogImage && <meta property="og:image" content={urlFor(metadata.ogImage).width(1200).height(630).auto('format').url()} />}
-    {metadata?.ogType && <meta property="og:type" content={metadata.ogType} />}
+    {(metadata?.ogTitle || siteMetadata?.ogTitle) && <meta property="og:title" content={metadata?.ogTitle || siteMetadata?.ogTitle} />}
+    {(metadata?.ogDescription || siteMetadata?.ogDescription) && <meta property="og:description" content={metadata?.ogDescription || siteMetadata?.ogDescription} />}
+    {(metadata?.ogImage || siteMetadata?.ogImage) && <meta property="og:image" content={urlFor(metadata?.ogImage || siteMetadata?.ogImage).width(1200).height(630).auto('format').url()} />}
+    {(metadata?.ogType || siteMetadata?.ogType) && <meta property="og:type" content={metadata?.ogType || siteMetadata?.ogType} />}
 
-    {metadata?.twitterCard && <meta name="twitter:card" content={metadata.twitterCard} />}
-    {metadata?.twitterTitle && <meta name="twitter:title" content={metadata.twitterTitle} />}
-    {metadata?.twitterDescription && <meta name="twitter:description" content={metadata.twitterDescription} />}
-    {metadata?.twitterImage && <meta name="twitter:image" content={urlFor(metadata.twitterImage).width(1200).height(600).auto('format').url()} />}
+    {(metadata?.twitterCard || siteMetadata?.twitterCard) && <meta name="twitter:card" content={metadata?.twitterCard || siteMetadata?.twitterCard} />}
+    {(metadata?.twitterTitle || siteMetadata?.twitterTitle) && <meta name="twitter:title" content={metadata?.twitterTitle || siteMetadata?.twitterTitle} />}
+    {(metadata?.twitterDescription || siteMetadata?.twitterDescription) && <meta name="twitter:description" content={metadata?.twitterDescription || siteMetadata?.twitterDescription} />}
+    {(metadata?.twitterImage || siteMetadata?.twitterImage) && <meta name="twitter:image" content={urlFor(metadata?.twitterImage || siteMetadata?.twitterImage).width(1200).height(600).auto('format').url()} />}
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

@@ -37,10 +37,7 @@ const artists = await client.fetch(`*[_type == "artist"] | order(name asc) {
 
 const title = pageData?.title || 'The Artists';
 const kicker = pageData?.kicker || 'Collaborators';
-const metadata = pageData?.metadata || {
-  metaTitle: 'Artists | Nathan Rhys',
-  metaDescription: 'Meet the talented artists behind the illustrations and designs of Nathan Rhys projects.'
-};
+const metadata = pageData?.metadata;
 ---
 
 <Layout title={title} metadata={metadata} layout={pageData?.layout}>
