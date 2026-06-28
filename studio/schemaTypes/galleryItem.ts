@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {displayLastUpdatedField} from './displayLastUpdated'
 
 export default defineType({
   name: 'galleryItem',
@@ -21,6 +22,7 @@ export default defineType({
       },
       validation: (Rule) => Rule.required(),
     }),
+    displayLastUpdatedField(),
     defineField({
       name: 'image',
       title: 'Image',

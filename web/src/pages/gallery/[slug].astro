@@ -54,7 +54,7 @@ const metadata = {
 const fullWidths = [800, 1200, 1600, 2000, 2400];
 ---
 
-<Layout title={item.title} metadata={metadata}>
+<Layout title={item.title} metadata={metadata} displayLastUpdated={item.displayLastUpdated} updatedAt={item._updatedAt}>
   <div class="container py-10">
     <div class="gallery-detail">
       <!-- Zoomable Image Control -->

@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {displayLastUpdatedField} from './displayLastUpdated'
 
 export default defineType({
   name: 'artist',
@@ -36,6 +37,7 @@ export default defineType({
       description: 'The shared navigation and footer layout for this page.',
       group: 'layout',
     }),
+    displayLastUpdatedField('layout'),
     defineField({
       name: 'metadata',
       title: 'Page Metadata',

@@ -44,7 +44,7 @@ const kicker = pageData?.kicker || 'Artwork';
 const metadata = pageData?.metadata;
 ---
 
-<Layout title={title} metadata={metadata} layout={pageData?.layout}>
+<Layout title={title} metadata={metadata} layout={pageData?.layout} displayLastUpdated={pageData?.displayLastUpdated} updatedAt={pageData?._updatedAt}>
   <section class="section">
     <div class="container">
       <header class="section-heading mb-16">

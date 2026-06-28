@@ -9,9 +9,11 @@ interface Props {
   metadata?: any;
   showTopNav?: boolean;
   layout?: any;
+  displayLastUpdated?: boolean;
+  updatedAt?: string;
 }
 
-const { title, metadata, showTopNav = true, layout } = Astro.props;
+const { title, metadata, showTopNav = true, layout, displayLastUpdated, updatedAt } = Astro.props;
 
 const siteMetadata = await client.fetch(`*[_type == "siteMetadata"][0].metadata`);
 
@@ -68,10 +70,30 @@ const footerCopyright = layout?.copyrightText || home?.footerCopyright || 'Natha
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,650;14..32,750&family=Literata:opsz,wght@7..72,400;7..72,500;7..72,650&family=Marcellus&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <style>
+      .last-updated-container {
+        padding-top: 2rem;
+        padding-bottom: 0;
+      }
+      .last-updated {
+        font-family: var(--font-sans, sans-serif);
+        font-size: 0.875rem;
+        color: var(--color-text-muted, #888);
+        text-transform: lowercase;
+        margin-bottom: 0;
+      }
+    </style>
   </head>
   <body>
     {showTopNav && <Navigation items={navItems} variant="top" />}
     <main class="site-main">
+      {displayLastUpdated && updatedAt && (
+        <div class="container last-updated-container">
+          <p class="last-updated">
+            last updated: {new Date(updatedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+          </p>
+        </div>
+      )}
       <slot />
     </main>
     <footer class="site-footer">

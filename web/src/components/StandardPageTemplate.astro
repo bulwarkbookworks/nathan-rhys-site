@@ -6,14 +6,14 @@ import PageSection from './PageSection.astro';
 const { page } = Astro.props;
 ---
 
-<Layout title={page.title} metadata={page.metadata} layout={page.layout}>
+<Layout title={page.title} metadata={page.metadata} layout={page.layout} displayLastUpdated={page.displayLastUpdated} updatedAt={page._updatedAt}>
   <div class="container py-24">
     <div class="standard-page">
       <header class="mb-16">
         <h1 class="text-5xl md:text-7xl mb-4">{page.title}</h1>
       </header>
       
-      <div class="standard-page__sections space-y-24">
+      <div class="standard-page__sections space-y-12">
         {page.sections?.map((section: any) => (
           <PageSection section={section} />
         ))}
