@@ -17,9 +17,6 @@ const pageData = await client.fetch(`*[_type == "galleryPage"][0]{
             slug,
             _type == "book" => {
               "seriesSlug": series->slug.current
-            },
-            _type == "buttondownEmbed" => {
-              "username": username.current
             }
           }
         }

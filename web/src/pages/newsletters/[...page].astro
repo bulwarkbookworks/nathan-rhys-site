@@ -1,0 +1,138 @@
+---
+import { client } from '../../lib/sanity';
+import Layout from '../../layouts/Layout.astro';
+import PageSection from '../../components/PageSection.astro';
+
+export async function getStaticPaths({ paginate }: any) {
+  const newsletters = await client.fetch(`*[_type == "newsletter"] | order(publishDate desc) {
+    title,
+    "slug": slug.current,
+    publishDate,
+    heading,
+    kicker
+  }`);
+
+  return paginate(newsletters, { pageSize: 10 });
+}
+
+const { page } = Astro.props;
+
+const SECTION_QUERY = `
+  sections[]{
+    ...,
+    ctas[]{
+      ...,
+      link{
+        ...,
+        internal->{
+          ...,
+          _type == "book" => {
+            "seriesSlug": series->slug.current
+          }
+        }
+      }
+    },
+    _type == "listSection" => {
+      items[]{
+        ...,
+        content[],
+        glyphiconColor
+      }
+    },
+    _type == "richTextSection" => {
+      content[]
+    }
+  }
+`;
+
+const LAYOUT_QUERY = `
+  "layout": layout->{
+    ...,
+    topNavigation->{
+      items[]{
+        label,
+        link{
+          ...,
+          internal->{ 
+            _type, 
+            slug,
+            _type == "book" => {
+              "seriesSlug": series->slug.current
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+const newslettersPage = await client.fetch(`*[_type == "newsletters"][0]{
+  ...,
+  ${SECTION_QUERY},
+  ${LAYOUT_QUERY}
+}`);
+
+const title = newslettersPage?.title || 'Newsletters';
+const heading = newslettersPage?.heading || title;
+const kicker = newslettersPage?.kicker;
+const metadata = newslettersPage?.metadata;
+---
+
+<Layout title={title} metadata={metadata} layout={newslettersPage?.layout} displayLastUpdated={newslettersPage?.displayLastUpdated} updatedAt={newslettersPage?._updatedAt}>
+  <div class="container py-24">
+    <div class="standard-page">
+      <header class="mb-16">
+        {kicker && <p class="text-secondary font-bold uppercase tracking-wider mb-2">{kicker}</p>}
+        <h1 class="text-5xl md:text-7xl mb-4">{heading}</h1>
+      </header>
+
+      {newslettersPage?.sections?.map((section: any) => (
+          <PageSection section={section} />
+      ))}
+
+      <div class="mt-16 space-y-12">
+        {page.data.map((newsletter: any) => {
+           const date = new Date(newsletter.publishDate);
+           const year = date.getFullYear();
+           const month = String(date.getMonth() + 1).padStart(2, '0');
+           const href = `/newsletters/${year}/${month}/${newsletter.slug}`;
+           
+           return (
+             <article class="border-b border-white/10 pb-12 last:border-0">
+                <p class="text-sm text-secondary font-bold uppercase tracking-widest mb-4">
+                  {new Date(newsletter.publishDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                </p>
+                <h2 class="text-3xl md:text-5xl mb-4">
+                  <a href={href} class="hover:text-secondary transition-colors">
+                    {newsletter.heading || newsletter.title}
+                  </a>
+                </h2>
+                {newsletter.kicker && <p class="text-xl text-muted font-serif italic">{newsletter.kicker}</p>}
+                <div class="mt-8">
+                  <a href={href} class="button button--ghost">Read Newsletter</a>
+                </div>
+             </article>
+           )
+        })}
+      </div>
+
+      {page.url.prev || page.url.next ? (
+        <nav class="mt-20 flex justify-between items-center border-t border-white/10 pt-12">
+          {page.url.prev ? (
+            <a href={page.url.prev} class="button button--ghost">
+              <i class="bi bi-arrow-left me-2"></i> Newer
+            </a>
+          ) : <div />}
+          
+          <span class="text-muted">Page {page.currentPage} of {page.lastPage}</span>
+
+          {page.url.next ? (
+            <a href={page.url.next} class="button button--ghost">
+              Older <i class="bi bi-arrow-right ms-2"></i>
+            </a>
+          ) : <div />}
+        </nav>
+      ) : null}
+    </div>
+  </div>
+</Layout>

@@ -56,6 +56,25 @@ export default defineConfig({
                     S.documentTypeListItem('galleryItem'),
                   ]),
               ),
+            // Newsletters Group
+            S.listItem()
+              .title('Newsletters')
+              .child(
+                S.list()
+                  .title('Newsletters')
+                  .items([
+                    S.listItem()
+                      .title('Newsletters Landing Page')
+                      .id('newsletters')
+                      .child(S.document().schemaType('newsletters').documentId('newsletters')),
+                    S.listItem()
+                      .title('Newsletter Thank You Page')
+                      .id('newsletterThankYou')
+                      .child(S.document().schemaType('newsletterThankYou').documentId('newsletterThankYou')),
+                    S.divider(),
+                    S.documentTypeListItem('newsletter'),
+                  ]),
+              ),
             // Site Configuration Group
             S.listItem()
               .title('Site Configuration')
@@ -70,7 +89,6 @@ export default defineConfig({
                       .title('Default Site Metadata')
                       .id('siteMetadata')
                       .child(S.document().schemaType('siteMetadata').documentId('siteMetadata')),
-                    S.documentTypeListItem('buttondownEmbed'),
                   ]),
               ),
           ]),
@@ -81,13 +99,13 @@ export default defineConfig({
   schema: {
     types: schemaTypes,
     // Filter out singleton types from the global "Create new" menu
-    templates: (prev) => prev.filter((template) => !['home', 'artistsPage', 'galleryPage', 'siteMetadata'].includes(template.id)),
+    templates: (prev) => prev.filter((template) => !['home', 'artistsPage', 'galleryPage', 'siteMetadata', 'newsletters', 'newsletterThankYou'].includes(template.id)),
   },
 
   document: {
     // For singleton types, filter out actions that are not appropriate
     actions: (prev, {schemaType}) => {
-      if (['home', 'artistsPage', 'galleryPage', 'siteMetadata'].includes(schemaType)) {
+      if (['home', 'artistsPage', 'galleryPage', 'siteMetadata', 'newsletters', 'newsletterThankYou'].includes(schemaType)) {
         return prev.filter(({action}) => action && ['publish', 'discardChanges', 'restore'].includes(action))
       }
       return prev

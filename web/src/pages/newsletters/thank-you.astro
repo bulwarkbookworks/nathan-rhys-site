@@ -1,0 +1,87 @@
+---
+import { client } from '../../lib/sanity';
+import Layout from '../../layouts/Layout.astro';
+import PageSection from '../../components/PageSection.astro';
+
+const SECTION_QUERY = `
+  sections[]{
+    ...,
+    ctas[]{
+      ...,
+      link{
+        ...,
+        internal->{
+          ...,
+          _type == "book" => {
+            "seriesSlug": series->slug.current
+          }
+        }
+      }
+    },
+    _type == "listSection" => {
+      items[]{
+        ...,
+        content[],
+        glyphiconColor
+      }
+    },
+    _type == "richTextSection" => {
+      content[]
+    }
+  }
+`;
+
+const LAYOUT_QUERY = `
+  "layout": layout->{
+    ...,
+    topNavigation->{
+      items[]{
+        label,
+        link{
+          ...,
+          internal->{ 
+            _type, 
+            slug,
+            _type == "book" => {
+              "seriesSlug": series->slug.current
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+const page = await client.fetch(`*[_type == "newsletterThankYou"][0]{
+  ...,
+  ${SECTION_QUERY},
+  ${LAYOUT_QUERY}
+}`);
+
+if (!page) {
+  return Astro.redirect('/404');
+}
+
+const title = page.title || 'Thank You';
+const heading = page.heading || title;
+const kicker = page.kicker;
+const metadata = {
+  ...page.metadata,
+  excludeFromSitemap: page.excludeFromSitemap
+};
+---
+
+<Layout title={title} metadata={metadata} layout={page?.layout} displayLastUpdated={page?.displayLastUpdated} updatedAt={page?._updatedAt}>
+  <div class="container py-24">
+    <div class="standard-page">
+      <header class="mb-16">
+        {kicker && <p class="text-secondary font-bold uppercase tracking-wider mb-2">{kicker}</p>}
+        <h1 class="text-5xl md:text-7xl mb-4">{heading}</h1>
+      </header>
+
+      {page.sections?.map((section: any) => (
+          <PageSection section={section} />
+      ))}
+    </div>
+  </div>
+</Layout>

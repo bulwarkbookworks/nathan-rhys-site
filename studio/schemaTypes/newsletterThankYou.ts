@@ -2,8 +2,8 @@ import {defineField, defineType} from 'sanity'
 import {displayLastUpdatedField} from './displayLastUpdated'
 
 export default defineType({
-  name: 'standardPage',
-  title: 'Standard Page',
+  name: 'newsletterThankYou',
+  title: 'Newsletter Thank You',
   type: 'document',
   groups: [
     {name: 'content', title: 'Content'},
@@ -26,7 +26,20 @@ export default defineType({
         source: 'title',
         maxLength: 96,
       },
+      initialValue: {current: 'thank-you'},
       validation: (Rule) => Rule.required(),
+      group: 'content',
+    }),
+    defineField({
+      name: 'heading',
+      title: 'Heading',
+      type: 'string',
+      group: 'content',
+    }),
+    defineField({
+      name: 'kicker',
+      title: 'Kicker',
+      type: 'string',
       group: 'content',
     }),
     defineField({
@@ -38,6 +51,14 @@ export default defineType({
         {type: 'listSection'},
       ],
       group: 'content',
+    }),
+    defineField({
+      name: 'excludeFromSitemap',
+      title: 'Exclude from Sitemap',
+      type: 'boolean',
+      initialValue: true,
+      description: 'If checked, this page will be excluded from the sitemap.',
+      group: 'metadata',
     }),
     defineField({
       name: 'layout',

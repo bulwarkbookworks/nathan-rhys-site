@@ -175,7 +175,6 @@ export default defineType({
       of: [
         {type: 'richTextSection'},
         {type: 'listSection'},
-        {type: 'buttondownEmbedSection'},
       ],
       group: 'content',
     }),

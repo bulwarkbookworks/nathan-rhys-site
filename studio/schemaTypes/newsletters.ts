@@ -2,8 +2,8 @@ import {defineField, defineType} from 'sanity'
 import {displayLastUpdatedField} from './displayLastUpdated'
 
 export default defineType({
-  name: 'standardPage',
-  title: 'Standard Page',
+  name: 'newsletters',
+  title: 'Newsletters',
   type: 'document',
   groups: [
     {name: 'content', title: 'Content'},
@@ -26,7 +26,20 @@ export default defineType({
         source: 'title',
         maxLength: 96,
       },
+      initialValue: {current: 'newsletters'},
       validation: (Rule) => Rule.required(),
+      group: 'content',
+    }),
+    defineField({
+      name: 'heading',
+      title: 'Heading',
+      type: 'string',
+      group: 'content',
+    }),
+    defineField({
+      name: 'kicker',
+      title: 'Kicker',
+      type: 'string',
       group: 'content',
     }),
     defineField({

@@ -1,7 +1,6 @@
 ---
 import { PortableText } from 'astro-portabletext';
 import { resolveLink } from '../lib/sanity';
-import ButtondownEmbed from './ButtondownEmbed.astro';
 
 interface Props {
   section: any;
@@ -53,16 +52,6 @@ const { section } = Astro.props;
             )}
           </div>
         ))}
-      </div>
-    )}
-
-    {section._type === 'buttondownEmbedSection' && section.embed && (
-      <div class="buttondown-section-content">
-        <ButtondownEmbed 
-          username={section.embed.username} 
-          emailLabel={section.embed.emailLabel} 
-          displayType={section.displayType} 
-        />
       </div>
     )}
   </div>

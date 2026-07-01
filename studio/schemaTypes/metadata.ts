@@ -24,6 +24,14 @@ export default defineType({
       rows: 3,
       group: 'general',
     }),
+    defineField({
+      name: 'excludeFromSitemap',
+      title: 'Exclude from Sitemap',
+      type: 'boolean',
+      initialValue: false,
+      description: 'If checked, this page will be excluded from the sitemap and search engines.',
+      group: 'general',
+    }),
     // Twitter
     defineField({
       name: 'twitterTitle',

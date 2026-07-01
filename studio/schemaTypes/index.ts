@@ -12,12 +12,14 @@ import standardPage from './standardPage'
 import listItem from './listItem'
 import richTextSection from './richTextSection'
 import listSection from './listSection'
-import buttondownEmbed from './buttondownEmbed'
-import buttondownEmbedSection from './buttondownEmbedSection'
 import artist from './artist'
 import galleryItem from './galleryItem'
 import artistsPage from './artistsPage'
 import galleryPage from './galleryPage'
 import siteMetadata from './siteMetadata'
 
-export const schemaTypes = [book, chapter, home, series, pillar, metadata, cta, navigation, link, layout, standardPage, listItem, richTextSection, listSection, buttondownEmbed, buttondownEmbedSection, artist, galleryItem, artistsPage, galleryPage, siteMetadata]
+import newsletter from './newsletter'
+import newsletters from './newsletters'
+import newsletterThankYou from './newsletterThankYou'
+
+export const schemaTypes = [book, chapter, home, series, pillar, metadata, cta, navigation, link, layout, standardPage, listItem, richTextSection, listSection, artist, galleryItem, artistsPage, galleryPage, siteMetadata, newsletter, newsletters, newsletterThankYou]

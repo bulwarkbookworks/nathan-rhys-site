@@ -28,9 +28,6 @@ const artist = await client.fetch(`*[_type == "artist" && slug.current == $slug]
             slug,
             _type == "book" => {
               "seriesSlug": series->slug.current
-            },
-            _type == "buttondownEmbed" => {
-              "username": username.current
             }
           }
         }

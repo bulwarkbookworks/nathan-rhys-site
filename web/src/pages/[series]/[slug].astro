@@ -30,9 +30,6 @@ const SECTION_QUERY = `
           ...,
           _type == "book" => {
             "seriesSlug": series->slug.current
-          },
-          _type == "buttondownEmbed" => {
-            "username": username.current
           }
         }
       }
@@ -46,12 +43,6 @@ const SECTION_QUERY = `
     },
     _type == "richTextSection" => {
       content[]
-    },
-    _type == "buttondownEmbedSection" => {
-      embed->{
-        "username": username.current,
-        emailLabel
-      }
     }
   }
 `;

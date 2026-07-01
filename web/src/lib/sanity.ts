@@ -110,11 +110,15 @@ export function resolveLink(link: any): string {
       url = `/artists`;
     } else if (doc._type === 'galleryPage') {
       url = `/gallery`;
-    } else if (doc._type === 'buttondownEmbed') {
-      const username = doc.username?.current || doc.username;
-      if (username) {
-        url = `https://buttondown.com/${username}`;
-      }
+    } else if (doc._type === 'newsletters') {
+      url = `/newsletters`;
+    } else if (doc._type === 'newsletterThankYou') {
+      url = `/newsletters/thank-you`;
+    } else if (doc._type === 'newsletter') {
+      const date = new Date(doc.publishDate);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      url = `/newsletters/${year}/${month}/${doc.slug?.current || doc.slug}`;
     }
     
     if (link.anchor) {

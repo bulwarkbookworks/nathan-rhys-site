@@ -1,0 +1,109 @@
+---
+import { client } from '../../../../lib/sanity';
+import Layout from '../../../../layouts/Layout.astro';
+import PageSection from '../../../../components/PageSection.astro';
+
+export async function getStaticPaths() {
+  const newsletters = await client.fetch(`*[_type == "newsletter"]{
+    "slug": slug.current,
+    publishDate
+  }`);
+
+  return newsletters.map((newsletter: any) => {
+    const date = new Date(newsletter.publishDate);
+    const year = date.getFullYear().toString();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    return {
+      params: { 
+        year, 
+        month, 
+        slug: newsletter.slug 
+      }
+    };
+  });
+}
+
+const { slug } = Astro.params;
+
+const SECTION_QUERY = `
+  sections[]{
+    ...,
+    ctas[]{
+      ...,
+      link{
+        ...,
+        internal->{
+          ...,
+          _type == "book" => {
+            "seriesSlug": series->slug.current
+          }
+        }
+      }
+    },
+    _type == "listSection" => {
+      items[]{
+        ...,
+        content[],
+        glyphiconColor
+      }
+    },
+    _type == "richTextSection" => {
+      content[]
+    }
+  }
+`;
+
+const LAYOUT_QUERY = `
+  "layout": layout->{
+    ...,
+    topNavigation->{
+      items[]{
+        label,
+        link{
+          ...,
+          internal->{ 
+            _type, 
+            slug,
+            _type == "book" => {
+              "seriesSlug": series->slug.current
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+const data = await client.fetch(`*[_type == "newsletter" && slug.current == $slug][0]{
+  ...,
+  ${SECTION_QUERY},
+  ${LAYOUT_QUERY}
+}`, { slug });
+
+if (!data) {
+  return Astro.redirect('/404');
+}
+
+const title = data.title;
+const heading = data.heading || title;
+const kicker = data.kicker;
+const metadata = data.metadata;
+---
+
+<Layout title={title} metadata={metadata} layout={data.layout} displayLastUpdated={data.displayLastUpdated} updatedAt={data._updatedAt}>
+  <div class="container py-24">
+    <div class="standard-page">
+      <header class="mb-16">
+        {kicker && <p class="text-secondary font-bold uppercase tracking-wider mb-2">{kicker}</p>}
+        <h1 class="text-5xl md:text-7xl mb-4">{heading}</h1>
+        <p class="text-muted italic">{new Date(data.publishDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+      </header>
+      
+      <div class="standard-page__sections space-y-12">
+        {data.sections?.map((section: any) => (
+          <PageSection section={section} />
+        ))}
+      </div>
+    </div>
+  </div>
+</Layout>

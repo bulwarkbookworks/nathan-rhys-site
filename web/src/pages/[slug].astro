@@ -33,9 +33,6 @@ const SECTION_QUERY = `
           ...,
           _type == "book" => {
             "seriesSlug": series->slug.current
-          },
-          _type == "buttondownEmbed" => {
-            "username": username.current
           }
         }
       }
@@ -49,12 +46,6 @@ const SECTION_QUERY = `
     },
     _type == "richTextSection" => {
       content[]
-    },
-    _type == "buttondownEmbedSection" => {
-      embed->{
-        "username": username.current,
-        emailLabel
-      }
     }
   }
 `;
@@ -72,9 +63,6 @@ const LAYOUT_QUERY = `
             slug,
             _type == "book" => {
               "seriesSlug": series->slug.current
-            },
-            _type == "buttondownEmbed" => {
-              "username": username.current
             }
           }
         }
