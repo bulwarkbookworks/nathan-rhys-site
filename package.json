@@ -11,5 +11,12 @@
     "build:studio": "npm run build -w studio",
     "build:web": "npm run build -w web",
     "install:all": "npm install"
+  },
+  "allowScripts": {
+    "@parcel/watcher@2.5.6": true,
+    "esbuild@0.28.1": true,
+    "esbuild@0.27.7": true,
+    "esbuild@0.27.3": true,
+    "sharp@0.34.5": true
   }
 }
