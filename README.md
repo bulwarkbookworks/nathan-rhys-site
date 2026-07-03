@@ -22,3 +22,15 @@ You can run both or either from the root:
 ## Deployment
 - **Frontend:** Automatically deploys to GitHub Pages via GitHub Actions on every push to `main`.
 - **Studio:** Can be deployed to Sanity's hosting by running `npm run build:studio` and then `npx sanity deploy` from the `studio` directory.
+
+## Services
+This project uses the following services:
+
+- **[Astro](https://astro.build)** - The web framework used for the frontend.
+- **[Sanity CMS](https://www.sanity.io)** - Used for content management and structured data.
+- **[GitHub Pages](https://pages.github.com)** - Hosts the live production site.
+- **[GitHub Actions](https://github.com/features/actions)** - Automates the build and deployment process.
+- **[MailerLite](https://www.mailerlite.com)** - Used for newsletter subscriptions and email marketing.
+- **[Google Fonts](https://fonts.google.com)** - Provides typography for the site.
+- **[Bootstrap Icons](https://icons.getbootstrap.com)** - Used for iconography.
+- **[Tailwind CSS](https://tailwindcss.com)** - Used for utility-first styling.
