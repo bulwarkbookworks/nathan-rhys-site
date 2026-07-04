@@ -28,6 +28,7 @@ const sanity = createClient({
   dataset: 'production',
   useCdn: false,
   apiVersion: '2024-03-12',
+  token: process.env.SANITY_API_TOKEN || env.SANITY_API_TOKEN,
 });
 
 // Map a Sanity document to the same route its page uses (mirrors resolveLink in src/lib/sanity.ts).
@@ -104,6 +105,22 @@ export default defineConfig({
     filter: (page) => !excludedPaths.has(normalizePath(page)),
   }), mcp()],
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [
+      tailwindcss(),
+      {
+        name: 'sanity-watcher',
+        configureServer(server) {
+          const subscription = sanity.listen('*').subscribe((update) => {
+            if (update.type === 'mutation') {
+              server.config.logger.info(`[sanity-watcher] Content change detected: ${update.documentId}. Reloading...`, { timestamp: true });
+              server.hot.send({ type: 'full-reload' });
+            }
+          });
+          server.httpServer?.on('close', () => {
+            subscription.unsubscribe();
+          });
+        }
+      }
+    ],
   },
 });

@@ -15,9 +15,9 @@ npm install
 ```
 
 ### 2. Run Development Servers
-You can run both or either from the root:
+You can run these from the root in separate terminals:
 - **Run Studio:** `npm run dev:studio` (default: localhost:3333)
-- **Run Web:** `npm run dev:web` (default: localhost:4321)
+- **Run Web:** `npm run dev:web` (default: localhost:4321). This command now includes a **Live Content Watcher** that automatically refreshes the frontend whenever you update content in Sanity.
 
 ## Deployment
 - **Frontend:** Automatically deploys to GitHub Pages via GitHub Actions on every push to `main`.
