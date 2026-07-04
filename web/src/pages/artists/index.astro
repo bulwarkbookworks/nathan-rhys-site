@@ -4,8 +4,7 @@ import Layout from '../../layouts/Layout.astro';
 import { PortableText } from 'astro-portabletext';
 
 const pageData = await client.fetch(`*[_type == "artistsPage"][0]{
-  ...,
-  ${LAYOUT_QUERY_FRAGMENT}
+  ...
 }`);
 
 const artists = await client.fetch(`*[_type == "artist"] | order(name asc) {
@@ -20,7 +19,7 @@ const kicker = pageData?.kicker || 'Collaborators';
 const metadata = pageData?.metadata;
 ---
 
-<Layout title={title} metadata={metadata} layout={pageData?.layout} displayLastUpdated={pageData?.displayLastUpdated} updatedAt={pageData?._updatedAt}>
+<Layout title={title} metadata={metadata} displayLastUpdated={pageData?.displayLastUpdated} updatedAt={pageData?._updatedAt}>
   <section class="section">
     <div class="container">
       <header class="section-heading mb-16">

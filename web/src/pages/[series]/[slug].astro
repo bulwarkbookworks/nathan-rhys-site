@@ -52,8 +52,7 @@ const data = await client.fetch(`*[_type == "book" && slug.current == $slug && s
   series->{ name, slug }, 
   "seriesSlug": series->slug.current,
   chapters[]->{ title, slug },
-  ${SECTION_QUERY},
-  ${LAYOUT_QUERY_FRAGMENT}
+  ${SECTION_QUERY}
 }`, { series, slug });
 
 if (!data) {

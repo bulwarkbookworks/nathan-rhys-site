@@ -82,9 +82,17 @@ export default defineConfig({
                 S.list()
                   .title('Site Configuration')
                   .items([
+                    S.listItem()
+                      .title('Site Layout')
+                      .id('layout')
+                      .child(S.document().schemaType('layout').documentId('layout')),
+                    S.listItem()
+                      .title('Site Footer')
+                      .id('footer')
+                      .child(S.document().schemaType('footer').documentId('footer')),
+                    S.divider(),
                     S.documentTypeListItem('pillar'),
                     S.documentTypeListItem('navigation'),
-                    S.documentTypeListItem('layout'),
                     S.listItem()
                       .title('Default Site Metadata')
                       .id('siteMetadata')
@@ -99,13 +107,13 @@ export default defineConfig({
   schema: {
     types: schemaTypes,
     // Filter out singleton types from the global "Create new" menu
-    templates: (prev) => prev.filter((template) => !['home', 'artistsPage', 'galleryPage', 'siteMetadata', 'newsletters', 'newsletterThankYou'].includes(template.id)),
+    templates: (prev) => prev.filter((template) => !['home', 'artistsPage', 'galleryPage', 'siteMetadata', 'newsletters', 'newsletterThankYou', 'layout', 'footer'].includes(template.id)),
   },
 
   document: {
     // For singleton types, filter out actions that are not appropriate
     actions: (prev, {schemaType}) => {
-      if (['home', 'artistsPage', 'galleryPage', 'siteMetadata', 'newsletters', 'newsletterThankYou'].includes(schemaType)) {
+      if (['home', 'artistsPage', 'galleryPage', 'siteMetadata', 'newsletters', 'newsletterThankYou', 'layout', 'footer'].includes(schemaType)) {
         return prev.filter(({action}) => action && ['publish', 'discardChanges', 'restore'].includes(action))
       }
       return prev

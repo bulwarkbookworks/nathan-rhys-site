@@ -52,15 +52,7 @@ export default defineType({
       validation: (Rule) => Rule.required(),
       group: 'content',
     }),
-    defineField({
-      name: 'layout',
-      title: 'Layout',
-      type: 'reference',
-      to: [{type: 'layout'}],
-      description: 'The shared navigation and footer layout for this page.',
-      group: 'content',
-    }),
-    displayLastUpdatedField('content'),
+    displayLastUpdatedField('metadata'),
     defineField({
       name: 'metadata',
       title: 'Page Metadata',

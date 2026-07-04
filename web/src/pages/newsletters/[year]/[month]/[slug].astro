@@ -55,8 +55,7 @@ const SECTION_QUERY = `
 
 const data = await client.fetch(`*[_type == "newsletter" && slug.current == $slug][0]{
   ...,
-  ${SECTION_QUERY},
-  ${LAYOUT_QUERY_FRAGMENT}
+  ${SECTION_QUERY}
 }`, { slug });
 
 if (!data) {
@@ -69,7 +68,7 @@ const kicker = data.kicker;
 const metadata = data.metadata;
 ---
 
-<Layout title={title} metadata={metadata} layout={data.layout} displayLastUpdated={data.displayLastUpdated} updatedAt={data._updatedAt}>
+<Layout title={title} metadata={metadata} displayLastUpdated={data.displayLastUpdated} updatedAt={data._updatedAt}>
   <div class="container py-24">
     <div class="standard-page">
       <header class="mb-16">

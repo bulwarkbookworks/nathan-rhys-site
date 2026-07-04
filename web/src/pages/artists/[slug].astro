@@ -15,8 +15,7 @@ const { slug } = Astro.params;
 
 const artist = await client.fetch(`*[_type == "artist" && slug.current == $slug][0]{
   ...,
-  _id,
-  ${LAYOUT_QUERY_FRAGMENT}
+  _id
 }`, { slug });
 
 if (!artist) {
@@ -31,7 +30,7 @@ const iconMap: Record<string, string> = {
 };
 ---
 
-<Layout title={artist.name} metadata={artist.metadata} layout={artist.layout} displayLastUpdated={artist.displayLastUpdated} updatedAt={artist._updatedAt}>
+<Layout title={artist.name} metadata={artist.metadata} displayLastUpdated={artist.displayLastUpdated} updatedAt={artist._updatedAt}>
   <div class="container py-20">
     <div class="mb-12">
       <a href="/artists" class="button button--ghost">

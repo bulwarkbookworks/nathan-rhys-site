@@ -21,5 +21,6 @@ import siteMetadata from './siteMetadata'
 import newsletter from './newsletter'
 import newsletters from './newsletters'
 import newsletterThankYou from './newsletterThankYou'
+import footer from './footer'
 
-export const schemaTypes = [book, chapter, home, series, pillar, metadata, cta, navigation, link, layout, standardPage, listItem, richTextSection, listSection, artist, galleryItem, artistsPage, galleryPage, siteMetadata, newsletter, newsletters, newsletterThankYou]
+export const schemaTypes = [book, chapter, home, series, pillar, metadata, cta, navigation, link, layout, standardPage, listItem, richTextSection, listSection, artist, galleryItem, artistsPage, galleryPage, siteMetadata, newsletter, newsletters, newsletterThankYou, footer]

@@ -1,5 +1,5 @@
 ---
-import { client, urlFor, resolveLink, NAVIGATION_FIELDS } from '../lib/sanity';
+import { client, urlFor, resolveLink, NAVIGATION_FIELDS, GLOBAL_LAYOUT_QUERY, FOOTER_QUERY } from '../lib/sanity';
 import Navigation from '../components/Navigation.astro';
 import '../styles/global.css';
 import '../styles/main.scss';
@@ -8,18 +8,18 @@ interface Props {
   title: string;
   metadata?: any;
   showTopNav?: boolean;
-  layout?: any;
   displayLastUpdated?: boolean;
   updatedAt?: string;
 }
 
-const { title, metadata, showTopNav = true, layout, displayLastUpdated, updatedAt } = Astro.props;
+const { title, metadata, showTopNav = true, displayLastUpdated, updatedAt } = Astro.props;
 
 const siteMetadata = await client.fetch(`*[_type == "siteMetadata"][0].metadata`);
 
-const navigation = layout?.topNavigation || await client.fetch(`*[_type == "navigation"][0]{ 
-  ${NAVIGATION_FIELDS}
-}`);
+const layout = await client.fetch(GLOBAL_LAYOUT_QUERY);
+const footer = await client.fetch(FOOTER_QUERY);
+
+const navigation = layout?.topNavigation;
 const navItems = navigation?.items?.length ? navigation.items : [
   { label: 'Home', link: '/' },
   { label: 'Books', link: '/#featured-book' },
@@ -28,13 +28,8 @@ const navItems = navigation?.items?.length ? navigation.items : [
   { label: 'About', link: '/#author' },
 ];
 
-const bottomNavigation = layout?.bottomNavigation || await client.fetch(`*[_type == "navigation" && (title match "Footer" || title match "bottom")][0]{ 
-  ${NAVIGATION_FIELDS}
-}`);
-const footerNavItems = bottomNavigation?.items || [];
-
-const footerBrand = layout?.bottomText || 'Nathan Rhys';
-const footerCopyright = layout?.copyrightText || 'Nathan Rhys. All rights reserved.';
+const footerBrand = footer?.siteInfo?.publisherInfo || 'Nathan Rhys';
+const footerCopyright = footer?.copyrightArea?.copyrightText || footer?.siteInfo?.copyrightNotice || 'Nathan Rhys. All rights reserved.';
 ---
 
 <!doctype html>
@@ -90,24 +85,78 @@ const footerCopyright = layout?.copyrightText || 'Nathan Rhys. All rights reserv
       <slot />
     </main>
     <footer class="site-footer">
-      <div class="container site-footer__inner">
-        <div class="site-footer__content">
-          <p class="site-footer__brand">{footerBrand}</p>
-          {footerNavItems.length > 0 && (
-            <nav class="site-footer__nav" aria-label="Footer navigation">
-              <ul class="site-footer__nav-list">
-                {footerNavItems.map((item: any) => (
-                  <li class="site-footer__nav-item">
-                    <a href={resolveLink(item.link)} class="site-footer__nav-link">
-                      {item.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          )}
+      <div class="container site-footer__main">
+        <div class="row">
+          <div class="col-lg-4 mb-12 mb-lg-0">
+            <p class="site-footer__brand">{footerBrand}</p>
+            {footer?.siteInfo?.shortDescription && <p class="site-footer__description lede mt-4 mb-0">{footer.siteInfo.shortDescription}</p>}
+            {footer?.siteInfo?.publisherInfo && <p class="site-footer__publisher mt-4">{footer.siteInfo.publisherInfo}</p>}
+          </div>
+          
+          <div class="col-lg-8">
+            <div class="row">
+              {footer?.navigationGroups?.map((group: any) => (
+                group.items?.length > 0 && (
+                  <div class="col-6 col-md-4 mb-8 mb-md-0">
+                    <h3 class="site-footer__heading">{group.title}</h3>
+                    <ul class="site-footer__list list-unstyled mt-4 space-y-2">
+                      {group.items.map((item: any) => (
+                        <li>
+                          <a href={resolveLink(item.link)} class="site-footer__link hover:text-accent">
+                            {item.label}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )
+              ))}
+
+              {footer?.legalNavigation?.items?.length > 0 && (
+                <div class="col-6 col-md-4 mb-8 mb-md-0">
+                  <h3 class="site-footer__heading">{footer.legalNavigation.title || 'Legal'}</h3>
+                  <ul class="site-footer__list list-unstyled mt-4 space-y-2">
+                    {footer.legalNavigation.items.map((item: any) => (
+                      <li>
+                        <a href={resolveLink(item.link)} class="site-footer__link hover:text-accent">
+                          {item.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {footer?.socialLinks?.filter((l: any) => l.enabled).length > 0 && (
+                <div class="col-6 col-md-4">
+                  <h3 class="site-footer__heading">Connect</h3>
+                  <ul class="site-footer__list list-unstyled mt-4 space-y-2">
+                    {footer.socialLinks.filter((l: any) => l.enabled).map((social: any) => (
+                      <li>
+                        <a href={social.url} target={social.openInNewTab ? "_blank" : undefined} rel="noopener noreferrer" class="site-footer__link flex items-center gap-2 hover:text-accent">
+                          {social.icon && <i class={`bi bi-${social.icon}`}></i>}
+                          <span>{social.platform}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
-        <p class="site-footer__copyright">&copy; {new Date().getFullYear()} {footerCopyright}</p>
+      </div>
+
+      <div class="site-footer__bottom mt-16 pt-8 border-t border-white/5">
+        <div class="container">
+          <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs tracking-widest uppercase opacity-60">
+            <p>&copy; {new Date().getFullYear()} {footerCopyright}</p>
+            <div class="flex gap-6">
+              {footer?.copyrightArea?.publisherName && <span>{footer.copyrightArea.publisherName}</span>}
+              {footer?.copyrightArea?.secondaryText && <span>{footer.copyrightArea.secondaryText}</span>}
+            </div>
+          </div>
+        </div>
       </div>
     </footer>
   </body>

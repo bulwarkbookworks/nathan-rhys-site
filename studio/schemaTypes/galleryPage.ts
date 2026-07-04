@@ -7,7 +7,6 @@ export default defineType({
   type: 'document',
   groups: [
     {name: 'content', title: 'Content'},
-    {name: 'layout', title: 'Layout'},
     {name: 'metadata', title: 'Metadata'},
   ],
   fields: [
@@ -25,15 +24,7 @@ export default defineType({
       initialValue: 'Artwork',
       group: 'content',
     }),
-    defineField({
-      name: 'layout',
-      title: 'Layout',
-      type: 'reference',
-      to: [{type: 'layout'}],
-      description: 'The shared navigation and footer layout for this page.',
-      group: 'layout',
-    }),
-    displayLastUpdatedField('layout'),
+    displayLastUpdatedField('metadata'),
     defineField({
       name: 'metadata',
       title: 'Page Metadata',

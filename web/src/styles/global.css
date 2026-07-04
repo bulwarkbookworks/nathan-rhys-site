@@ -378,60 +378,64 @@
   }
 
   .site-footer {
-    padding-block: 2.5rem;
-    border-top: 1px solid color-mix(in srgb, var(--color-secondary) 18%, transparent);
-    background: rgba(4, 9, 7, 0.72);
+    padding-block: clamp(4rem, 8vw, 7rem) 3rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background: var(--color-background-deep);
     color: var(--color-text-muted);
-    font-size: 0.88rem;
-  }
-
-  .site-footer__inner {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem 1rem;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .site-footer p {
-    margin: 0;
   }
 
   .site-footer__brand {
     color: var(--color-secondary);
-    font-weight: 750;
-    letter-spacing: 0.16em;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 0;
+  }
+
+  .site-footer__description {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .site-footer__publisher {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    font-family: var(--font-sans);
+    letter-spacing: 0.05em;
     text-transform: uppercase;
   }
 
-  .site-footer__content {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 1.5rem 2.5rem;
+  .site-footer__heading {
+    color: var(--color-text-main);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
   }
 
-  .site-footer__nav-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem 1.75rem;
-    list-style: none;
+  .site-footer__list {
     margin: 0;
     padding: 0;
+    list-style: none;
   }
 
-  .site-footer__nav-link {
+  .site-footer__link {
     color: var(--color-text-muted);
     text-decoration: none;
-    font-size: 0.82rem;
-    font-weight: 650;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-size: 0.94rem;
     transition: color 180ms ease;
   }
 
-  .site-footer__nav-link:hover {
+  .site-footer__link:hover {
     color: var(--color-accent);
+  }
+
+  .site-footer__bottom {
+    font-family: var(--font-sans);
   }
 }
 
@@ -465,8 +469,7 @@
     width: min(74vw, 19rem);
   }
 
-  .site-footer__inner {
-    justify-content: center;
-    text-align: center;
+  .site-footer {
+    text-align: left;
   }
 }

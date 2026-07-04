@@ -43,7 +43,6 @@ const bookFields = `
 const home = await client.fetch(`*[_type == "home"][0]{
   ...,
   ${ctasField},
-  ${LAYOUT_QUERY_FRAGMENT},
   sections[]{
     ...,
     ctas[]{
@@ -136,7 +135,6 @@ const pillars = home?.brandPillars?.length ? home.brandPillars : [
   title={siteTitle} 
   metadata={home?.metadata} 
   showTopNav={false}
-  layout={home?.layout}
 >
     <header class="site-hero">
       {home?.heroImage && (

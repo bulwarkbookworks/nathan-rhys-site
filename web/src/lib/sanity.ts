@@ -74,9 +74,48 @@ export const LAYOUT_QUERY_FRAGMENT = `
     ...,
     topNavigation->{
       ${NAVIGATION_FIELDS}
-    },
-    bottomNavigation->{
+    }
+  }
+`;
+
+export const GLOBAL_LAYOUT_QUERY = `
+  *[_id == "layout"][0]{
+    topNavigation->{
       ${NAVIGATION_FIELDS}
+    }
+  }
+`;
+
+export const FOOTER_QUERY = `
+  *[_id == "footer"][0]{
+    navigationGroups[]{
+      title,
+      items[]{
+        ${LINK_FIELDS}
+      }
+    },
+    socialLinks[]{
+      platform,
+      icon,
+      url,
+      openInNewTab,
+      enabled
+    },
+    siteInfo{
+      publisherInfo,
+      copyrightNotice,
+      shortDescription
+    },
+    legalNavigation{
+      title,
+      items[]{
+        ${LINK_FIELDS}
+      }
+    },
+    copyrightArea{
+      copyrightText,
+      publisherName,
+      secondaryText
     }
   }
 `;

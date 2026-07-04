@@ -54,8 +54,7 @@ let data;
 if (type === 'standardPage') {
   data = await client.fetch(`*[_type == "standardPage" && slug.current == $slug][0]{
     ...,
-    ${SECTION_QUERY},
-    ${LAYOUT_QUERY_FRAGMENT}
+    ${SECTION_QUERY}
   }`, { slug });
 } else {
   data = await client.fetch(`*[_type == "book" && slug.current == $slug][0]{ 
@@ -63,8 +62,7 @@ if (type === 'standardPage') {
     series->{ name, slug }, 
     "seriesSlug": series->slug.current,
     chapters[]->{ title, slug },
-    ${SECTION_QUERY},
-    ${LAYOUT_QUERY_FRAGMENT}
+    ${SECTION_QUERY}
   }`, { slug });
 }
 

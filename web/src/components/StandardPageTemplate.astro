@@ -6,7 +6,7 @@ import PageSection from './PageSection.astro';
 const { page } = Astro.props;
 ---
 
-<Layout title={page.title} metadata={page.metadata} layout={page.layout} displayLastUpdated={page.displayLastUpdated} updatedAt={page._updatedAt}>
+<Layout title={page.title} metadata={page.metadata} displayLastUpdated={page.displayLastUpdated} updatedAt={page._updatedAt}>
   <div class="container py-24">
     <div class="standard-page">
       <header class="mb-16">

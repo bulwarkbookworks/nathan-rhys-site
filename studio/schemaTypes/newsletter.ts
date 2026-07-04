@@ -8,7 +8,6 @@ export default defineType({
   groups: [
     {name: 'content', title: 'Content'},
     {name: 'email', title: 'Email'},
-    {name: 'layout', title: 'Layout'},
     {name: 'metadata', title: 'Metadata'},
   ],
   fields: [
@@ -80,15 +79,7 @@ export default defineType({
       of: [{type: 'block'}],
       group: 'email',
     }),
-    defineField({
-      name: 'layout',
-      title: 'Layout',
-      type: 'reference',
-      to: [{type: 'layout'}],
-      description: 'The shared navigation and footer layout for this page.',
-      group: 'layout',
-    }),
-    displayLastUpdatedField('layout'),
+    displayLastUpdatedField('metadata'),
     defineField({
       name: 'metadata',
       title: 'Page Metadata',
