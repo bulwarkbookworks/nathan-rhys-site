@@ -1,5 +1,5 @@
 ---
-import { client, urlFor } from '../../lib/sanity';
+import { client, urlFor, LAYOUT_QUERY_FRAGMENT } from '../../lib/sanity';
 import Layout from '../../layouts/Layout.astro';
 import { PortableText } from 'astro-portabletext';
 import Gallery from '../../components/Gallery.astro';
@@ -16,24 +16,7 @@ const { slug } = Astro.params;
 const artist = await client.fetch(`*[_type == "artist" && slug.current == $slug][0]{
   ...,
   _id,
-  "layout": layout->{
-    ...,
-    topNavigation->{
-      items[]{
-        label,
-        link{
-          ...,
-          internal->{ 
-            _type, 
-            slug,
-            _type == "book" => {
-              "seriesSlug": series->slug.current
-            }
-          }
-        }
-      }
-    }
-  }
+  ${LAYOUT_QUERY_FRAGMENT}
 }`, { slug });
 
 if (!artist) {

@@ -1,5 +1,5 @@
 ---
-import { client } from '../../lib/sanity';
+import { client, LAYOUT_QUERY_FRAGMENT } from '../../lib/sanity';
 import BookTemplate from '../../components/BookTemplate.astro';
 
 export async function getStaticPaths() {
@@ -52,7 +52,8 @@ const data = await client.fetch(`*[_type == "book" && slug.current == $slug && s
   series->{ name, slug }, 
   "seriesSlug": series->slug.current,
   chapters[]->{ title, slug },
-  ${SECTION_QUERY}
+  ${SECTION_QUERY},
+  ${LAYOUT_QUERY_FRAGMENT}
 }`, { series, slug });
 
 if (!data) {

@@ -1,5 +1,5 @@
 ---
-import { client } from '../../../../lib/sanity';
+import { client, LAYOUT_QUERY_FRAGMENT } from '../../../../lib/sanity';
 import Layout from '../../../../layouts/Layout.astro';
 import PageSection from '../../../../components/PageSection.astro';
 
@@ -53,31 +53,10 @@ const SECTION_QUERY = `
   }
 `;
 
-const LAYOUT_QUERY = `
-  "layout": layout->{
-    ...,
-    topNavigation->{
-      items[]{
-        label,
-        link{
-          ...,
-          internal->{ 
-            _type, 
-            slug,
-            _type == "book" => {
-              "seriesSlug": series->slug.current
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
 const data = await client.fetch(`*[_type == "newsletter" && slug.current == $slug][0]{
   ...,
   ${SECTION_QUERY},
-  ${LAYOUT_QUERY}
+  ${LAYOUT_QUERY_FRAGMENT}
 }`, { slug });
 
 if (!data) {

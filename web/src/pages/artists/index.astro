@@ -1,28 +1,11 @@
 ---
-import { client, urlFor } from '../../lib/sanity';
+import { client, urlFor, LAYOUT_QUERY_FRAGMENT } from '../../lib/sanity';
 import Layout from '../../layouts/Layout.astro';
 import { PortableText } from 'astro-portabletext';
 
 const pageData = await client.fetch(`*[_type == "artistsPage"][0]{
   ...,
-  "layout": layout->{
-    ...,
-    topNavigation->{
-      items[]{
-        label,
-        link{
-          ...,
-          internal->{ 
-            _type, 
-            slug,
-            _type == "book" => {
-              "seriesSlug": series->slug.current
-            }
-          }
-        }
-      }
-    }
-  }
+  ${LAYOUT_QUERY_FRAGMENT}
 }`);
 
 const artists = await client.fetch(`*[_type == "artist"] | order(name asc) {

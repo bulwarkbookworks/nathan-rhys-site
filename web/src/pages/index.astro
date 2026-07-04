@@ -1,5 +1,5 @@
 ---
-import { client, urlFor, resolveLink, getBookUrl, generateSrcset } from '../lib/sanity';
+import { client, urlFor, resolveLink, getBookUrl, generateSrcset, LAYOUT_QUERY_FRAGMENT } from '../lib/sanity';
 import Navigation from '../components/Navigation.astro';
 import Layout from '../layouts/Layout.astro';
 import PageSection from '../components/PageSection.astro';
@@ -43,24 +43,7 @@ const bookFields = `
 const home = await client.fetch(`*[_type == "home"][0]{
   ...,
   ${ctasField},
-  "layout": layout->{
-    ...,
-    topNavigation->{
-      items[]{
-        label,
-        link{
-          ...,
-          internal->{ 
-            _type, 
-            slug,
-            _type == "book" => {
-              "seriesSlug": series->slug.current
-            }
-          }
-        }
-      }
-    }
-  },
+  ${LAYOUT_QUERY_FRAGMENT},
   sections[]{
     ...,
     ctas[]{

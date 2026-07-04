@@ -1,5 +1,5 @@
 ---
-import { client } from '../lib/sanity';
+import { client, LAYOUT_QUERY_FRAGMENT } from '../lib/sanity';
 import StandardPageTemplate from '../components/StandardPageTemplate.astro';
 import BookTemplate from '../components/BookTemplate.astro';
 
@@ -50,33 +50,12 @@ const SECTION_QUERY = `
   }
 `;
 
-const LAYOUT_QUERY = `
-  "layout": layout->{
-    ...,
-    topNavigation->{
-      items[]{
-        label,
-        link{
-          ...,
-          internal->{ 
-            _type, 
-            slug,
-            _type == "book" => {
-              "seriesSlug": series->slug.current
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
 let data;
 if (type === 'standardPage') {
   data = await client.fetch(`*[_type == "standardPage" && slug.current == $slug][0]{
     ...,
     ${SECTION_QUERY},
-    ${LAYOUT_QUERY}
+    ${LAYOUT_QUERY_FRAGMENT}
   }`, { slug });
 } else {
   data = await client.fetch(`*[_type == "book" && slug.current == $slug][0]{ 
@@ -85,7 +64,7 @@ if (type === 'standardPage') {
     "seriesSlug": series->slug.current,
     chapters[]->{ title, slug },
     ${SECTION_QUERY},
-    ${LAYOUT_QUERY}
+    ${LAYOUT_QUERY_FRAGMENT}
   }`, { slug });
 }
 

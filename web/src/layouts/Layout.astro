@@ -1,5 +1,5 @@
 ---
-import { client, urlFor } from '../lib/sanity';
+import { client, urlFor, resolveLink, NAVIGATION_FIELDS } from '../lib/sanity';
 import Navigation from '../components/Navigation.astro';
 import '../styles/global.css';
 import '../styles/main.scss';
@@ -18,19 +18,7 @@ const { title, metadata, showTopNav = true, layout, displayLastUpdated, updatedA
 const siteMetadata = await client.fetch(`*[_type == "siteMetadata"][0].metadata`);
 
 const navigation = layout?.topNavigation || await client.fetch(`*[_type == "navigation"][0]{ 
-  items[]{
-    label,
-    link{
-      ...,
-      internal->{ 
-        _type, 
-        slug,
-        _type == "book" => {
-          "seriesSlug": series->slug.current
-        }
-      }
-    }
-  }
+  ${NAVIGATION_FIELDS}
 }`);
 const navItems = navigation?.items?.length ? navigation.items : [
   { label: 'Home', link: '/' },
@@ -39,6 +27,11 @@ const navItems = navigation?.items?.length ? navigation.items : [
   { label: 'Artists', link: '/artists' },
   { label: 'About', link: '/#author' },
 ];
+
+const bottomNavigation = layout?.bottomNavigation || await client.fetch(`*[_type == "navigation" && (title match "Footer" || title match "bottom")][0]{ 
+  ${NAVIGATION_FIELDS}
+}`);
+const footerNavItems = bottomNavigation?.items || [];
 
 const footerBrand = layout?.bottomText || 'Nathan Rhys';
 const footerCopyright = layout?.copyrightText || 'Nathan Rhys. All rights reserved.';
@@ -98,8 +91,23 @@ const footerCopyright = layout?.copyrightText || 'Nathan Rhys. All rights reserv
     </main>
     <footer class="site-footer">
       <div class="container site-footer__inner">
-        <p class="site-footer__brand">{footerBrand}</p>
-        <p>&copy; {new Date().getFullYear()} {footerCopyright}</p>
+        <div class="site-footer__content">
+          <p class="site-footer__brand">{footerBrand}</p>
+          {footerNavItems.length > 0 && (
+            <nav class="site-footer__nav" aria-label="Footer navigation">
+              <ul class="site-footer__nav-list">
+                {footerNavItems.map((item: any) => (
+                  <li class="site-footer__nav-item">
+                    <a href={resolveLink(item.link)} class="site-footer__nav-link">
+                      {item.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
+        </div>
+        <p class="site-footer__copyright">&copy; {new Date().getFullYear()} {footerCopyright}</p>
       </div>
     </footer>
   </body>

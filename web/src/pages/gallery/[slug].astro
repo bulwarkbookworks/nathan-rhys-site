@@ -1,5 +1,5 @@
 ---
-import { client, urlFor, generateSrcset, getBookUrl } from '../../lib/sanity';
+import { client, urlFor, generateSrcset, getBookUrl, LAYOUT_QUERY_FRAGMENT } from '../../lib/sanity';
 import Layout from '../../layouts/Layout.astro';
 import { PortableText } from 'astro-portabletext';
 
@@ -28,7 +28,8 @@ const item = await client.fetch(`*[_type == "galleryItem" && slug.current == $sl
     title,
     slug,
     "seriesSlug": series->slug.current
-  }
+  },
+  ${LAYOUT_QUERY_FRAGMENT}
 }`, { slug });
 
 if (!item) {
@@ -54,7 +55,7 @@ const metadata = {
 const fullWidths = [800, 1200, 1600, 2000, 2400];
 ---
 
-<Layout title={item.title} metadata={metadata} displayLastUpdated={item.displayLastUpdated} updatedAt={item._updatedAt}>
+<Layout title={item.title} metadata={metadata} layout={item.layout} displayLastUpdated={item.displayLastUpdated} updatedAt={item._updatedAt}>
   <div class="container py-10">
     <div class="gallery-detail">
       <!-- Zoomable Image Control -->

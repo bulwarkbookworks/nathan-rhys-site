@@ -51,6 +51,36 @@ export const BOOK_URL_PROJECTION = `
   }
 `;
 
+export const LINK_FIELDS = `
+  label,
+  link {
+    ...,
+    internal->{ 
+      _type, 
+      slug,
+      ${BOOK_URL_PROJECTION}
+    }
+  }
+`;
+
+export const NAVIGATION_FIELDS = `
+  items[]{
+    ${LINK_FIELDS}
+  }
+`;
+
+export const LAYOUT_QUERY_FRAGMENT = `
+  layout->{
+    ...,
+    topNavigation->{
+      ${NAVIGATION_FIELDS}
+    },
+    bottomNavigation->{
+      ${NAVIGATION_FIELDS}
+    }
+  }
+`;
+
 /**
  * Constructs the URL for a given book based on its slug and series information.
  *
