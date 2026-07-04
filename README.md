@@ -34,3 +34,10 @@ This project uses the following services:
 - **[Google Fonts](https://fonts.google.com)** - Provides typography for the site.
 - **[Bootstrap Icons](https://icons.getbootstrap.com)** - Used for iconography.
 - **[Tailwind CSS](https://tailwindcss.com)** - Used for utility-first styling.
+- **[RSS](https://www.rssboard.org/rss-specification)** - Auto-updating feed for newsletter entries available at `/rss.xml`.
+
+## RSS Feed & Auto-Updating
+The newsletter RSS feed is automatically generated at build time. 
+To ensure the feed (and the rest of the site) stays up-to-date with content changes in Sanity without manual pushes:
+1. **Sanity Webhooks:** Configure a webhook in your Sanity project settings (Manage -> API -> Webhooks) pointing to a service that can trigger the GitHub Actions workflow.
+2. **GitHub Actions Trigger:** You can use a repository dispatch event or a specialized action to trigger the `deploy.yml` workflow when Sanity content is published.

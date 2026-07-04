@@ -81,9 +81,16 @@ const metadata = newslettersPage?.metadata;
 <Layout title={title} metadata={metadata} layout={newslettersPage?.layout} displayLastUpdated={newslettersPage?.displayLastUpdated} updatedAt={newslettersPage?._updatedAt}>
   <div class="container py-24">
     <div class="standard-page">
-      <header class="mb-16">
-        {kicker && <p class="text-secondary font-bold uppercase tracking-wider mb-2">{kicker}</p>}
-        <h1 class="text-5xl md:text-7xl mb-4">{heading}</h1>
+      <header class="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-8">
+        <div>
+          {kicker && <p class="text-secondary font-bold uppercase tracking-wider mb-2">{kicker}</p>}
+          <h1 class="text-5xl md:text-7xl mb-4">{heading}</h1>
+        </div>
+        <div class="pb-2">
+          <a href="/rss.xml" class="button button--ghost inline-flex items-center">
+            <i class="bi bi-rss-fill me-2"></i> RSS Feed
+          </a>
+        </div>
       </header>
 
       {newslettersPage?.sections?.map((section: any) => (
