@@ -4,6 +4,8 @@ import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 import { createClient } from '@sanity/client';
 
+import mcp from 'astro-mcp';
+
 // Resolve the active mode from the CLI so `loadEnv` reads the right `.env.[mode]` file:
 // `astro dev` -> development, `astro build --mode X` -> X, otherwise -> production.
 function resolveMode() {
@@ -95,14 +97,12 @@ export default defineConfig({
   site: SITE_URL,
   base: '/',
   outDir: '../dist/web',
-  integrations: [
-    sitemap({
-      // Relative so it resolves against `site` -> always same-origin as the sitemap,
-      // which is required for browsers to actually apply the XSL styling.
-      xslURL: '/sitemap.xsl',
-      filter: (page) => !excludedPaths.has(normalizePath(page)),
-    }),
-  ],
+  integrations: [sitemap({
+    // Relative so it resolves against `site` -> always same-origin as the sitemap,
+    // which is required for browsers to actually apply the XSL styling.
+    xslURL: '/sitemap.xsl',
+    filter: (page) => !excludedPaths.has(normalizePath(page)),
+  }), mcp()],
   vite: {
     plugins: [tailwindcss()],
   },
