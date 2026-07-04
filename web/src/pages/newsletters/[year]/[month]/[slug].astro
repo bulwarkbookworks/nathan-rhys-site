@@ -43,12 +43,12 @@ const SECTION_QUERY = `
     _type == "listSection" => {
       items[]{
         ...,
-        content[],
+        content,
         glyphiconColor
       }
     },
     _type == "richTextSection" => {
-      content[]
+      content
     }
   }
 `;

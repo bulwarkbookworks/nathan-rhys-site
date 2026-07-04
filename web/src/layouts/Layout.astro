@@ -40,10 +40,8 @@ const navItems = navigation?.items?.length ? navigation.items : [
   { label: 'About', link: '/#author' },
 ];
 
-const home = await client.fetch(`*[_type == "home"][0]{ footerBrand, footerCopyright }`);
-
-const footerBrand = layout?.bottomText || home?.footerBrand || 'Nathan Rhys';
-const footerCopyright = layout?.copyrightText || home?.footerCopyright || 'Nathan Rhys. All rights reserved.';
+const footerBrand = layout?.bottomText || 'Nathan Rhys';
+const footerCopyright = layout?.copyrightText || 'Nathan Rhys. All rights reserved.';
 ---
 
 <!doctype html>

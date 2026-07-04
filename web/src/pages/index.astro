@@ -2,6 +2,7 @@
 import { client, urlFor, resolveLink, getBookUrl, generateSrcset } from '../lib/sanity';
 import Navigation from '../components/Navigation.astro';
 import Layout from '../layouts/Layout.astro';
+import PageSection from '../components/PageSection.astro';
 
 const linkField = `
   link {
@@ -42,6 +43,49 @@ const bookFields = `
 const home = await client.fetch(`*[_type == "home"][0]{
   ...,
   ${ctasField},
+  "layout": layout->{
+    ...,
+    topNavigation->{
+      items[]{
+        label,
+        link{
+          ...,
+          internal->{ 
+            _type, 
+            slug,
+            _type == "book" => {
+              "seriesSlug": series->slug.current
+            }
+          }
+        }
+      }
+    }
+  },
+  sections[]{
+    ...,
+    ctas[]{
+      ...,
+      link{
+        ...,
+        internal->{
+          ...,
+          _type == "book" => {
+            "seriesSlug": series->slug.current
+          }
+        }
+      }
+    },
+    _type == "listSection" => {
+      items[]{
+        ...,
+        content,
+        glyphiconColor
+      }
+    },
+    _type == "richTextSection" => {
+      content
+    }
+  },
   featuredBook->{
     ${bookFields}
   },
@@ -109,6 +153,7 @@ const pillars = home?.brandPillars?.length ? home.brandPillars : [
   title={siteTitle} 
   metadata={home?.metadata} 
   showTopNav={false}
+  layout={home?.layout}
 >
     <header class="site-hero">
       {home?.heroImage && (
@@ -196,12 +241,16 @@ const pillars = home?.brandPillars?.length ? home.brandPillars : [
         </div>
       </section>
 
-      <section id="author" class="section section--author">
-        <div class="container container--narrow">
-          <p class="section-kicker">{home?.authorKicker || 'Author Note'}</p>
-          <h2>{home?.authorHeading || 'Nathan Rhys writes stories about hidden beauty, costly courage, and the choice to protect what is good.'}</h2>
-          <p>{home?.authorStatement || 'I write modern fantasy for readers who want wonder without weightlessness: stories where choices matter, power has a cost, and hope is earned rather than handed out.'}</p>
-        </div>
-      </section>
+      {home?.sections?.length > 0 && (
+        <section id="author" class="section section--extra-content">
+          <div class="container container--narrow">
+            <div class="space-y-16">
+              {home.sections.map((section: any) => (
+                <PageSection section={section} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
 </Layout>
