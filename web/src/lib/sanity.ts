@@ -51,15 +51,20 @@ export const BOOK_URL_PROJECTION = `
   }
 `;
 
+export const LINK_OBJECT_FIELDS = `
+  ...,
+  internal->{ 
+    _type, 
+    slug,
+    publishDate,
+    ${BOOK_URL_PROJECTION}
+  }
+`;
+
 export const LINK_FIELDS = `
   label,
   link {
-    ...,
-    internal->{ 
-      _type, 
-      slug,
-      ${BOOK_URL_PROJECTION}
-    }
+    ${LINK_OBJECT_FIELDS}
   }
 `;
 
@@ -97,7 +102,9 @@ export const FOOTER_QUERY = `
     socialLinks[]{
       platform,
       icon,
-      url,
+      link {
+        ${LINK_OBJECT_FIELDS}
+      },
       openInNewTab,
       enabled
     },
@@ -188,6 +195,10 @@ export function resolveLink(link: any): string {
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
       url = `/newsletters/${year}/${month}/${doc.slug?.current || doc.slug}`;
+    } else if (doc._type === 'galleryItem' && doc.slug?.current) {
+      url = `/gallery/${doc.slug.current}`;
+    } else if (doc._type === 'chapter' && doc.slug?.current) {
+      url = `/chapters/${doc.slug.current}`;
     }
     
     if (link.anchor) {

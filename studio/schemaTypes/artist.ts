@@ -91,15 +91,15 @@ export default defineType({
               },
             },
             {
-              name: 'url',
-              title: 'URL',
-              type: 'url',
+              name: 'link',
+              title: 'Link',
+              type: 'link',
             },
           ],
           preview: {
             select: {
               title: 'platform',
-              subtitle: 'url',
+              subtitle: 'link.external',
             },
           },
         },

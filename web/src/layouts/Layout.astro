@@ -133,7 +133,7 @@ const footerCopyright = footer?.copyrightArea?.copyrightText || footer?.siteInfo
                   <ul class="site-footer__list list-unstyled mt-4 space-y-2">
                     {footer.socialLinks.filter((l: any) => l.enabled).map((social: any) => (
                       <li>
-                        <a href={social.url} target={social.openInNewTab ? "_blank" : undefined} rel="noopener noreferrer" class="site-footer__link flex items-center gap-2 hover:text-accent">
+                        <a href={resolveLink(social.link)} target={social.openInNewTab ? "_blank" : undefined} rel="noopener noreferrer" class="site-footer__link flex items-center gap-2 hover:text-accent">
                           {social.icon && <i class={`bi bi-${social.icon}`}></i>}
                           <span>{social.platform}</span>
                         </a>

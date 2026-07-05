@@ -1,5 +1,5 @@
 ---
-import { client, urlFor, LAYOUT_QUERY_FRAGMENT } from '../../lib/sanity';
+import { client, urlFor, resolveLink, LAYOUT_QUERY_FRAGMENT, LINK_OBJECT_FIELDS } from '../../lib/sanity';
 import Layout from '../../layouts/Layout.astro';
 import { PortableText } from 'astro-portabletext';
 import Gallery from '../../components/Gallery.astro';
@@ -15,6 +15,12 @@ const { slug } = Astro.params;
 
 const artist = await client.fetch(`*[_type == "artist" && slug.current == $slug][0]{
   ...,
+  socialUrls[]{
+    platform,
+    link {
+      ${LINK_OBJECT_FIELDS}
+    }
+  },
   _id
 }`, { slug });
 
@@ -49,7 +55,7 @@ const iconMap: Record<string, string> = {
           {artist.socialUrls && artist.socialUrls.length > 0 && (
             <div class="artist-page__socials">
               {artist.socialUrls.map((social: any) => (
-                <a href={social.url} target="_blank" rel="noopener noreferrer" class="artist-page__social-link">
+                <a href={resolveLink(social.link)} target="_blank" rel="noopener noreferrer" class="artist-page__social-link">
                   <i class={`bi ${iconMap[social.platform] || 'bi-link-45deg'} me-2`}></i>
                   {social.platform === 'artstation' ? 'Art Station' : social.platform}
                 </a>

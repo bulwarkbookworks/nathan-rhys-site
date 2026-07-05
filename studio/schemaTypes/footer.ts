@@ -53,7 +53,7 @@ export default defineType({
           fields: [
             {name: 'platform', type: 'string', title: 'Platform Name (e.g. Twitter, RSS)'},
             {name: 'icon', type: 'string', title: 'Icon (Bootstrap Icon name, e.g. twitter, rss)'},
-            {name: 'url', type: 'url', title: 'URL'},
+            {name: 'link', type: 'link', title: 'Link'},
             {name: 'openInNewTab', type: 'boolean', title: 'Open in new tab', initialValue: true},
             {name: 'enabled', type: 'boolean', title: 'Enabled', initialValue: true},
           ],
