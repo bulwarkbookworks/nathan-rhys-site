@@ -9,7 +9,6 @@ export default defineType({
       name: 'label',
       title: 'Label',
       type: 'string',
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'link',
@@ -28,7 +27,6 @@ export default defineType({
         ],
       },
       initialValue: 'primary',
-      validation: (Rule) => Rule.required(),
     }),
   ],
 })

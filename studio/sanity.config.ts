@@ -75,6 +75,7 @@ export default defineConfig({
                     S.documentTypeListItem('newsletter'),
                   ]),
               ),
+            S.documentTypeListItem('thankYouPage').title('Thank You Pages'),
             // Site Configuration Group
             S.listItem()
               .title('Site Configuration')

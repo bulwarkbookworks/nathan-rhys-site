@@ -1,35 +1,7 @@
 ---
-import { client, LAYOUT_QUERY_FRAGMENT } from '../../lib/sanity';
+import { client, LAYOUT_QUERY_FRAGMENT, SECTION_QUERY } from '../../lib/sanity';
 import Layout from '../../layouts/Layout.astro';
 import PageSection from '../../components/PageSection.astro';
-
-const SECTION_QUERY = `
-  sections[]{
-    ...,
-    ctas[]{
-      ...,
-      link{
-        ...,
-        internal->{
-          ...,
-          _type == "book" => {
-            "seriesSlug": series->slug.current
-          }
-        }
-      }
-    },
-    _type == "listSection" => {
-      items[]{
-        ...,
-        content,
-        glyphiconColor
-      }
-    },
-    _type == "richTextSection" => {
-      content
-    }
-  }
-`;
 
 const page = await client.fetch(`*[_type == "newsletterThankYou"][0]{
   ...,

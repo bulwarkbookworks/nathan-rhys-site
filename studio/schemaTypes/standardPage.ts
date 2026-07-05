@@ -35,6 +35,8 @@ export default defineType({
       of: [
         {type: 'richTextSection'},
         {type: 'listSection'},
+        {type: 'cardsSection'},
+        {type: 'web3FormsSection'},
       ],
       group: 'content',
     }),

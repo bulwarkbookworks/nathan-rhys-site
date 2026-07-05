@@ -21,6 +21,10 @@ import siteMetadata from './siteMetadata'
 import newsletter from './newsletter'
 import newsletters from './newsletters'
 import newsletterThankYou from './newsletterThankYou'
+import thankYouPage from './thankYouPage'
+import card from './card'
+import cardsSection from './cardsSection'
 import footer from './footer'
+import web3FormsSection from './web3FormsSection'
 
-export const schemaTypes = [book, chapter, home, series, pillar, metadata, cta, navigation, link, layout, standardPage, listItem, richTextSection, listSection, artist, galleryItem, artistsPage, galleryPage, siteMetadata, newsletter, newsletters, newsletterThankYou, footer]
+export const schemaTypes = [book, chapter, home, series, pillar, metadata, cta, navigation, link, layout, standardPage, listItem, richTextSection, listSection, artist, galleryItem, artistsPage, galleryPage, siteMetadata, newsletter, newsletters, newsletterThankYou, thankYouPage, card, cardsSection, footer, web3FormsSection]

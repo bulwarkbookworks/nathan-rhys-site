@@ -58,7 +58,7 @@ const { book } = Astro.props;
 
           {book.ctas && book.ctas.length > 0 && (
             <div class="flex flex-wrap gap-4 mb-16">
-              {book.ctas.map((cta: any) => (
+              {book.ctas.filter((cta: any) => cta.label).map((cta: any) => (
                 <a 
                   href={resolveLink(cta.link)} 
                   class:list={[

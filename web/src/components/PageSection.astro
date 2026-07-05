@@ -1,6 +1,8 @@
 ---
 import { PortableText } from 'astro-portabletext';
 import { resolveLink } from '../lib/sanity';
+import CardsSection from './CardsSection.astro';
+import Web3FormsSection from './Web3FormsSection.astro';
 
 interface Props {
   section: any;
@@ -54,12 +56,20 @@ const { section } = Astro.props;
         ))}
       </div>
     )}
+
+    {section._type === 'cardsSection' && (
+      <CardsSection section={section} />
+    )}
+
+    {section._type === 'web3FormsSection' && (
+      <Web3FormsSection section={section} />
+    )}
   </div>
 
   <!-- Section CTAs -->
   {section.ctas && section.ctas.length > 0 && (
     <div class="section-ctas flex flex-wrap gap-4 mt-12">
-      {section.ctas.map((cta: any) => (
+      {section.ctas.filter((cta: any) => cta.label).map((cta: any) => (
         <a 
           href={resolveLink(cta.link)} 
           class:list={[

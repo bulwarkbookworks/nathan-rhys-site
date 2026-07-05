@@ -37,7 +37,11 @@ const footerCopyright = footer?.copyrightArea?.copyrightText || footer?.siteInfo
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
+    {layout?.faviconIcoUrl && <link rel="icon" href={layout.faviconIcoUrl} sizes="any" />}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    {layout?.favicon16 && <link rel="icon" type="image/png" sizes="16x16" href={urlFor(layout.favicon16).width(16).height(16).auto('format').url()} />}
+    {layout?.favicon32 && <link rel="icon" type="image/png" sizes="32x32" href={urlFor(layout.favicon32).width(32).height(32).auto('format').url()} />}
+    {layout?.logoAppleTouch && <link rel="apple-touch-icon" href={urlFor(layout.logoAppleTouch).width(180).height(180).auto('format').url()} />}
     <meta name="generator" content={Astro.generator} />
     {metadata?.excludeFromSitemap && <meta name="robots" content="noindex, nofollow" />}
     <title>{metadata?.metaTitle || siteMetadata?.metaTitle || title}</title>

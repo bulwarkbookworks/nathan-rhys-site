@@ -1,0 +1,49 @@
+---
+import { client, SECTION_QUERY } from '../../lib/sanity';
+import Layout from '../../layouts/Layout.astro';
+import PageSection from '../../components/PageSection.astro';
+
+export async function getStaticPaths() {
+  const pages = await client.fetch(`*[_type == "thankYouPage"]{ "slug": slug.current }`);
+  return pages.map((page: any) => ({
+    params: { slug: page.slug }
+  }));
+}
+
+const { slug } = Astro.params;
+
+const data = await client.fetch(`*[_type == "thankYouPage" && slug.current == $slug][0]{
+  ...,
+  ${SECTION_QUERY}
+}`, { slug });
+
+if (!data) {
+  return Astro.redirect('/404');
+}
+
+const metadata = {
+  metaTitle: data.metaTitle,
+  excludeFromSitemap: data.excludeFromSitemap !== false
+};
+---
+
+<Layout title={data.title} metadata={metadata}>
+  <div class="container py-24">
+    <div class="thank-you-page">
+      <header class="mb-16">
+        {data.kicker && <p class="text-accent font-bold tracking-widest uppercase text-sm mb-4">{data.kicker}</p>}
+        <h1 class="text-5xl md:text-7xl mb-4">{data.title}</h1>
+      </header>
+      
+      <div class="thank-you-page__sections space-y-12">
+        {data.sections?.map((section: any) => (
+          <PageSection section={section} />
+        ))}
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style is:global>
+  /* Thank You Page Specific Styles */
+</style>

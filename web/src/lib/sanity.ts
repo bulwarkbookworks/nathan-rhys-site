@@ -77,6 +77,7 @@ export const NAVIGATION_FIELDS = `
 export const LAYOUT_QUERY_FRAGMENT = `
   layout->{
     ...,
+    "faviconIcoUrl": faviconIco.asset->url,
     topNavigation->{
       ${NAVIGATION_FIELDS}
     }
@@ -85,6 +86,8 @@ export const LAYOUT_QUERY_FRAGMENT = `
 
 export const GLOBAL_LAYOUT_QUERY = `
   *[_id == "layout"][0]{
+    ...,
+    "faviconIcoUrl": faviconIco.asset->url,
     topNavigation->{
       ${NAVIGATION_FIELDS}
     }
@@ -123,6 +126,41 @@ export const FOOTER_QUERY = `
       copyrightText,
       publisherName,
       secondaryText
+    }
+  }
+`;
+
+export const SECTION_QUERY = `
+  sections[]{
+    ...,
+    ctas[]{
+      ...,
+      link{
+        ${LINK_OBJECT_FIELDS}
+      }
+    },
+    _type == "listSection" => {
+      items[]{
+        ...,
+        content,
+        glyphiconColor
+      }
+    },
+    _type == "richTextSection" => {
+      content
+    },
+    _type == "cardsSection" => {
+      ...,
+      cards[]{
+        ...,
+        body,
+        cta{
+          ...,
+          link{
+            ${LINK_OBJECT_FIELDS}
+          }
+        }
+      }
     }
   }
 `;
@@ -177,6 +215,8 @@ export function resolveLink(link: any): string {
       url = '/';
     } else if (doc._type === 'standardPage' && doc.slug?.current) {
       url = `/${doc.slug.current}`;
+    } else if (doc._type === 'thankYouPage' && doc.slug?.current) {
+      url = `/${doc.slug.current}/thank-you`;
     } else if (doc._type === 'series' && doc.slug?.current) {
       // Assuming series might have pages later
       url = `/series/${doc.slug.current}`;

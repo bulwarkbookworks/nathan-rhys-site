@@ -1,0 +1,128 @@
+---
+import { PortableText } from 'astro-portabletext';
+
+interface Props {
+  section: {
+    kicker?: string;
+    heading?: string;
+    content?: any;
+    submitButtonText?: string;
+    redirectPath?: string;
+  };
+}
+
+const { section } = Astro.props;
+
+const accessKey = import.meta.env.WEB3FORMS_ACCESS_KEY;
+const requireTurnstile = import.meta.env.WEB3FORMS_REQUIRE_TURNSTILE === "true";
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+const isProd = import.meta.env.PROD;
+const showWarning = !accessKey && !isProd;
+
+// Use the current URL for full redirect path if redirectPath is relative
+const baseUrl = Astro.url.origin;
+const redirectUrl = section.redirectPath 
+  ? (section.redirectPath.startsWith('http') ? section.redirectPath : `${baseUrl}${section.redirectPath}`)
+  : undefined;
+---
+
+<div class="web3forms-section max-w-2xl">
+  {showWarning && (
+    <div class="bg-rust/20 border border-rust text-text-main p-4 rounded-lg mb-8">
+      <p class="font-bold">Development Warning:</p>
+      <p><code>WEB3FORMS_ACCESS_KEY</code> is missing from your environment variables. The form will not submit correctly.</p>
+    </div>
+  )}
+
+  <div class="form-intro mb-8">
+    {section.content && (
+      <div class="rich-text-content">
+        <PortableText value={section.content} />
+      </div>
+    )}
+  </div>
+
+  <form action="https://api.web3forms.com/submit" method="POST" class="space-y-6">
+    <input type="hidden" name="access_key" value={accessKey} />
+    {redirectUrl && <input type="hidden" name="redirect" value={redirectUrl} />}
+    
+    <!-- Honeypot -->
+    <input type="checkbox" name="botcheck" class="hidden" style="display: none;" />
+
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="form-group">
+        <label for="name" class="block text-sm font-bold mb-2 uppercase tracking-wider text-secondary">Full Name</label>
+        <input 
+          type="text" 
+          name="name" 
+          id="name" 
+          required 
+          placeholder="John Doe"
+          class="w-full bg-surface-soft border border-white/10 rounded-lg px-4 py-3 text-text-main focus:outline-none focus:border-accent transition-colors"
+        />
+      </div>
+      <div class="form-group">
+        <label for="email" class="block text-sm font-bold mb-2 uppercase tracking-wider text-secondary">Email Address</label>
+        <input 
+          type="email" 
+          name="email" 
+          id="email" 
+          required 
+          placeholder="john@example.com"
+          class="w-full bg-surface-soft border border-white/10 rounded-lg px-4 py-3 text-text-main focus:outline-none focus:border-accent transition-colors"
+        />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="subject" class="block text-sm font-bold mb-2 uppercase tracking-wider text-secondary">Subject</label>
+      <input 
+        type="text" 
+        name="subject" 
+        id="subject" 
+        required 
+        placeholder="How can I help you?"
+        class="w-full bg-surface-soft border border-white/10 rounded-lg px-4 py-3 text-text-main focus:outline-none focus:border-accent transition-colors"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="message" class="block text-sm font-bold mb-2 uppercase tracking-wider text-secondary">Message</label>
+      <textarea 
+        name="message" 
+        id="message" 
+        rows="5" 
+        required 
+        placeholder="Your message here..."
+        class="w-full bg-surface-soft border border-white/10 rounded-lg px-4 py-3 text-text-main focus:outline-none focus:border-accent transition-colors"
+      ></textarea>
+    </div>
+
+    {requireTurnstile && turnstileSiteKey && (
+      <div class="form-group">
+        <div class="cf-turnstile" data-sitekey={turnstileSiteKey}></div>
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+      </div>
+    )}
+
+    <div>
+      <button 
+        type="submit" 
+        class="inline-block px-10 py-4 rounded-full font-bold bg-secondary text-background-deep hover:bg-accent transition-all cursor-pointer"
+      >
+        {section.submitButtonText || 'Send Message'}
+      </button>
+    </div>
+  </form>
+</div>
+
+<style>
+  .web3forms-section {
+    /* Additional styles if needed */
+  }
+  
+  /* Ensure form elements inherit font */
+  input, textarea, button {
+    font-family: inherit;
+  }
+</style>

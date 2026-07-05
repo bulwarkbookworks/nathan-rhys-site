@@ -1,5 +1,5 @@
 ---
-import { client, urlFor, resolveLink, getBookUrl, generateSrcset, LAYOUT_QUERY_FRAGMENT } from '../lib/sanity';
+import { client, urlFor, resolveLink, getBookUrl, generateSrcset, LAYOUT_QUERY_FRAGMENT, SECTION_QUERY } from '../lib/sanity';
 import Navigation from '../components/Navigation.astro';
 import Layout from '../layouts/Layout.astro';
 import PageSection from '../components/PageSection.astro';
@@ -43,31 +43,7 @@ const bookFields = `
 const home = await client.fetch(`*[_type == "home"][0]{
   ...,
   ${ctasField},
-  sections[]{
-    ...,
-    ctas[]{
-      ...,
-      link{
-        ...,
-        internal->{
-          ...,
-          _type == "book" => {
-            "seriesSlug": series->slug.current
-          }
-        }
-      }
-    },
-    _type == "listSection" => {
-      items[]{
-        ...,
-        content,
-        glyphiconColor
-      }
-    },
-    _type == "richTextSection" => {
-      content
-    }
-  },
+  ${SECTION_QUERY},
   featuredBook->{
     ${bookFields}
   },
@@ -157,7 +133,7 @@ const pillars = home?.brandPillars?.length ? home.brandPillars : [
         <p class="lede">{blurb}</p>
         {homeCtas.length > 0 && (
           <div class="cta-row" aria-label="Primary actions">
-            {homeCtas.map((cta: any) => (
+            {homeCtas.filter((cta: any) => cta.label).map((cta: any) => (
               <a class={`button button--${cta.style || 'primary'}`} href={cta.link}>{cta.label}</a>
             ))}
           </div>
@@ -192,7 +168,7 @@ const pillars = home?.brandPillars?.length ? home.brandPillars : [
                 {fallbackBook.blurb && <p class="book-blurb">{fallbackBook.blurb}</p>}
                 {fallbackBook.ctas?.length > 0 && (
                   <div class="cta-row cta-row--compact">
-                    {fallbackBook.ctas.map((cta: any) => (
+                    {fallbackBook.ctas.filter((cta: any) => cta.label).map((cta: any) => (
                       <a class={`button button--${cta.style || 'primary'}`} href={resolveLink(cta.link)}>{cta.label}</a>
                     ))}
                   </div>

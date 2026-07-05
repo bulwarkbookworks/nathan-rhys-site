@@ -51,6 +51,8 @@ function docToPath(doc) {
       return '/newsletters';
     case 'newsletterThankYou':
       return '/newsletters/thank-you';
+    case 'thankYouPage':
+      return doc.slug ? `/${doc.slug}/thank-you` : null;
     case 'newsletter': {
       if (!doc.slug || !doc.publishDate) return null;
       const date = new Date(doc.publishDate);
@@ -79,7 +81,7 @@ function normalizePath(input) {
 let excludedPaths = new Set();
 try {
   const excludedDocs = await sanity.fetch(
-    `*[metadata.excludeFromSitemap == true]{
+    `*[(metadata.excludeFromSitemap == true || excludeFromSitemap == true)]{
       _type,
       "slug": slug.current,
       "seriesSlug": series->slug.current,

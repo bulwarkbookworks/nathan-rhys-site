@@ -1,0 +1,69 @@
+---
+import { PortableText } from 'astro-portabletext';
+import { urlFor, resolveLink } from '../lib/sanity';
+
+interface Props {
+  card: any;
+}
+
+const { card } = Astro.props;
+---
+
+<div class="card bg-surface-soft border border-white/5 rounded-2xl p-8 flex flex-col h-full transition-all hover:border-accent/30 hover:shadow-2xl group">
+  {card.graphicType === 'icon' && card.icon && (
+    <div class="card__graphic mb-6">
+      <img 
+        src={urlFor(card.icon).width(64).height(64).url()} 
+        alt="" 
+        class="w-16 h-16 object-contain"
+      />
+    </div>
+  )}
+
+  {(card.title || (card.graphicType === 'glyphicon' && card.glyphicon)) && (
+    <div class="flex items-start gap-4 mb-4">
+      {card.graphicType === 'glyphicon' && card.glyphicon && (
+        <div class="card__graphic flex-shrink-0 mt-1">
+          <i class:list={['bi', card.glyphicon, 'text-3xl text-secondary group-hover:text-accent transition-colors']}></i>
+        </div>
+      )}
+
+      {card.title && (
+        <h3 class="card__title text-2xl font-bold text-text-main group-hover:text-secondary transition-colors">
+          {card.title}
+        </h3>
+      )}
+    </div>
+  )}
+
+  {card.body && (
+    <div class="card__body text-text-muted mb-8 flex-grow line-height-relaxed">
+      <PortableText value={card.body} />
+    </div>
+  )}
+
+  {card.cta && card.cta.label && (
+    <div class="card__cta mt-auto">
+      <a 
+        href={resolveLink(card.cta.link)} 
+        class:list={[
+          'inline-block px-6 py-2 rounded-full font-bold text-sm transition-all',
+          card.cta.style === 'primary' ? 'bg-secondary text-background-deep hover:bg-accent' : 
+          card.cta.style === 'secondary' ? 'bg-white/5 text-text-main border border-white/10 hover:border-secondary' :
+          'border border-secondary text-secondary hover:bg-secondary hover:text-background-deep'
+        ]}
+      >
+        {card.cta.label}
+      </a>
+    </div>
+  )}
+</div>
+
+<style is:global>
+  .card__body p {
+    margin-bottom: 0.75rem;
+  }
+  .card__body p:last-child {
+    margin-bottom: 0;
+  }
+</style>
