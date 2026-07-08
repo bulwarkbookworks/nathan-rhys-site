@@ -140,11 +140,13 @@ export const SECTION_QUERY = `
       }
     },
     _type == "listSection" => {
+      beforeContent,
       items[]{
         ...,
         content,
         glyphiconColor
-      }
+      },
+      afterContent
     },
     _type == "richTextSection" => {
       content
@@ -160,6 +162,12 @@ export const SECTION_QUERY = `
             ${LINK_OBJECT_FIELDS}
           }
         }
+      }
+    },
+    _type == "web3FormsSection" => {
+      ...,
+      form->{
+        ...
       }
     }
   }

@@ -1,6 +1,7 @@
 import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
+import {codeInput} from '@sanity/code-input'
 import {schemaTypes} from './schemaTypes'
 import './styles/main.scss'
 
@@ -76,6 +77,9 @@ export default defineConfig({
                   ]),
               ),
             S.documentTypeListItem('thankYouPage').title('Thank You Pages'),
+            S.divider(),
+            S.documentTypeListItem('web3Form').title('Web3Forms'),
+            S.divider(),
             // Site Configuration Group
             S.listItem()
               .title('Site Configuration')
@@ -103,6 +107,7 @@ export default defineConfig({
           ]),
     }),
     visionTool(),
+    codeInput(),
   ],
 
   schema: {

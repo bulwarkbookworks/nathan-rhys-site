@@ -26,5 +26,6 @@ import card from './card'
 import cardsSection from './cardsSection'
 import footer from './footer'
 import web3FormsSection from './web3FormsSection'
+import web3Form from './web3Form'
 
-export const schemaTypes = [book, chapter, home, series, pillar, metadata, cta, navigation, link, layout, standardPage, listItem, richTextSection, listSection, artist, galleryItem, artistsPage, galleryPage, siteMetadata, newsletter, newsletters, newsletterThankYou, thankYouPage, card, cardsSection, footer, web3FormsSection]
+export const schemaTypes = [book, chapter, home, series, pillar, metadata, cta, navigation, link, layout, standardPage, listItem, richTextSection, listSection, artist, galleryItem, artistsPage, galleryPage, siteMetadata, newsletter, newsletters, newsletterThankYou, thankYouPage, card, cardsSection, footer, web3FormsSection, web3Form]

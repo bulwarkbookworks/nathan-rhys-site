@@ -23,10 +23,24 @@ export default defineType({
       group: 'header',
     }),
     defineField({
+      name: 'beforeContent',
+      title: 'Content Before List',
+      type: 'array',
+      of: [{type: 'block'}],
+      group: 'content',
+    }),
+    defineField({
       name: 'items',
       title: 'List Items',
       type: 'array',
       of: [{type: 'listItem'}],
+      group: 'content',
+    }),
+    defineField({
+      name: 'afterContent',
+      title: 'Content After List',
+      type: 'array',
+      of: [{type: 'block'}],
       group: 'content',
     }),
     defineField({

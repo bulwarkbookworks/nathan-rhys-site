@@ -25,9 +25,12 @@ export default defineType({
     }),
     defineField({
       name: 'content',
-      title: 'Content',
-      type: 'array',
-      of: [{type: 'block'}],
+      title: 'Body Content (Code)',
+      description: 'Enter text or code to display before the form.',
+      type: 'code',
+      options: {
+        withFilename: true,
+      },
       group: 'content',
     }),
     defineField({
@@ -38,62 +41,11 @@ export default defineType({
       group: 'ctas',
     }),
     defineField({
-      name: 'submitButtonText',
-      title: 'Submit Button Text',
-      type: 'string',
-      initialValue: 'Send Message',
+      name: 'form',
+      title: 'Form',
+      type: 'reference',
+      to: [{type: 'web3Form'}],
       group: 'form',
     }),
-    defineField({
-      name: 'formType',
-      title: 'Form Type',
-      description: 'Used to select the correct API key or subject line in the code. Defaults to "contact".',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'General Contact', value: 'contact' },
-          { title: 'Support / Get Help', value: 'support' },
-        ],
-      },
-      initialValue: 'contact',
-      group: 'form',
-    }),
-    defineField({
-      name: 'redirectPath',
-      title: 'Redirect Path',
-      description: 'Optional path to redirect after submission (e.g. /thank-you)',
-      type: 'string',
-      group: 'form',
-    }),
-    defineField({
-      name: 'customFields',
-      title: 'Custom Form Fields',
-      description: 'Define specific fields for this form. If empty, the default fields (Name, Email, Subject, Message) will be used.',
-      type: 'array',
-      group: 'form',
-      of: [{
-        type: 'object',
-        fields: [
-          { name: 'label', type: 'string', title: 'Label' },
-          { name: 'name', type: 'string', title: 'Field Name (e.g., "order_number")' },
-          { 
-            name: 'type', 
-            type: 'string', 
-            title: 'Type',
-            options: { list: ['text', 'email', 'textarea', 'tel', 'number'] },
-            initialValue: 'text'
-          },
-          { name: 'placeholder', type: 'string', title: 'Placeholder' },
-          { name: 'required', type: 'boolean', title: 'Required', initialValue: true },
-          { 
-            name: 'width', 
-            type: 'string', 
-            title: 'Width',
-            options: { list: ['full', 'half'] },
-            initialValue: 'full'
-          },
-        ]
-      }]
-    })
   ],
 })
