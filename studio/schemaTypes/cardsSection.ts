@@ -30,6 +30,7 @@ export default defineType({
         list: [
           {title: '2 Columns', value: '2'},
           {title: '3 Columns', value: '3'},
+          {title: '4 Columns', value: '4'},
         ],
         layout: 'radio',
       },
@@ -37,10 +38,24 @@ export default defineType({
       group: 'settings',
     }),
     defineField({
+      name: 'beforeContent',
+      title: 'Before Cards Content',
+      type: 'array',
+      of: [{type: 'block'}],
+      group: 'content',
+    }),
+    defineField({
       name: 'cards',
       title: 'Cards',
       type: 'array',
       of: [{type: 'card'}],
+      group: 'content',
+    }),
+    defineField({
+      name: 'afterContent',
+      title: 'After Cards Content',
+      type: 'array',
+      of: [{type: 'block'}],
       group: 'content',
     }),
   ],

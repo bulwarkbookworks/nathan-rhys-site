@@ -1,4 +1,5 @@
 ---
+import { PortableText } from 'astro-portabletext';
 import Card from './Card.astro';
 
 interface Props {
@@ -9,11 +10,27 @@ const { section } = Astro.props;
 const columns = section.columns || '3';
 ---
 
-<div class:list={[
-  'cards-grid grid gap-8',
-  columns === '2' ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3'
-]}>
-  {section.cards?.map((card: any) => (
-    <Card card={card} />
-  ))}
+<div class="cards-section-wrapper">
+  {section.beforeContent && (
+    <div class="rich-text-content mb-10">
+      <PortableText value={section.beforeContent} />
+    </div>
+  )}
+
+  <div class:list={[
+    'cards-grid grid gap-8',
+    columns === '2' ? 'md:grid-cols-2' : 
+    columns === '4' ? 'md:grid-cols-2 lg:grid-cols-4' : 
+    'md:grid-cols-2 lg:grid-cols-3'
+  ]}>
+    {section.cards?.map((card: any) => (
+      <Card card={card} />
+    ))}
+  </div>
+
+  {section.afterContent && (
+    <div class="rich-text-content mt-10">
+      <PortableText value={section.afterContent} />
+    </div>
+  )}
 </div>
