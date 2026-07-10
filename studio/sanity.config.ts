@@ -79,6 +79,7 @@ export default defineConfig({
             S.documentTypeListItem('thankYouPage').title('Thank You Pages'),
             S.divider(),
             S.documentTypeListItem('web3Form').title('Web3Forms'),
+            S.documentTypeListItem('mailerliteForm').title('MailerLite Forms'),
             S.divider(),
             // Site Configuration Group
             S.listItem()

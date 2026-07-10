@@ -47,7 +47,7 @@ export default defineType({
       name: 'ctas',
       title: 'CTAs',
       type: 'array',
-      of: [{type: 'cta'}],
+      of: [{type: 'cta'}, {type: 'mailerliteCTA'}],
       group: 'ctas',
     }),
   ],

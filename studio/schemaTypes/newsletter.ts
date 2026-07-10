@@ -65,6 +65,7 @@ export default defineType({
         {type: 'listSection'},
         {type: 'cardsSection'},
         {type: 'web3FormsSection'},
+        {type: 'mailerliteSection'},
       ],
       group: 'content',
     }),

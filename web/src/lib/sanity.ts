@@ -137,6 +137,11 @@ export const SECTION_QUERY = `
       ...,
       link{
         ${LINK_OBJECT_FIELDS}
+      },
+      _type == "mailerliteCTA" => {
+        form->{
+          ...
+        }
       }
     },
     _type == "listSection" => {
@@ -165,6 +170,12 @@ export const SECTION_QUERY = `
       }
     },
     _type == "web3FormsSection" => {
+      ...,
+      form->{
+        ...
+      }
+    },
+    _type == "mailerliteSection" => {
       ...,
       form->{
         ...

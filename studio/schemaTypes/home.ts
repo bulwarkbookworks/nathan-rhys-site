@@ -50,7 +50,7 @@ export default defineType({
       name: 'ctas',
       title: 'Calls to Action',
       type: 'array',
-      of: [{type: 'cta'}],
+      of: [{type: 'cta'}, {type: 'mailerliteCTA'}],
       group: 'content',
     }),
     defineField({
@@ -99,6 +99,7 @@ export default defineType({
         {type: 'listSection'},
         {type: 'cardsSection'},
         {type: 'web3FormsSection'},
+        {type: 'mailerliteSection'},
       ],
       group: 'content',
     }),
