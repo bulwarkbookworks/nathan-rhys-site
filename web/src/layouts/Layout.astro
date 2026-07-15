@@ -78,7 +78,7 @@ const footerCopyright = footer?.copyrightArea?.copyrightText || footer?.siteInfo
     <slot name="head" />
   </head>
   <body>
-    {showTopNav && <Navigation items={navItems} variant="top" />}
+    {showTopNav && <Navigation items={navItems} variant="top" logo={layout?.logoOriginal} />}
     <main class="site-main">
       {displayLastUpdated && updatedAt && (
         <div class="container last-updated-container">

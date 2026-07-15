@@ -88,6 +88,9 @@ const eyebrow = home?.eyebrow || 'Nathan Rhys';
 const tagline = home?.tagline || 'Fantasy where meaning has weight.';
 const blurb = home?.blurb || 'Modern fantasy about hidden beauty, costly courage, and the burden of protecting what is good.';
 
+const layout = await client.fetch(`*[_id == "layout"][0]{ logoOriginal }`);
+const logo = layout?.logoOriginal;
+
 const navItems = navigation?.items?.length ? navigation.items : [
   { label: 'Home', link: '/' },
   { label: 'Books', link: '#featured-book' },
@@ -149,7 +152,7 @@ const hasMailerlite = home?.sections?.some((s: any) =>
       </div>
     </header>
 
-    <Navigation items={navItems} variant="home" />
+    <Navigation items={navItems} variant="home" logo={logo} />
 
     <div class="site-content">
       {fallbackBook && (

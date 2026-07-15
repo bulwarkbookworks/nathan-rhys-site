@@ -1,24 +1,69 @@
 ---
-import { resolveLink } from '../lib/sanity';
+import { resolveLink, urlFor } from '../lib/sanity';
 
 interface Props {
   items: Array<{ label: string; link: any }>;
   variant?: 'home' | 'top';
+  logo?: any;
 }
 
-const { items, variant = 'top' } = Astro.props;
+const { items, variant = 'top', logo } = Astro.props;
 ---
 
 <nav class={`site-nav site-nav--${variant}`}>
-  <div class="container">
-    <ul class="site-nav__list">
-      {items.map((item) => (
-        <li class="site-nav__item">
-          <a href={resolveLink(item.link)} class="site-nav__link">
-            {item.label}
-          </a>
-        </li>
-      ))}
-    </ul>
+  <div class="container site-nav__container">
+    <div class="site-nav__brand">
+      <a href="/" class="site-nav__logo-link">
+        {logo ? (
+          <img 
+            src={urlFor(logo).height(80).auto('format').url()} 
+            alt="Logo" 
+            class="site-nav__logo"
+          />
+        ) : (
+          <span class="site-nav__logo-text">Nathan Rhys</span>
+        )}
+      </a>
+    </div>
+
+    <button class="site-nav__toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span class="site-nav__toggle-box">
+        <span class="site-nav__toggle-inner"></span>
+      </span>
+    </button>
+
+    <div class="site-nav__menu">
+      <ul class="site-nav__list">
+        {items.map((item) => (
+          <li class="site-nav__item">
+            <a href={resolveLink(item.link)} class="site-nav__link">
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
   </div>
 </nav>
+
+<script>
+  function initNav() {
+    const toggle = document.querySelector('.site-nav__toggle');
+    const menu = document.querySelector('.site-nav__menu');
+    
+    if (toggle && menu) {
+      toggle.addEventListener('click', () => {
+        const expanded = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', (!expanded).toString());
+        menu.classList.toggle('is-active');
+        document.body.classList.toggle('nav-open');
+      });
+    }
+  }
+
+  // Run on initial load
+  initNav();
+
+  // Run on view transitions if enabled
+  document.addEventListener('astro:after-swap', initNav);
+</script>
