@@ -13,7 +13,7 @@ interface Props {
 const { section } = Astro.props;
 ---
 
-<section class="page-section">
+<section class:list={["page-section", section.cssClasses]}>
   <!-- Section Header -->
   <div class="section-header mb-10">
     {section.kicker && <p class="section-kicker">{section.kicker}</p>}
@@ -36,32 +36,42 @@ const { section } = Astro.props;
           </div>
         )}
 
-        {section.items?.map((item: any) => (
-          <div class="list-item">
-            <div class="list-item__header flex items-baseline gap-4 mb-3">
-              {item.glyphicon && (
-                <i class:list={[
-                  'bi', 
-                  item.glyphicon, 
-                  'text-2xl',
-                  item.glyphiconColor === 'red' && 'text-red-500',
-                  item.glyphiconColor === 'blue' && 'text-blue-500',
-                  item.glyphiconColor === 'green' && 'text-green-500',
-                  item.glyphiconColor === 'yellow' && 'text-yellow-500',
-                  item.glyphiconColor === 'purple' && 'text-purple-500',
-                  item.glyphiconColor === 'orange' && 'text-orange-500',
-                  (!item.glyphiconColor || ['secondary', 'accent', 'rust', 'text-main', 'text-muted'].includes(item.glyphiconColor)) && `text-${item.glyphiconColor || 'secondary'}`
-                ]}></i>
-              )}
-              <h3 class="font-bold text-2xl m-0 text-text-main">{item.heading}</h3>
-            </div>
-            {item.content && (
-              <div class="list-item__content pl-10 opacity-90">
-                 <PortableText value={item.content} />
+        <div class:list={[
+          section.columns === '2' && "grid md:grid-cols-2 gap-x-12 gap-y-8",
+          section.columns === '3' && "grid md:grid-cols-3 gap-x-8 gap-y-8",
+          section.columns === '4' && "grid md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-6",
+          (!section.columns || section.columns === '1') && "space-y-6"
+        ]}>
+          {section.items?.map((item: any) => (
+            <div class="list-item">
+              <div class="list-item__header flex items-baseline gap-4 mb-3">
+                {item.glyphicon && (
+                  <i class:list={[
+                    'bi', 
+                    item.glyphicon, 
+                    section.style === 'small' ? 'text-lg' : 'text-2xl',
+                    item.glyphiconColor === 'red' && 'text-red-500',
+                    item.glyphiconColor === 'blue' && 'text-blue-500',
+                    item.glyphiconColor === 'green' && 'text-green-500',
+                    item.glyphiconColor === 'yellow' && 'text-yellow-500',
+                    item.glyphiconColor === 'purple' && 'text-purple-500',
+                    item.glyphiconColor === 'orange' && 'text-orange-500',
+                    (!item.glyphiconColor || ['secondary', 'accent', 'rust', 'text-main', 'text-muted'].includes(item.glyphiconColor)) && `text-${item.glyphiconColor || 'secondary'}`
+                  ]}></i>
+                )}
+                <h3 class:list={[
+                  "font-bold m-0 text-text-main",
+                  section.style === 'small' ? "text-lg" : "text-2xl"
+                ]}>{item.heading}</h3>
               </div>
-            )}
-          </div>
-        ))}
+              {item.content && section.style !== 'small' && (
+                <div class="list-item__content pl-10 opacity-90">
+                   <PortableText value={item.content} />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
 
         {section.afterContent && (
           <div class="rich-text-content mt-10">

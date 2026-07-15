@@ -1,7 +1,8 @@
 ---
-import { client, LAYOUT_QUERY_FRAGMENT, SECTION_QUERY } from '../../lib/sanity';
+import { client, LAYOUT_QUERY_FRAGMENT, SECTION_QUERY, NEWSLETTERS_SLUG } from '../../lib/sanity';
 import Layout from '../../layouts/Layout.astro';
 import PageSection from '../../components/PageSection.astro';
+import MailerliteUniversal from '../../components/MailerliteUniversal.astro';
 
 export async function getStaticPaths({ paginate }: any) {
   const newsletters = await client.fetch(`*[_type == "newsletter"] | order(publishDate desc) {
@@ -12,15 +13,24 @@ export async function getStaticPaths({ paginate }: any) {
     kicker
   }`);
 
-  return paginate(newsletters, { pageSize: 10 });
+  return paginate(newsletters, { 
+    params: { newslettersSlug: NEWSLETTERS_SLUG },
+    pageSize: 10 
+  });
 }
 
 const { page } = Astro.props;
+const { newslettersSlug } = Astro.params;
 
 const newslettersPage = await client.fetch(`*[_type == "newsletters"][0]{
   ...,
   ${SECTION_QUERY}
 }`);
+
+const hasMailerlite = newslettersPage?.sections?.some((s: any) => 
+  s._type === 'mailerliteSection' || 
+  s.ctas?.some((c: any) => c._type === 'mailerliteCTA')
+);
 
 const title = newslettersPage?.title || 'Newsletters';
 const heading = newslettersPage?.heading || title;
@@ -29,6 +39,7 @@ const metadata = newslettersPage?.metadata;
 ---
 
 <Layout title={title} metadata={metadata} displayLastUpdated={newslettersPage?.displayLastUpdated} updatedAt={newslettersPage?._updatedAt}>
+  {hasMailerlite && <MailerliteUniversal slot="head" />}
   <div class="container py-24">
     <div class="standard-page">
       <header class="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-8">
@@ -52,7 +63,7 @@ const metadata = newslettersPage?.metadata;
            const date = new Date(newsletter.publishDate);
            const year = date.getFullYear();
            const month = String(date.getMonth() + 1).padStart(2, '0');
-           const href = `/newsletters/${year}/${month}/${newsletter.slug}`;
+           const href = `/${newslettersSlug}/${year}/${month}/${newsletter.slug}`;
            
            return (
              <article class="border-b border-white/10 pb-12 last:border-0">

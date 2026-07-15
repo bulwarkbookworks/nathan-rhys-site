@@ -11,6 +11,12 @@ export default defineType({
   ],
   fields: [
     defineField({
+      name: 'internalLabel',
+      title: 'Internal Label',
+      type: 'string',
+      description: 'Used for identification in the list of sections. Not displayed on the website.',
+    }),
+    defineField({
       name: 'kicker',
       title: 'Kicker',
       type: 'string',
@@ -49,5 +55,24 @@ export default defineType({
       initialValue: 'center',
       group: 'settings',
     }),
+    defineField({
+      name: 'cssClasses',
+      title: 'CSS Classes',
+      type: 'string',
+      description: 'Additional CSS classes to add to the section tag.',
+      group: 'settings',
+    }),
   ],
+  preview: {
+    select: {
+      title: 'heading',
+      internalLabel: 'internalLabel',
+    },
+    prepare({title, internalLabel}) {
+      return {
+        title: internalLabel || title || 'MailerLite Section',
+        subtitle: internalLabel ? (title ? `MailerLite Section: ${title}` : 'MailerLite Section') : 'MailerLite Section',
+      }
+    },
+  },
 })

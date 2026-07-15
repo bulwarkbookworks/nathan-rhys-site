@@ -3,11 +3,18 @@ import Layout from '../layouts/Layout.astro';
 import { urlFor, resolveLink } from '../lib/sanity';
 import { PortableText } from 'astro-portabletext';
 import PageSection from './PageSection.astro';
+import MailerliteUniversal from './MailerliteUniversal.astro';
 
 const { book } = Astro.props;
+
+const hasMailerlite = book.sections?.some((s: any) => 
+  s._type === 'mailerliteSection' || 
+  s.ctas?.some((c: any) => c._type === 'mailerliteCTA')
+) || book.ctas?.some((c: any) => c._type === 'mailerliteCTA');
 ---
 
 <Layout title={book.title} metadata={book.metadata} displayLastUpdated={book.displayLastUpdated} updatedAt={book._updatedAt}>
+  {hasMailerlite && <MailerliteUniversal slot="head" />}
   <div class="container py-24">
     <div class="book-page">
       <div class="grid md:grid-cols-12 gap-12 lg:gap-20 items-start">

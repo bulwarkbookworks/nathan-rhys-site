@@ -20,12 +20,6 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'accountId',
-      title: 'Account ID',
-      type: 'string',
-      description: 'The MailerLite Account ID (optional if set in env vars).',
-    }),
-    defineField({
       name: 'description',
       title: 'Description',
       type: 'text',

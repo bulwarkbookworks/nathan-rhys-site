@@ -75,6 +75,7 @@ const footerCopyright = footer?.copyrightArea?.copyrightText || footer?.siteInfo
         margin-bottom: 0;
       }
     </style>
+    <slot name="head" />
   </head>
   <body>
     {showTopNav && <Navigation items={navItems} variant="top" />}

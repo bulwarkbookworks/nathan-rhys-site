@@ -9,8 +9,15 @@ export default defineType({
     { name: 'content', title: 'Content' },
     { name: 'ctas', title: 'CTAs' },
     { name: 'form', title: 'Form Settings' },
+    { name: 'settings', title: 'Settings' },
   ],
   fields: [
+    defineField({
+      name: 'internalLabel',
+      title: 'Internal Label',
+      type: 'string',
+      description: 'Used for identification in the list of sections. Not displayed on the website.',
+    }),
     defineField({
       name: 'kicker',
       title: 'Kicker',
@@ -47,5 +54,24 @@ export default defineType({
       to: [{type: 'web3Form'}],
       group: 'form',
     }),
+    defineField({
+      name: 'cssClasses',
+      title: 'CSS Classes',
+      type: 'string',
+      description: 'Additional CSS classes to add to the section tag.',
+      group: 'settings',
+    }),
   ],
+  preview: {
+    select: {
+      title: 'heading',
+      internalLabel: 'internalLabel',
+    },
+    prepare({title, internalLabel}) {
+      return {
+        title: internalLabel || title || 'Web3Forms Section',
+        subtitle: internalLabel ? (title ? `Web3Forms Section: ${title}` : 'Web3Forms Section') : 'Web3Forms Section',
+      }
+    },
+  },
 })

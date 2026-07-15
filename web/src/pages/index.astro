@@ -3,6 +3,7 @@ import { client, urlFor, resolveLink, getBookUrl, generateSrcset, LAYOUT_QUERY_F
 import Navigation from '../components/Navigation.astro';
 import Layout from '../layouts/Layout.astro';
 import PageSection from '../components/PageSection.astro';
+import MailerliteUniversal from '../components/MailerliteUniversal.astro';
 
 const linkField = `
   link {
@@ -105,6 +106,12 @@ const pillars = home?.brandPillars?.length ? home.brandPillars : [
   { title: 'Courage under burden', body: 'The strongest characters are not untouched by fear; they choose anyway.' },
   { title: 'Hope with teeth', body: 'The darkness is real, but it does not get the final word.' },
 ];
+
+const hasMailerlite = home?.sections?.some((s: any) => 
+  s._type === 'mailerliteSection' || 
+  s.ctas?.some((c: any) => c._type === 'mailerliteCTA')
+) || home?.featuredBook?.ctas?.some((c: any) => c._type === 'mailerliteCTA')
+  || home?.series?.some((ser: any) => ser.books?.some((b: any) => b.ctas?.some((c: any) => c._type === 'mailerliteCTA')));
 ---
 
 <Layout 
@@ -112,6 +119,7 @@ const pillars = home?.brandPillars?.length ? home.brandPillars : [
   metadata={home?.metadata} 
   showTopNav={false}
 >
+    {hasMailerlite && <MailerliteUniversal slot="head" />}
     <header class="site-hero">
       {home?.heroImage && (
         <picture class="site-hero__media" aria-hidden="true">

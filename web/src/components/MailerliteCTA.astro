@@ -4,7 +4,6 @@ interface Props {
     label: string;
     form?: {
       formId: string;
-      accountId?: string;
     };
     style?: 'primary' | 'secondary' | 'ghost';
   };
@@ -12,7 +11,6 @@ interface Props {
 
 const { cta } = Astro.props;
 const form = cta.form;
-const accountId = form?.accountId || import.meta.env.PUBLIC_MAILERLITE_ACCOUNT_ID;
 
 const styleClasses = {
   primary: 'bg-secondary text-background-deep hover:bg-accent',
@@ -26,7 +24,6 @@ const currentStyle = cta.style || 'primary';
 {form && (
   <button 
     data-ml-form={form.formId}
-    data-ml-account={accountId}
     class:list={[
       "mailerlite-cta inline-block px-10 py-4 rounded-full font-bold transition-all cursor-pointer",
       styleClasses[currentStyle]
@@ -40,18 +37,8 @@ const currentStyle = cta.style || 'primary';
   function setupMailerLiteCTA(button: HTMLButtonElement) {
     button.addEventListener('click', () => {
       const formId = button.getAttribute('data-ml-form');
-      const accountId = button.getAttribute('data-ml-account');
       
       if (typeof window !== 'undefined' && (window as any).ml && formId) {
-        (window as any).ml('show', formId, true);
-      } else if (accountId && formId) {
-        // If ml is not loaded yet, try to load it and then show
-        (function(w: any,d,e,u,f,l: any,n: any){w[f]=w[f]||function(){(w[f].q=w[f].q||[])
-        .push(arguments);},l=d.createElement(e),l.async=1,l.src=u,
-        n=d.getElementsByTagName(e)[0],n.parentNode.insertBefore(l,n);})
-        (window,document,'script','https://assets.mailerlite.com/js/universal.js','ml');
-        
-        (window as any).ml('account', accountId);
         (window as any).ml('show', formId, true);
       }
     });

@@ -8,6 +8,10 @@ export const client = createClient({
   apiVersion: "2024-03-12", // use current date (YYYY-MM-DD) to target the latest API version
 });
 
+// Fetch newsletters slug once for link resolution
+const newslettersData = await client.fetch(`*[_type == "newsletters"][0]{ "slug": slug.current }`).catch(() => null);
+export const NEWSLETTERS_SLUG = newslettersData?.slug || 'newsletters';
+
 /**
  * Constructs an image URL builder instance for generating image URLs based on the provided client configuration.
  *
@@ -133,6 +137,7 @@ export const FOOTER_QUERY = `
 export const SECTION_QUERY = `
   sections[]{
     ...,
+    cssClasses,
     ctas[]{
       ...,
       link{
@@ -145,6 +150,8 @@ export const SECTION_QUERY = `
       }
     },
     _type == "listSection" => {
+      style,
+      columns,
       beforeContent,
       items[]{
         ...,
@@ -246,14 +253,14 @@ export function resolveLink(link: any): string {
     } else if (doc._type === 'galleryPage') {
       url = `/gallery`;
     } else if (doc._type === 'newsletters') {
-      url = `/newsletters`;
+      url = `/${NEWSLETTERS_SLUG}`;
     } else if (doc._type === 'newsletterThankYou') {
-      url = `/newsletters/thank-you`;
+      url = `/${NEWSLETTERS_SLUG}/thank-you`;
     } else if (doc._type === 'newsletter') {
       const date = new Date(doc.publishDate);
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
-      url = `/newsletters/${year}/${month}/${doc.slug?.current || doc.slug}`;
+      url = `/${NEWSLETTERS_SLUG}/${year}/${month}/${doc.slug?.current || doc.slug}`;
     } else if (doc._type === 'galleryItem' && doc.slug?.current) {
       url = `/gallery/${doc.slug.current}`;
     } else if (doc._type === 'chapter' && doc.slug?.current) {

@@ -2,6 +2,7 @@
 import { client, SECTION_QUERY } from '../../lib/sanity';
 import Layout from '../../layouts/Layout.astro';
 import PageSection from '../../components/PageSection.astro';
+import MailerliteUniversal from '../../components/MailerliteUniversal.astro';
 
 export async function getStaticPaths() {
   const pages = await client.fetch(`*[_type == "thankYouPage"]{ "slug": slug.current }`);
@@ -25,9 +26,15 @@ const metadata = {
   metaTitle: data.metaTitle,
   excludeFromSitemap: data.excludeFromSitemap !== false
 };
+
+const hasMailerlite = data.sections?.some((s: any) => 
+  s._type === 'mailerliteSection' || 
+  s.ctas?.some((c: any) => c._type === 'mailerliteCTA')
+);
 ---
 
 <Layout title={data.title} metadata={metadata}>
+  {hasMailerlite && <MailerliteUniversal slot="head" />}
   <div class="container py-24">
     <div class="thank-you-page">
       <header class="mb-16">

@@ -2,11 +2,18 @@
 import Layout from '../layouts/Layout.astro';
 import { PortableText } from 'astro-portabletext';
 import PageSection from './PageSection.astro';
+import MailerliteUniversal from './MailerliteUniversal.astro';
 
 const { page } = Astro.props;
+
+const hasMailerlite = page.sections?.some((s: any) => 
+  s._type === 'mailerliteSection' || 
+  s.ctas?.some((c: any) => c._type === 'mailerliteCTA')
+);
 ---
 
 <Layout title={page.title} metadata={page.metadata} displayLastUpdated={page.displayLastUpdated} updatedAt={page._updatedAt}>
+  {hasMailerlite && <MailerliteUniversal slot="head" />}
   <div class="container py-24">
     <div class="standard-page">
       <header class="mb-16">

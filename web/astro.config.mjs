@@ -31,6 +31,21 @@ const sanity = createClient({
   token: process.env.SANITY_API_TOKEN || env.SANITY_API_TOKEN,
 });
 
+// Normalize a path or full URL to a leading-slash, no-trailing-slash pathname for comparison.
+function normalizePath(input) {
+  let path = input;
+  try {
+    path = new URL(input).pathname;
+  } catch {
+    // already a pathname
+  }
+  if (path.length > 1 && path.endsWith('/')) path = path.slice(0, -1);
+  return path || '/';
+}
+
+// Fetch newsletters slug for sitemap generation
+const newslettersSlug = await sanity.fetch(`*[_type == "newsletters"][0].slug.current`).catch(() => 'newsletters') || 'newsletters';
+
 // Map a Sanity document to the same route its page uses (mirrors resolveLink in src/lib/sanity.ts).
 function docToPath(doc) {
   switch (doc._type) {
@@ -48,9 +63,9 @@ function docToPath(doc) {
     case 'galleryPage':
       return '/gallery';
     case 'newsletters':
-      return '/newsletters';
+      return `/${newslettersSlug}`;
     case 'newsletterThankYou':
-      return '/newsletters/thank-you';
+      return `/${newslettersSlug}/thank-you`;
     case 'thankYouPage':
       return doc.slug ? `/${doc.slug}/thank-you` : null;
     case 'newsletter': {
@@ -58,23 +73,11 @@ function docToPath(doc) {
       const date = new Date(doc.publishDate);
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
-      return `/newsletters/${year}/${month}/${doc.slug}`;
+      return `/${newslettersSlug}/${year}/${month}/${doc.slug}`;
     }
     default:
       return null; // siteMetadata and any non-page types have no URL
   }
-}
-
-// Normalize a path or full URL to a leading-slash, no-trailing-slash pathname for comparison.
-function normalizePath(input) {
-  let path = input;
-  try {
-    path = new URL(input).pathname;
-  } catch {
-    // already a pathname
-  }
-  if (path.length > 1 && path.endsWith('/')) path = path.slice(0, -1);
-  return path || '/';
 }
 
 // Build the set of excluded pathnames from Sanity. Failures never break the build.

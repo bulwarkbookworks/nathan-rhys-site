@@ -1,7 +1,14 @@
 ---
-import { client, LAYOUT_QUERY_FRAGMENT, SECTION_QUERY } from '../../lib/sanity';
+import { client, LAYOUT_QUERY_FRAGMENT, SECTION_QUERY, NEWSLETTERS_SLUG } from '../../lib/sanity';
 import Layout from '../../layouts/Layout.astro';
 import PageSection from '../../components/PageSection.astro';
+import MailerliteUniversal from '../../components/MailerliteUniversal.astro';
+
+export async function getStaticPaths() {
+  return [
+    { params: { newslettersSlug: NEWSLETTERS_SLUG } }
+  ];
+}
 
 const page = await client.fetch(`*[_type == "newsletterThankYou"][0]{
   ...,
@@ -11,6 +18,11 @@ const page = await client.fetch(`*[_type == "newsletterThankYou"][0]{
 if (!page) {
   return Astro.redirect('/404');
 }
+
+const hasMailerlite = page.sections?.some((s: any) => 
+  s._type === 'mailerliteSection' || 
+  s.ctas?.some((c: any) => c._type === 'mailerliteCTA')
+);
 
 const title = page.title || 'Thank You';
 const heading = page.heading || title;
@@ -22,6 +34,7 @@ const metadata = {
 ---
 
 <Layout title={title} metadata={metadata} displayLastUpdated={page?.displayLastUpdated} updatedAt={page?._updatedAt}>
+  {hasMailerlite && <MailerliteUniversal slot="head" />}
   <div class="container py-24">
     <div class="standard-page">
       <header class="mb-16">
