@@ -29,6 +29,13 @@ export default defineType({
       group: 'content',
     }),
     defineField({
+      name: 'mainClass',
+      title: 'Main CSS Class',
+      type: 'string',
+      description: 'CSS class to be added to the <main> tag of the page.',
+      group: 'content',
+    }),
+    defineField({
       name: 'sections',
       title: 'Sections',
       type: 'array',

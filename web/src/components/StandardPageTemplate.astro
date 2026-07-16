@@ -12,7 +12,7 @@ const hasMailerlite = page.sections?.some((s: any) =>
 );
 ---
 
-<Layout title={page.title} metadata={page.metadata} displayLastUpdated={page.displayLastUpdated} updatedAt={page._updatedAt}>
+<Layout title={page.title} metadata={page.metadata} displayLastUpdated={page.displayLastUpdated} updatedAt={page._updatedAt} mainClass={page.mainClass}>
   {hasMailerlite && <MailerliteUniversal slot="head" />}
   <div class="container py-24">
     <div class="standard-page">

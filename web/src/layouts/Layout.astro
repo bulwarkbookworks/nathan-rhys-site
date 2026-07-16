@@ -10,9 +10,10 @@ interface Props {
   showTopNav?: boolean;
   displayLastUpdated?: boolean;
   updatedAt?: string;
+  mainClass?: string;
 }
 
-const { title, metadata, showTopNav = true, displayLastUpdated, updatedAt } = Astro.props;
+const { title, metadata, showTopNav = true, displayLastUpdated, updatedAt, mainClass } = Astro.props;
 
 const siteMetadata = await client.fetch(`*[_type == "siteMetadata"][0].metadata`);
 
@@ -79,7 +80,7 @@ const footerCopyright = footer?.copyrightArea?.copyrightText || footer?.siteInfo
   </head>
   <body>
     {showTopNav && <Navigation items={navItems} variant="top" logo={layout?.logoOriginal} />}
-    <main class="site-main">
+    <main class:list={["site-main", mainClass]}>
       {displayLastUpdated && updatedAt && (
         <div class="container last-updated-container">
           <p class="last-updated">
