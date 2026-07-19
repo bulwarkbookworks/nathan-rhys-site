@@ -1,5 +1,6 @@
 ---
 import { client, urlFor, resolveLink, getBookUrl, generateSrcset, LAYOUT_QUERY_FRAGMENT, SECTION_QUERY } from '../lib/sanity';
+import { PortableText } from 'astro-portabletext';
 import Navigation from '../components/Navigation.astro';
 import Layout from '../layouts/Layout.astro';
 import PageSection from '../components/PageSection.astro';
@@ -141,7 +142,9 @@ const hasMailerlite = home?.sections?.some((s: any) =>
       <div class="container site-hero__content">
         <p class="eyebrow">{eyebrow}</p>
         <h1>{tagline}</h1>
-        <p class="lede">{blurb}</p>
+        <div class="lede">
+          {Array.isArray(blurb) ? <PortableText value={blurb} /> : <p>{blurb}</p>}
+        </div>
         {homeCtas.length > 0 && (
           <div class="cta-row" aria-label="Primary actions">
             {homeCtas.filter((cta: any) => cta.label).map((cta: any) => (
@@ -176,7 +179,11 @@ const hasMailerlite = home?.sections?.some((s: any) =>
                 <h2>{fallbackBook.title}</h2>
                 {fallbackBook.subtitle && <p class="book-subtitle">{fallbackBook.subtitle}</p>}
                 {formatRelease(fallbackBook) && <p class="release-note">{formatRelease(fallbackBook)}</p>}
-                {fallbackBook.blurb && <p class="book-blurb">{fallbackBook.blurb}</p>}
+                {fallbackBook.blurb && (
+                  <div class="book-blurb">
+                    {Array.isArray(fallbackBook.blurb) ? <PortableText value={fallbackBook.blurb} /> : <p>{fallbackBook.blurb}</p>}
+                  </div>
+                )}
                 {fallbackBook.ctas?.length > 0 && (
                   <div class="cta-row cta-row--compact">
                     {fallbackBook.ctas.filter((cta: any) => cta.label).map((cta: any) => (

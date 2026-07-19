@@ -33,8 +33,8 @@ export default defineType({
     defineField({
       name: 'blurb',
       title: 'Hero Blurb',
-      type: 'text',
-      rows: 3,
+      type: 'array',
+      of: [{type: 'block'}],
       group: 'content',
     }),
     defineField({

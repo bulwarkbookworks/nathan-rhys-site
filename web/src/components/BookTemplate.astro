@@ -58,7 +58,11 @@ const hasMailerlite = book.sections?.some((s: any) =>
           <div class="book-blurb mb-12">
             {book.blurb && (
               <div class="book-blurb-content text-text-muted font-serif leading-relaxed text-xl space-y-6">
-                {book.blurb.split('\n').map((para: string) => para && <p>{para}</p>)}
+                {Array.isArray(book.blurb) ? (
+                  <PortableText value={book.blurb} />
+                ) : (
+                  book.blurb.split('\n').map((para: string) => para && <p>{para}</p>)
+                )}
               </div>
             )}
           </div>

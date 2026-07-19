@@ -1,5 +1,6 @@
 ---
 import { urlFor } from '../lib/sanity';
+import { PortableText } from 'astro-portabletext';
 
 interface Props {
   tools: any[];
@@ -29,19 +30,39 @@ const { tools } = Astro.props;
       </div>
       
       <div class="tool-card__body">
-        {tool.shortDescription && <p class="tool-card__description">{tool.shortDescription}</p>}
+        {tool.shortDescription && (
+          <div class="tool-card__description">
+            {Array.isArray(tool.shortDescription) ? (
+              <PortableText value={tool.shortDescription} />
+            ) : (
+              <p>{tool.shortDescription}</p>
+            )}
+          </div>
+        )}
         
         <div class="tool-card__rationale">
           {tool.problemSolved && (
             <div class="tool-card__rationale-item">
               <span class="tool-card__rationale-label">Problem Solved</span>
-              <p class="tool-card__rationale-text">{tool.problemSolved}</p>
+              <div class="tool-card__rationale-text">
+                {Array.isArray(tool.problemSolved) ? (
+                  <PortableText value={tool.problemSolved} />
+                ) : (
+                  <p>{tool.problemSolved}</p>
+                )}
+              </div>
             </div>
           )}
           {tool.whyIChoseThisTool && (
             <div class="tool-card__rationale-item">
               <span class="tool-card__rationale-label">Why I chose it</span>
-              <p class="tool-card__rationale-text">{tool.whyIChoseThisTool}</p>
+              <div class="tool-card__rationale-text">
+                {Array.isArray(tool.whyIChoseThisTool) ? (
+                  <PortableText value={tool.whyIChoseThisTool} />
+                ) : (
+                  <p>{tool.whyIChoseThisTool}</p>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -53,7 +74,11 @@ const { tools } = Astro.props;
               <i class="bi bi-chevron-down" aria-hidden="true"></i>
             </summary>
             <div class="tool-card__alternatives-content">
-              <p>{tool.alternatives}</p>
+              {Array.isArray(tool.alternatives) ? (
+                <PortableText value={tool.alternatives} />
+              ) : (
+                <p>{tool.alternatives}</p>
+              )}
             </div>
           </details>
         )}

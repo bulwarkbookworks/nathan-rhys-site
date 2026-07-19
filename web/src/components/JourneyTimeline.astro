@@ -27,7 +27,15 @@ const { steps } = Astro.props;
       <div class="journey-step__content">
         <h3 class="journey-step__title">{step.title}</h3>
         
-        {step.shortBlurb && <p class="journey-step__blurb">{step.shortBlurb}</p>}
+        {step.shortBlurb && (
+          <div class="journey-step__blurb">
+            {Array.isArray(step.shortBlurb) ? (
+              <PortableText value={step.shortBlurb} />
+            ) : (
+              <p>{step.shortBlurb}</p>
+            )}
+          </div>
+        )}
         
         {step.reasoning && (
           <div class="journey-step__reasoning">
@@ -160,6 +168,14 @@ const { steps } = Astro.props;
     line-height: 1.65;
     margin-bottom: 1.75rem;
     opacity: 0.95;
+  }
+  
+  .journey-step__blurb :global(p:not(:last-child)) {
+    margin-bottom: 1rem;
+  }
+  
+  .journey-step__blurb :global(p:last-child) {
+    margin-bottom: 0;
   }
 
   .journey-step__reasoning {

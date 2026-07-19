@@ -105,8 +105,8 @@ export default defineType({
     defineField({
       name: 'blurb',
       title: 'Blurb',
-      type: 'text',
-      rows: 5,
+      type: 'array',
+      of: [{type: 'block'}],
       group: 'content',
     }),
     defineField({

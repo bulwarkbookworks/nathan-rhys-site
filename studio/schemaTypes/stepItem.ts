@@ -47,8 +47,8 @@ export default defineType({
     defineField({
       name: 'shortBlurb',
       title: 'Short Blurb',
-      type: 'text',
-      rows: 3,
+      type: 'array',
+      of: [{type: 'block'}],
       validation: (Rule) => Rule.required(),
     }),
     defineField({
