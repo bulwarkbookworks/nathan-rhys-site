@@ -1,0 +1,281 @@
+---
+import { urlFor } from '../lib/sanity';
+
+interface Props {
+  tools: any[];
+}
+
+const { tools } = Astro.props;
+---
+
+<div class="workshop-grid">
+  {tools?.map((tool: any) => (
+    <div class="tool-card" id={tool._id}>
+      <div class="tool-card__header">
+        {tool.logo && (
+          <div class="tool-card__logo-wrapper">
+            <img 
+              src={urlFor(tool.logo).width(128).height(128).auto('format').url()} 
+              alt={`${tool.name} logo`} 
+              class="tool-card__logo" 
+              loading="lazy"
+            />
+          </div>
+        )}
+        <div class="tool-card__title-group">
+          <h3 class="tool-card__name">{tool.name}</h3>
+          {tool.category && <span class="tool-card__category">{tool.category}</span>}
+        </div>
+      </div>
+      
+      <div class="tool-card__body">
+        {tool.shortDescription && <p class="tool-card__description">{tool.shortDescription}</p>}
+        
+        <div class="tool-card__rationale">
+          {tool.problemSolved && (
+            <div class="tool-card__rationale-item">
+              <span class="tool-card__rationale-label">Problem Solved</span>
+              <p class="tool-card__rationale-text">{tool.problemSolved}</p>
+            </div>
+          )}
+          {tool.whyIChoseThisTool && (
+            <div class="tool-card__rationale-item">
+              <span class="tool-card__rationale-label">Why I chose it</span>
+              <p class="tool-card__rationale-text">{tool.whyIChoseThisTool}</p>
+            </div>
+          )}
+        </div>
+        
+        {tool.alternatives && (
+          <details class="tool-card__alternatives">
+            <summary class="tool-card__alternatives-summary">
+              <span>Alternatives considered</span>
+              <i class="bi bi-chevron-down" aria-hidden="true"></i>
+            </summary>
+            <div class="tool-card__alternatives-content">
+              <p>{tool.alternatives}</p>
+            </div>
+          </details>
+        )}
+      </div>
+      
+      {tool.externalWebsite && (
+        <div class="tool-card__footer">
+          <a href={tool.externalWebsite} target="_blank" rel="noopener noreferrer" class="tool-card__link">
+            <span>Visit {tool.name}</span>
+            <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
+          </a>
+        </div>
+      )}
+    </div>
+  ))}
+</div>
+
+<style>
+  .workshop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 2.5rem;
+    margin-top: 4rem;
+    margin-bottom: 4rem;
+  }
+
+  .tool-card {
+    background: rgba(15, 36, 29, 0.45);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1.25rem;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+  
+  .tool-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(214, 177, 95, 0.4);
+    box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.4);
+  }
+
+  .tool-card__header {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .tool-card__logo-wrapper {
+    width: 3.5rem;
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.75rem;
+    padding: 0.6rem;
+    flex-shrink: 0;
+  }
+
+  .tool-card__logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .tool-card__title-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .tool-card__name {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--color-text-main);
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tool-card__category {
+    font-size: 0.75rem;
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-accent);
+    font-weight: 800;
+    margin-top: 0.25rem;
+  }
+
+  .tool-card__body {
+    flex-grow: 1;
+  }
+
+  .tool-card__description {
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    color: var(--color-text-main);
+    margin-bottom: 1.75rem;
+    line-height: 1.6;
+    opacity: 0.9;
+  }
+
+  .tool-card__rationale {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .tool-card__rationale-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .tool-card__rationale-label {
+    color: var(--color-secondary);
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+  }
+
+  .tool-card__rationale-text {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+  }
+
+  .tool-card__alternatives {
+    margin-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 1rem;
+  }
+
+  .tool-card__alternatives-summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--color-text-muted);
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    user-select: none;
+    transition: color 0.2s ease;
+  }
+  
+  .tool-card__alternatives-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .tool-card__alternatives-summary:hover {
+    color: var(--color-accent);
+  }
+
+  .tool-card__alternatives[open] .tool-card__alternatives-summary {
+    color: var(--color-accent);
+    margin-bottom: 1rem;
+  }
+  
+  .tool-card__alternatives[open] .bi-chevron-down {
+    transform: rotate(180deg);
+  }
+
+  .tool-card__alternatives-summary i {
+    font-size: 0.75rem;
+    transition: transform 0.3s ease;
+  }
+
+  .tool-card__alternatives-content {
+    font-family: var(--font-serif);
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+    padding-left: 0.75rem;
+    border-left: 1px solid rgba(117, 215, 208, 0.2);
+  }
+
+  .tool-card__footer {
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .tool-card__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    text-decoration: none;
+    color: var(--color-accent);
+    transition: color 0.2s ease, gap 0.2s ease;
+  }
+  
+  .tool-card__link:hover {
+    color: var(--color-secondary);
+    gap: 0.8rem;
+  }
+
+  @media (max-width: 767.98px) {
+    .workshop-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    
+    .tool-card {
+      padding: 1.5rem;
+    }
+  }
+</style>

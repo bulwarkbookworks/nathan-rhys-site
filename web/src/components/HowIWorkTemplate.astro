@@ -1,0 +1,81 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageSection from './PageSection.astro';
+import JourneyTimeline from './JourneyTimeline.astro';
+import WorkshopGrid from './WorkshopGrid.astro';
+import MailerliteUniversal from './MailerliteUniversal.astro';
+
+const { page } = Astro.props;
+
+// Check for Mailerlite in any of the section arrays
+const allSections = [
+  ...(page.journeySections || []),
+  ...(page.workshopSections || []),
+  ...(page.postWorkshopSections || [])
+];
+
+const hasMailerlite = allSections.some((s: any) => 
+  s._type === 'mailerliteSection' || 
+  s.ctas?.some((c: any) => c._type === 'mailerliteCTA')
+);
+---
+
+<Layout title={page.title} metadata={page.metadata} displayLastUpdated={page.displayLastUpdated} updatedAt={page._updatedAt} mainClass={page.mainClass}>
+  {hasMailerlite && <MailerliteUniversal slot="head" />}
+  
+  <div class="container py-24">
+    <header class="mb-16">
+      <h1 class="text-5xl md:text-7xl mb-4">{page.title}</h1>
+    </header>
+
+    <div class="how-i-work-content">
+      {/* 1. Pre-Journey standard sections */}
+      {page.journeySections && page.journeySections.length > 0 && (
+        <div class="how-i-work-group how-i-work-group--pre-journey space-y-12 mb-16">
+          {page.journeySections.map((section: any) => (
+            <PageSection section={section} />
+          ))}
+        </div>
+      )}
+
+      {/* 2. Journey steps (Bespoke) */}
+      {page.journeySteps && page.journeySteps.length > 0 && (
+        <div class="how-i-work-group how-i-work-group--journey mb-24">
+          <JourneyTimeline steps={page.journeySteps} />
+        </div>
+      )}
+
+      {/* 3. Pre-Workshop standard sections */}
+      {page.workshopSections && page.workshopSections.length > 0 && (
+        <div class="how-i-work-group how-i-work-group--pre-workshop space-y-12 mb-16">
+          {page.workshopSections.map((section: any) => (
+            <PageSection section={section} />
+          ))}
+        </div>
+      )}
+
+      {/* 4. Workshop tools (Bespoke) */}
+      {page.workshopTools && page.workshopTools.length > 0 && (
+        <div class="how-i-work-group how-i-work-group--workshop mb-24">
+          <WorkshopGrid tools={page.workshopTools} />
+        </div>
+      )}
+
+      {/* 5. Post-Workshop standard sections */}
+      {page.postWorkshopSections && page.postWorkshopSections.length > 0 && (
+        <div class="how-i-work-group how-i-work-group--post-workshop space-y-12">
+          {page.postWorkshopSections.map((section: any) => (
+            <PageSection section={section} />
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+</Layout>
+
+<style is:global>
+  /* Standard styles for consistency with StandardPageTemplate */
+  .how-i-work-group .page-section {
+    /* Any specific overrides if needed */
+  }
+</style>

@@ -1,13 +1,15 @@
 ---
-import { client, LAYOUT_QUERY_FRAGMENT, SECTION_QUERY } from '../lib/sanity';
+import { client, LAYOUT_QUERY_FRAGMENT, SECTION_QUERY, HOW_I_WORK_QUERY } from '../lib/sanity';
 import StandardPageTemplate from '../components/StandardPageTemplate.astro';
+import HowIWorkTemplate from '../components/HowIWorkTemplate.astro';
 import BookTemplate from '../components/BookTemplate.astro';
 
 export async function getStaticPaths() {
   const standardPages = await client.fetch(`*[_type == "standardPage"]{ "slug": slug.current }`);
   const standaloneBooks = await client.fetch(`*[_type == "book" && !defined(series)]{ "slug": slug.current }`);
+  const howIWorkPage = await client.fetch(`*[_type == "howIWorkPage"][0]{ "slug": slug.current }`);
   
-  return [
+  const paths = [
     ...standardPages.map((page: any) => ({
       params: { slug: page.slug },
       props: { type: 'standardPage' }
@@ -17,6 +19,15 @@ export async function getStaticPaths() {
       props: { type: 'book' }
     }))
   ];
+
+  if (howIWorkPage?.slug) {
+    paths.push({
+      params: { slug: howIWorkPage.slug },
+      props: { type: 'howIWorkPage' }
+    });
+  }
+
+  return paths;
 }
 
 const { slug } = Astro.params;
@@ -28,6 +39,8 @@ if (type === 'standardPage') {
     ...,
     ${SECTION_QUERY}
   }`, { slug });
+} else if (type === 'howIWorkPage') {
+  data = await client.fetch(HOW_I_WORK_QUERY, { slug });
 } else {
   data = await client.fetch(`*[_type == "book" && slug.current == $slug][0]{ 
     ..., 
@@ -45,6 +58,8 @@ if (!data) {
 
 {type === 'standardPage' ? (
   <StandardPageTemplate page={data} />
+) : type === 'howIWorkPage' ? (
+  <HowIWorkTemplate page={data} />
 ) : (
   <BookTemplate book={data} />
 )}

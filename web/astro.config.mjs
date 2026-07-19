@@ -52,6 +52,7 @@ function docToPath(doc) {
     case 'home':
       return '/';
     case 'standardPage':
+    case 'howIWorkPage':
       return doc.slug ? `/${doc.slug}` : null;
     case 'book':
       if (!doc.slug) return null;

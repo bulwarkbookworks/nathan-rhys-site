@@ -134,8 +134,7 @@ export const FOOTER_QUERY = `
   }
 `;
 
-export const SECTION_QUERY = `
-  sections[]{
+export const SECTION_FIELDS = `
     ...,
     cssClasses,
     ctas[]{
@@ -188,6 +187,35 @@ export const SECTION_QUERY = `
         ...
       }
     }
+`;
+
+export const SECTION_QUERY = `
+  sections[]{
+    ${SECTION_FIELDS}
+  }
+`;
+
+export const HOW_I_WORK_QUERY = `
+  *[_type == "howIWorkPage" && slug.current == $slug][0]{
+    ...,
+    journeySections[]{
+      ${SECTION_FIELDS}
+    },
+    journeySteps[]->{
+      ...,
+      substeps[]{
+        ...
+      }
+    },
+    workshopSections[]{
+      ${SECTION_FIELDS}
+    },
+    workshopTools[]->{
+      ...
+    },
+    postWorkshopSections[]{
+      ${SECTION_FIELDS}
+    }
   }
 `;
 
@@ -239,7 +267,7 @@ export function resolveLink(link: any): string {
       url = getBookUrl(doc);
     } else if (doc._type === 'home') {
       url = '/';
-    } else if (doc._type === 'standardPage' && doc.slug?.current) {
+    } else if ((doc._type === 'standardPage' || doc._type === 'howIWorkPage') && doc.slug?.current) {
       url = `/${doc.slug.current}`;
     } else if (doc._type === 'thankYouPage' && doc.slug?.current) {
       url = `/${doc.slug.current}/thank-you`;
