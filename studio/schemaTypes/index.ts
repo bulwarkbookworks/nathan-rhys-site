@@ -17,6 +17,9 @@ import galleryItem from './galleryItem'
 import artistsPage from './artistsPage'
 import galleryPage from './galleryPage'
 import siteMetadata from './siteMetadata'
+import stepItem from './stepItem'
+import toolItem from './toolItem'
+import howIWorkPage from './howIWorkPage'
 
 import newsletter from './newsletter'
 import newsletters from './newsletters'
@@ -31,4 +34,4 @@ import mailerliteForm from './mailerliteForm'
 import mailerliteSection from './mailerliteSection'
 import mailerliteCTA from './mailerliteCTA'
 
-export const schemaTypes = [book, chapter, home, series, pillar, metadata, cta, navigation, link, layout, standardPage, listItem, richTextSection, listSection, artist, galleryItem, artistsPage, galleryPage, siteMetadata, newsletter, newsletters, newsletterThankYou, thankYouPage, card, cardsSection, footer, web3FormsSection, web3Form, mailerliteForm, mailerliteSection, mailerliteCTA]
+export const schemaTypes = [book, chapter, home, series, pillar, metadata, cta, navigation, link, layout, standardPage, listItem, richTextSection, listSection, artist, galleryItem, artistsPage, galleryPage, siteMetadata, stepItem, toolItem, howIWorkPage, newsletter, newsletters, newsletterThankYou, thankYouPage, card, cardsSection, footer, web3FormsSection, web3Form, mailerliteForm, mailerliteSection, mailerliteCTA]

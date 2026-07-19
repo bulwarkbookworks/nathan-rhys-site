@@ -76,6 +76,27 @@ export default defineConfig({
                     S.documentTypeListItem('newsletter'),
                   ]),
               ),
+            S.divider(),
+            // How I Work Group
+            S.listItem()
+              .title('How I Work')
+              .child(
+                S.list()
+                  .title('How I Work')
+                  .items([
+                    S.listItem()
+                      .title('How I Work Page')
+                      .id('howIWorkPage')
+                      .child(S.document().schemaType('howIWorkPage').documentId('howIWorkPage')),
+                    S.divider(),
+                    S.listItem()
+                      .title('Steps')
+                      .child(S.documentTypeList('stepItem').title('Steps')),
+                    S.listItem()
+                      .title('Tools')
+                      .child(S.documentTypeList('toolItem').title('Tools')),
+                  ]),
+              ),
             S.documentTypeListItem('thankYouPage').title('Thank You Pages'),
             S.divider(),
             S.documentTypeListItem('web3Form').title('Web3Forms'),
@@ -114,13 +135,13 @@ export default defineConfig({
   schema: {
     types: schemaTypes,
     // Filter out singleton types from the global "Create new" menu
-    templates: (prev) => prev.filter((template) => !['home', 'artistsPage', 'galleryPage', 'siteMetadata', 'newsletters', 'newsletterThankYou', 'layout', 'footer'].includes(template.id)),
+    templates: (prev) => prev.filter((template) => !['home', 'artistsPage', 'galleryPage', 'siteMetadata', 'newsletters', 'newsletterThankYou', 'layout', 'footer', 'howIWorkPage'].includes(template.id)),
   },
 
   document: {
     // For singleton types, filter out actions that are not appropriate
     actions: (prev, {schemaType}) => {
-      if (['home', 'artistsPage', 'galleryPage', 'siteMetadata', 'newsletters', 'newsletterThankYou', 'layout', 'footer'].includes(schemaType)) {
+      if (['home', 'artistsPage', 'galleryPage', 'siteMetadata', 'newsletters', 'newsletterThankYou', 'layout', 'footer', 'howIWorkPage'].includes(schemaType)) {
         return prev.filter(({action}) => action && ['publish', 'discardChanges', 'restore'].includes(action))
       }
       return prev
