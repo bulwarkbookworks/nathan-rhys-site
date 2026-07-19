@@ -9,307 +9,103 @@ interface Props {
 const { steps } = Astro.props;
 ---
 
-<div class="journey-timeline">
+<ol class="process-flow" role="list">
   {steps?.map((step: any, index: number) => (
-    <div class="journey-step" id={step._id}>
-      <div class="journey-step__connector" aria-hidden="true">
-        <div class="journey-step__node">
-           {step.iconType === 'glyphicon' && step.glyphicon && (
-             <i class:list={['bi', step.glyphicon]}></i>
-           )}
-           {step.iconType === 'image' && step.imageIcon && (
-             <img src={urlFor(step.imageIcon).width(32).height(32).auto('format').url()} alt="" />
-           )}
-        </div>
-        {index < steps.length - 1 && <div class="journey-step__line"></div>}
+    <li
+      class:list={[
+        'process-step',
+        index % 2 === 1 && 'process-step--reverse',
+        step.screenshot && 'process-step--has-image'
+      ]}
+      id={step._id}
+    >
+      <div class="process-step__waypoint" aria-hidden="true">
+        <span class="process-step__icon">
+          {step.iconType === 'glyphicon' && step.glyphicon && (
+            <i class:list={['bi', step.glyphicon]}></i>
+          )}
+          {step.iconType === 'image' && step.imageIcon && (
+            <img
+              src={urlFor(step.imageIcon).width(64).height(64).auto('format').url()}
+              alt=""
+              loading="lazy"
+              decoding="async"
+            />
+          )}
+          {(!step.iconType || (step.iconType === 'glyphicon' && !step.glyphicon) || (step.iconType === 'image' && !step.imageIcon)) && (
+            <span>{index + 1}</span>
+          )}
+        </span>
       </div>
-      
-      <div class="journey-step__content">
-        <h3 class="journey-step__title">{step.title}</h3>
-        
-        {step.shortBlurb && (
-          <div class="journey-step__blurb">
-            {Array.isArray(step.shortBlurb) ? (
-              <PortableText value={step.shortBlurb} />
-            ) : (
-              <p>{step.shortBlurb}</p>
-            )}
-          </div>
-        )}
-        
-        {step.reasoning && (
-          <div class="journey-step__reasoning">
-            <div class="journey-step__reasoning-label">Why this matters</div>
-            <div class="journey-step__reasoning-content">
-              <PortableText value={step.reasoning} />
-            </div>
-          </div>
-        )}
-        
-        {step.screenshot && (
-          <figure class="journey-step__figure">
-            <div class="journey-step__screenshot-container">
-              <img 
-                src={urlFor(step.screenshot).width(1200).auto('format').url()}
-                srcset={generateSrcset(step.screenshot, [400, 800, 1200, 1600])}
-                sizes="(max-width: 768px) 90vw, (max-width: 1200px) 70vw, 800px"
-                alt={step.screenshotCaption || `Screenshot for ${step.title}`} 
-                class="journey-step__screenshot"
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-            {step.screenshotCaption && (
-              <figcaption class="journey-step__figcaption">{step.screenshotCaption}</figcaption>
-            )}
-          </figure>
-        )}
-        
-        {step.substeps && step.substeps.length > 0 && (
-          <div class="journey-step__substeps">
-            {step.substeps.map((substep: any) => (
-              <div class="journey-substep">
-                <h4 class="journey-substep__title">{substep.title}</h4>
-                {substep.content && (
-                  <div class="journey-substep__content">
-                    <PortableText value={substep.content} />
-                  </div>
+
+      <article class="process-step__card">
+        <header class="process-step__header">
+          <p class="process-step__eyebrow">Part of the process</p>
+          <h2>{step.title}</h2>
+        </header>
+
+        <div class:list={[
+          'process-step__body',
+          step.screenshot && 'process-step__body--split'
+        ]}>
+          <div class="process-step__copy">
+            {step.shortBlurb && (
+              <div class="process-step__blurb">
+                {Array.isArray(step.shortBlurb) ? (
+                  <PortableText value={step.shortBlurb} />
+                ) : (
+                  <p>{step.shortBlurb}</p>
                 )}
               </div>
+            )}
+
+            {step.reasoning && (
+              <aside class="process-step__reasoning">
+                <p class="process-step__reasoning-title">Why it belongs here</p>
+                <div class="process-step__reasoning-copy">
+                  <PortableText value={step.reasoning} />
+                </div>
+              </aside>
+            )}
+          </div>
+
+          {step.screenshot && (
+            <figure class="process-step__figure">
+              <div class="process-step__image">
+                <img
+                  src={urlFor(step.screenshot).width(1600).auto('format').url()}
+                  srcset={generateSrcset(step.screenshot, [480, 768, 1100, 1400, 1800])}
+                  sizes="(max-width: 959px) 92vw, 48vw"
+                  alt={step.screenshotAlt || step.screenshotCaption || `Screenshot illustrating ${step.title}`}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              {step.screenshotCaption && (
+                <figcaption>{step.screenshotCaption}</figcaption>
+              )}
+            </figure>
+          )}
+        </div>
+
+        {step.substeps?.length > 0 && (
+          <div class="process-step__substeps" role="list" aria-label={`${step.title} details`}>
+            {step.substeps.map((substep: any) => (
+              <section class="process-substep" role="listitem">
+                <div class="process-substep__marker" aria-hidden="true"></div>
+                <div>
+                  <h3>{substep.title}</h3>
+                  {substep.content && (
+                    <div class="process-substep__content">
+                      <PortableText value={substep.content} />
+                    </div>
+                  )}
+                </div>
+              </section>
             ))}
           </div>
         )}
-      </div>
-    </div>
+      </article>
+    </li>
   ))}
-</div>
-
-<style>
-  .journey-timeline {
-    position: relative;
-    max-width: 1000px;
-    margin: 4rem auto;
-    padding-left: 3.5rem;
-  }
-
-  .journey-step {
-    position: relative;
-    padding-bottom: 5rem;
-    display: flex;
-    gap: 2rem;
-  }
-
-  .journey-step:last-child {
-    padding-bottom: 0;
-  }
-
-  .journey-step__connector {
-    position: absolute;
-    left: -3.5rem;
-    top: 0;
-    bottom: 0;
-    width: 2.5rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .journey-step__node {
-    width: 2.5rem;
-    height: 2.5rem;
-    background: var(--color-background-deep);
-    border: 1px solid var(--color-secondary);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2;
-    color: var(--color-secondary);
-    font-size: 1.15rem;
-    flex-shrink: 0;
-    box-shadow: 0 0 0 4px var(--color-background-deep);
-  }
-  
-  .journey-step__node img {
-    width: 1.4rem;
-    height: 1.4rem;
-    object-fit: contain;
-  }
-
-  .journey-step__line {
-    width: 2px;
-    background: linear-gradient(to bottom, 
-      var(--color-secondary) 0%, 
-      color-mix(in srgb, var(--color-secondary) 20%, transparent) 100%
-    );
-    flex-grow: 1;
-    margin-top: 0.25rem;
-    margin-bottom: 0.25rem;
-    opacity: 0.4;
-  }
-
-  .journey-step__content {
-    flex-grow: 1;
-    min-width: 0; /* Prevent flex overflow from long text or images */
-  }
-
-  .journey-step__title {
-    margin-top: -0.25rem;
-    margin-bottom: 1rem;
-    font-size: clamp(1.75rem, 4vw, 2.5rem);
-    color: var(--color-text-main);
-    line-height: 1.1;
-  }
-
-  .journey-step__blurb {
-    font-family: var(--font-serif);
-    font-size: clamp(1.1rem, 2vw, 1.25rem);
-    color: var(--color-text-main);
-    line-height: 1.65;
-    margin-bottom: 1.75rem;
-    opacity: 0.95;
-  }
-  
-  .journey-step__blurb :global(p:not(:last-child)) {
-    margin-bottom: 1rem;
-  }
-  
-  .journey-step__blurb :global(p:last-child) {
-    margin-bottom: 0;
-  }
-
-  .journey-step__reasoning {
-    margin-bottom: 2.5rem;
-    padding: 1.5rem;
-    background: rgba(117, 215, 208, 0.03);
-    border-radius: 0.75rem;
-    border: 1px solid rgba(117, 215, 208, 0.1);
-  }
-
-  .journey-step__reasoning-label {
-    font-family: var(--font-sans);
-    font-size: 0.7rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--color-accent);
-    margin-bottom: 0.75rem;
-  }
-
-  .journey-step__reasoning-content {
-    font-family: var(--font-serif);
-    font-size: 1rem;
-    color: var(--color-text-muted);
-    line-height: 1.6;
-  }
-  
-  .journey-step__reasoning-content :global(p:last-child) {
-    margin-bottom: 0;
-  }
-
-  .journey-step__figure {
-    margin: 0 0 3rem 0;
-  }
-  
-  .journey-step__screenshot-container {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 0.75rem;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: var(--shadow-lifted);
-  }
-
-  .journey-step__screenshot {
-    display: block;
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-  }
-
-  .journey-step__figcaption {
-    margin-top: 1rem;
-    font-size: 0.9rem;
-    font-family: var(--font-serif);
-    color: var(--color-text-muted);
-    font-style: italic;
-    padding-left: 0.5rem;
-    border-left: 2px solid var(--color-secondary);
-  }
-
-  .journey-step__substeps {
-    margin-top: 2.5rem;
-    display: grid;
-    gap: 2rem;
-    padding-left: 2rem;
-    border-left: 1px solid rgba(214, 177, 95, 0.15);
-  }
-
-  .journey-substep {
-    position: relative;
-  }
-  
-  .journey-substep::before {
-    content: "";
-    position: absolute;
-    left: -2rem;
-    top: 0.75rem;
-    width: 1rem;
-    height: 1px;
-    background: rgba(214, 177, 95, 0.3);
-  }
-
-  .journey-substep__title {
-    font-size: 1.25rem;
-    margin-bottom: 0.75rem;
-    color: var(--color-secondary);
-    line-height: 1.2;
-  }
-
-  .journey-substep__content {
-    font-family: var(--font-serif);
-    font-size: 1rem;
-    color: var(--color-text-muted);
-    line-height: 1.6;
-  }
-  
-  .journey-substep__content :global(p:last-child) {
-    margin-bottom: 0;
-  }
-
-  @media (max-width: 767.98px) {
-    .journey-timeline {
-      padding-left: 2.5rem;
-      margin-inline: 0.5rem;
-    }
-    
-    .journey-step {
-      gap: 1.5rem;
-      padding-bottom: 4rem;
-    }
-    
-    .journey-step__connector {
-      left: -2.5rem;
-      width: 2rem;
-    }
-    
-    .journey-step__node {
-      width: 2rem;
-      height: 2rem;
-      font-size: 1rem;
-    }
-    
-    .journey-step__node img {
-      width: 1.1rem;
-      height: 1.1rem;
-    }
-    
-    .journey-step__substeps {
-      padding-left: 1.5rem;
-    }
-    
-    .journey-substep::before {
-      left: -1.5rem;
-      width: 0.75rem;
-    }
-  }
-</style>
+</ol>
