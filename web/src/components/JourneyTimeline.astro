@@ -7,23 +7,20 @@ interface Props {
 }
 
 const { steps } = Astro.props;
+
+const hasDetails = (step: any) =>
+  Boolean(step.substeps?.length || step.screenshot);
 ---
 
-<ol class="process-flow" role="list">
+<ol class="journey" role="list" data-journey>
   {steps?.map((step: any, index: number) => (
-    <li
-      class:list={[
-        'process-step',
-        index % 2 === 1 && 'process-step--reverse',
-        step.screenshot && 'process-step--has-image'
-      ]}
-      id={step._id}
-    >
-      <div class="process-step__waypoint" aria-hidden="true">
-        <span class="process-step__icon">
+    <li class="journey-step" id={step._id}>
+      <div class="journey-step__rail" aria-hidden="true">
+        <span class="journey-step__node">
           {step.iconType === 'glyphicon' && step.glyphicon && (
             <i class:list={['bi', step.glyphicon]}></i>
           )}
+
           {step.iconType === 'image' && step.imageIcon && (
             <img
               src={urlFor(step.imageIcon).width(64).height(64).auto('format').url()}
@@ -32,80 +29,124 @@ const { steps } = Astro.props;
               decoding="async"
             />
           )}
-          {(!step.iconType || (step.iconType === 'glyphicon' && !step.glyphicon) || (step.iconType === 'image' && !step.imageIcon)) && (
+
+          {(!step.iconType ||
+            (step.iconType === 'glyphicon' && !step.glyphicon) ||
+            (step.iconType === 'image' && !step.imageIcon)) && (
             <span>{index + 1}</span>
           )}
         </span>
+
+        {index < steps.length - 1 && <span class="journey-step__line"></span>}
       </div>
 
-      <article class="process-step__card">
-        <header class="process-step__header">
-          <p class="process-step__eyebrow">Part of the process</p>
+      <article class="journey-step__card">
+        <header class="journey-step__header">
+          <p class="journey-step__eyebrow">Part of the process</p>
           <h2>{step.title}</h2>
         </header>
 
-        <div class:list={[
-          'process-step__body',
-          step.screenshot && 'process-step__body--split'
-        ]}>
-          <div class="process-step__copy">
-            {step.shortBlurb && (
-              <div class="process-step__blurb">
-                {Array.isArray(step.shortBlurb) ? (
-                  <PortableText value={step.shortBlurb} />
-                ) : (
-                  <p>{step.shortBlurb}</p>
-                )}
-              </div>
-            )}
-
-            {step.reasoning && (
-              <aside class="process-step__reasoning">
-                <p class="process-step__reasoning-title">Why it belongs here</p>
-                <div class="process-step__reasoning-copy">
-                  <PortableText value={step.reasoning} />
-                </div>
-              </aside>
-            )}
-          </div>
-
-          {step.screenshot && (
-            <figure class="process-step__figure">
-              <div class="process-step__image">
-                <img
-                  src={urlFor(step.screenshot).width(1600).auto('format').url()}
-                  srcset={generateSrcset(step.screenshot, [480, 768, 1100, 1400, 1800])}
-                  sizes="(max-width: 959px) 92vw, 48vw"
-                  alt={step.screenshotAlt || step.screenshotCaption || `Screenshot illustrating ${step.title}`}
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-              {step.screenshotCaption && (
-                <figcaption>{step.screenshotCaption}</figcaption>
+        <div class="journey-step__summary">
+          {step.shortBlurb && (
+            <div class="journey-step__blurb">
+              {Array.isArray(step.shortBlurb) ? (
+                <PortableText value={step.shortBlurb} />
+              ) : (
+                <p>{step.shortBlurb}</p>
               )}
-            </figure>
+            </div>
+          )}
+
+          {step.reasoning && (
+            <aside class="journey-step__reasoning">
+              <p class="journey-step__reasoning-label">Why this matters</p>
+              <div class="journey-step__reasoning-content">
+                <PortableText value={step.reasoning} />
+              </div>
+            </aside>
           )}
         </div>
 
-        {step.substeps?.length > 0 && (
-          <div class="process-step__substeps" role="list" aria-label={`${step.title} details`}>
-            {step.substeps.map((substep: any) => (
-              <section class="process-substep" role="listitem">
-                <div class="process-substep__marker" aria-hidden="true"></div>
-                <div>
-                  <h3>{substep.title}</h3>
-                  {substep.content && (
-                    <div class="process-substep__content">
-                      <PortableText value={substep.content} />
-                    </div>
+        {hasDetails(step) && (
+          <details class="journey-step__details">
+            <summary>
+              <span class="journey-step__summary-label">
+                Explore this stage
+              </span>
+              <span class="journey-step__summary-icon" aria-hidden="true"></span>
+            </summary>
+
+            <div class="journey-step__expanded">
+              {step.substeps?.length > 0 && (
+                <section class="journey-workflow" aria-labelledby={`${step._id}-workflow`}>
+                  <div class="journey-workflow__heading">
+                    <p>Inside this stage</p>
+                    <h3 id={`${step._id}-workflow`}>The workflow</h3>
+                  </div>
+
+                  <ol class="journey-workflow__steps" role="list">
+                    {step.substeps.map((substep: any) => (
+                      <li class="journey-substep">
+                        <span class="journey-substep__marker" aria-hidden="true"></span>
+                        <div class="journey-substep__body">
+                          <h4>{substep.title}</h4>
+
+                          {substep.content && (
+                            <div class="journey-substep__content">
+                              <PortableText value={substep.content} />
+                            </div>
+                          )}
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+              )}
+
+              {step.screenshot && (
+                <figure class="journey-step__figure">
+                  <div class="journey-step__image-frame">
+                    <img
+                      src={urlFor(step.screenshot).width(1600).auto('format').url()}
+                      srcset={generateSrcset(step.screenshot, [480, 768, 1100, 1400, 1800])}
+                      sizes="(max-width: 768px) 92vw, 1080px"
+                      alt={step.screenshotAlt || step.screenshotCaption || `Screenshot illustrating ${step.title}`}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+
+                  {step.screenshotCaption && (
+                    <figcaption>{step.screenshotCaption}</figcaption>
                   )}
-                </div>
-              </section>
-            ))}
-          </div>
+                </figure>
+              )}
+            </div>
+          </details>
         )}
       </article>
     </li>
   ))}
 </ol>
+
+<script>
+  const journey = document.querySelector('[data-journey]');
+
+  if (journey) {
+    const disclosures = Array.from(
+      journey.querySelectorAll('details.journey-step__details')
+    );
+
+    disclosures.forEach((disclosure) => {
+      disclosure.addEventListener('toggle', () => {
+        if (!disclosure.open) return;
+
+        disclosures.forEach((otherDisclosure) => {
+          if (otherDisclosure !== disclosure) {
+            otherDisclosure.removeAttribute('open');
+          }
+        });
+      });
+    });
+  }
+</script>

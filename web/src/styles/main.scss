@@ -15,82 +15,73 @@ $enable-negative-margins: true;
  * How I Work Page Styles
  */
 main.how-i-work-page {
-  --hiw-line: rgba(214, 177, 95, 0.30);
-  --hiw-line-soft: rgba(117, 215, 208, 0.14);
+  --hiw-line: rgba(214, 177, 95, 0.34);
+  --hiw-line-soft: rgba(117, 215, 208, 0.18);
+  --hiw-border: rgba(214, 177, 95, 0.17);
   --hiw-panel: rgba(15, 36, 29, 0.72);
-  --hiw-panel-strong: rgba(15, 36, 29, 0.94);
-  --hiw-border: rgba(214, 177, 95, 0.18);
+  --hiw-panel-deep: rgba(4, 9, 7, 0.34);
 
   overflow: clip;
   padding: 0;
 
   .how-i-work-hero {
     position: relative;
-    isolation: isolate;
-    padding: clamp(5rem, 11vw, 9.5rem) 0 clamp(4rem, 8vw, 7rem);
-    border-bottom: 1px solid rgba(214, 177, 95, 0.14);
+    padding: clamp(5rem, 10vw, 8.5rem) 0 clamp(3.5rem, 7vw, 5.75rem);
+    border-bottom: 1px solid rgba(214, 177, 95, 0.13);
     background:
-            radial-gradient(circle at 82% 24%, rgba(117, 215, 208, 0.10), transparent 24rem),
-            radial-gradient(circle at 18% 12%, rgba(214, 177, 95, 0.07), transparent 22rem),
-            linear-gradient(180deg, rgba(4, 9, 7, 0.76), rgba(7, 21, 18, 0.15));
+            radial-gradient(circle at 82% 25%, rgba(117, 215, 208, 0.09), transparent 25rem),
+            radial-gradient(circle at 15% 10%, rgba(214, 177, 95, 0.06), transparent 22rem),
+            linear-gradient(180deg, rgba(4, 9, 7, 0.72), rgba(7, 21, 18, 0.1));
 
-    &::before {
+    &::after {
       content: "";
       position: absolute;
-      z-index: -1;
-      inset: 0;
-      opacity: 0.16;
-      background-image:
-              linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-      background-size: 3.5rem 3.5rem;
-      mask-image: linear-gradient(to bottom, black, transparent 88%);
+      inset: auto 0 0;
+      height: 1px;
+      background: linear-gradient(
+              90deg,
+              transparent,
+              rgba(214, 177, 95, 0.35),
+              rgba(117, 215, 208, 0.24),
+              transparent
+      );
     }
 
     .container {
-      max-width: 78rem;
+      max-width: 80rem;
     }
 
     &__eyebrow {
-      margin: 0 0 1rem;
+      margin: 0 0 0.9rem;
       color: var(--color-accent);
       font-family: var(--font-sans);
       font-size: 0.72rem;
       font-weight: 800;
-      letter-spacing: 0.22em;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
     }
 
     h1 {
-      max-width: 11ch;
+      max-width: 12ch;
       margin: 0;
-      font-size: clamp(3.6rem, 9vw, 7.5rem);
-      line-height: 0.92;
+      font-size: clamp(3.5rem, 8vw, 7rem);
+      line-height: 0.94;
       text-wrap: balance;
-    }
-
-    &__lede {
-      max-width: 42rem;
-      margin: 1.7rem 0 0;
-      color: var(--color-text-muted);
-      font-family: var(--font-serif);
-      font-size: clamp(1.08rem, 2vw, 1.3rem);
-      line-height: 1.65;
     }
   }
 
   .how-i-work-shell {
-    max-width: 84rem;
+    max-width: 82rem;
     padding-top: clamp(4rem, 8vw, 7rem);
     padding-bottom: clamp(7rem, 12vw, 11rem);
   }
 
   .how-i-work-standard {
-    max-width: 66rem;
+    max-width: 68rem;
     margin-inline: auto;
 
     .page-section {
-      margin: 0;
+      margin-block: 0;
     }
 
     .page-section + .page-section {
@@ -109,7 +100,7 @@ main.how-i-work-page {
         background: linear-gradient(
                 to bottom,
                 var(--color-secondary),
-                rgba(117, 215, 208, 0.42),
+                rgba(117, 215, 208, 0.36),
                 transparent
         );
       }
@@ -129,152 +120,124 @@ main.how-i-work-page {
     margin-top: clamp(4rem, 8vw, 7rem);
   }
 
-  .process-flow {
+  .journey {
     position: relative;
-    display: grid;
-    gap: clamp(4.5rem, 9vw, 8rem);
-    margin: 0;
+    width: min(100%, 76rem);
+    margin: 0 auto;
     padding: 0;
     list-style: none;
-
-    &::before {
-      content: "";
-      position: absolute;
-      top: 2.25rem;
-      bottom: 2.25rem;
-      left: 50%;
-      width: 2px;
-      transform: translateX(-50%);
-      background: linear-gradient(
-              to bottom,
-              transparent,
-              var(--hiw-line) 5%,
-              var(--hiw-line-soft) 50%,
-              var(--hiw-line) 95%,
-              transparent
-      );
-    }
   }
 
-  .process-step {
+  .journey-step {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 5.5rem minmax(0, 1fr);
-    align-items: start;
+    grid-template-columns: 4.5rem minmax(0, 1fr);
+    align-items: stretch;
 
-    &__waypoint {
-      position: relative;
-      z-index: 3;
-      grid-column: 2;
-      display: flex;
-      justify-content: center;
-      padding-top: 1.55rem;
+    &:not(:last-child) {
+      padding-bottom: clamp(2.5rem, 5vw, 4rem);
     }
 
-    &__icon {
+    &__rail {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    &__node {
+      position: relative;
+      z-index: 2;
       display: grid;
       place-items: center;
-      width: 4.25rem;
+      width: 3.4rem;
       aspect-ratio: 1;
+      flex: 0 0 auto;
       border: 1px solid rgba(214, 177, 95, 0.56);
       border-radius: 50%;
       background:
-              radial-gradient(circle at 35% 28%, rgba(214, 177, 95, 0.16), transparent 45%),
+              radial-gradient(circle at 35% 28%, rgba(214, 177, 95, 0.14), transparent 45%),
               var(--color-background-deep);
       color: var(--color-secondary);
       font-family: var(--font-sans);
-      font-size: 1.1rem;
+      font-size: 0.9rem;
       font-weight: 800;
       box-shadow:
-              0 0 0 0.65rem var(--color-background),
-              0 1rem 3rem rgba(0, 0, 0, 0.26);
+              0 0 0 0.5rem var(--color-background),
+              0 0.9rem 2.5rem rgba(0, 0, 0, 0.24);
 
       img {
-        width: 2rem;
-        height: 2rem;
+        width: 1.6rem;
+        height: 1.6rem;
         object-fit: contain;
       }
     }
 
-    &__card {
-      position: relative;
-      grid-column: 1;
-      min-width: 0;
-      overflow: hidden;
-      border: 1px solid var(--hiw-border);
-      border-radius: 1.25rem;
-      background:
-              linear-gradient(145deg, rgba(255, 255, 255, 0.025), transparent 30%),
-              var(--hiw-panel);
-      box-shadow:
-              0 1.5rem 4rem rgba(0, 0, 0, 0.20),
-              inset 0 1px rgba(255, 255, 255, 0.025);
-
-      &::after {
-        content: "";
-        position: absolute;
-        top: 2.15rem;
-        right: -3.25rem;
-        width: 3.25rem;
-        height: 1px;
-        background: var(--hiw-line);
-      }
+    &__line {
+      flex: 1;
+      width: 2px;
+      min-height: 3rem;
+      margin-top: 0.8rem;
+      background: linear-gradient(
+              to bottom,
+              var(--hiw-line),
+              var(--hiw-line-soft) 65%,
+              rgba(214, 177, 95, 0.08)
+      );
     }
 
-    &--reverse {
-      .process-step__card {
-        grid-column: 3;
-
-        &::after {
-          right: auto;
-          left: -3.25rem;
-        }
-      }
+    &__card {
+      min-width: 0;
+      overflow: hidden;
+      margin-left: clamp(0.5rem, 2vw, 1.25rem);
+      border: 1px solid var(--hiw-border);
+      border-radius: 1.1rem;
+      background:
+              linear-gradient(145deg, rgba(255, 255, 255, 0.022), transparent 28%),
+              var(--hiw-panel);
+      box-shadow:
+              0 1.25rem 3.5rem rgba(0, 0, 0, 0.18),
+              inset 0 1px rgba(255, 255, 255, 0.025);
     }
 
     &__header {
-      padding: clamp(1.5rem, 3vw, 2.25rem) clamp(1.5rem, 3vw, 2.5rem) 1.2rem;
-      border-bottom: 1px solid rgba(214, 177, 95, 0.12);
+      padding: clamp(1.4rem, 3vw, 2rem) clamp(1.4rem, 3vw, 2.25rem) 1rem;
       background: linear-gradient(
               90deg,
-              rgba(214, 177, 95, 0.055),
-              rgba(117, 215, 208, 0.025)
+              rgba(214, 177, 95, 0.045),
+              rgba(117, 215, 208, 0.02)
       );
 
       h2 {
         margin: 0;
         color: var(--color-text-main);
-        font-size: clamp(2rem, 4vw, 3.1rem);
+        font-size: clamp(2rem, 4vw, 3rem);
         line-height: 1;
         text-wrap: balance;
       }
     }
 
     &__eyebrow {
-      margin: 0 0 0.55rem;
+      margin: 0 0 0.5rem;
       color: var(--color-accent);
       font-family: var(--font-sans);
-      font-size: 0.66rem;
+      font-size: 0.65rem;
       font-weight: 800;
-      letter-spacing: 0.17em;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
     }
 
-    &__body {
-      padding: clamp(1.5rem, 3vw, 2.5rem);
-
-      &--split {
-        display: grid;
-        grid-template-columns: minmax(16rem, 0.85fr) minmax(19rem, 1.15fr);
-        gap: clamp(1.75rem, 4vw, 3rem);
-        align-items: start;
-      }
+    &__summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(16rem, 0.65fr);
+      gap: clamp(1.5rem, 4vw, 3rem);
+      padding: 0 clamp(1.4rem, 3vw, 2.25rem) clamp(1.5rem, 3vw, 2.2rem);
     }
 
     &__blurb {
       color: var(--color-text-main);
       font-family: var(--font-serif);
-      font-size: clamp(1.05rem, 1.7vw, 1.2rem);
+      font-size: clamp(1.05rem, 1.8vw, 1.18rem);
       line-height: 1.72;
 
       p {
@@ -291,28 +254,27 @@ main.how-i-work-page {
     }
 
     &__reasoning {
-      position: relative;
-      margin-top: 1.75rem;
-      padding: 1.15rem 1.25rem 1.15rem 1.4rem;
-      border-left: 3px solid rgba(117, 215, 208, 0.56);
-      border-radius: 0 0.8rem 0.8rem 0;
-      background: rgba(4, 9, 7, 0.28);
+      align-self: start;
+      padding: 1rem 1.1rem 1.05rem 1.25rem;
+      border-left: 3px solid rgba(117, 215, 208, 0.5);
+      border-radius: 0 0.75rem 0.75rem 0;
+      background: var(--hiw-panel-deep);
     }
 
-    &__reasoning-title {
-      margin: 0 0 0.55rem;
+    &__reasoning-label {
+      margin: 0 0 0.5rem;
       color: var(--color-accent);
       font-family: var(--font-sans);
-      font-size: 0.66rem;
+      font-size: 0.64rem;
       font-weight: 800;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
     }
 
-    &__reasoning-copy {
+    &__reasoning-content {
       color: var(--color-text-muted);
       font-family: var(--font-serif);
-      font-size: 0.96rem;
+      font-size: 0.94rem;
       line-height: 1.62;
 
       p {
@@ -324,17 +286,110 @@ main.how-i-work-page {
       }
     }
 
-    &__figure {
-      min-width: 0;
-      margin: 0;
+    &__details {
+      border-top: 1px solid rgba(214, 177, 95, 0.12);
+
+      > summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 1rem clamp(1.4rem, 3vw, 2.25rem);
+        cursor: pointer;
+        color: var(--color-secondary);
+        background: rgba(4, 9, 7, 0.16);
+        list-style: none;
+        transition:
+                background-color 160ms ease,
+                color 160ms ease;
+
+        &::-webkit-details-marker {
+          display: none;
+        }
+
+        &:hover,
+        &:focus-visible {
+          color: var(--color-text-main);
+          background: rgba(214, 177, 95, 0.055);
+        }
+      }
+
+      &[open] {
+        > summary {
+          border-bottom: 1px solid rgba(214, 177, 95, 0.12);
+          color: var(--color-text-main);
+          background: rgba(214, 177, 95, 0.045);
+        }
+
+        .journey-step__summary-icon {
+          transform: rotate(45deg);
+        }
+      }
     }
 
-    &__image {
+    &__summary-label {
+      font-family: var(--font-sans);
+      font-size: 0.73rem;
+      font-weight: 800;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    &__summary-icon {
+      position: relative;
+      width: 1rem;
+      height: 1rem;
+      flex: 0 0 auto;
+      transition: transform 180ms ease;
+
+      &::before,
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 50% auto auto 50%;
+        width: 0.85rem;
+        height: 1px;
+        background: currentColor;
+        transform: translate(-50%, -50%);
+      }
+
+      &::after {
+        transform: translate(-50%, -50%) rotate(90deg);
+      }
+    }
+
+    &__expanded {
+      padding: clamp(1.5rem, 4vw, 3rem) clamp(1.4rem, 3vw, 2.25rem)
+      clamp(1.75rem, 4vw, 3rem);
+      background:
+              linear-gradient(180deg, rgba(4, 9, 7, 0.16), transparent 9rem),
+              rgba(4, 9, 7, 0.1);
+    }
+
+    &__figure {
+      margin: clamp(2.5rem, 5vw, 4rem) 0 0;
+      padding-top: clamp(2rem, 4vw, 3rem);
+      border-top: 1px solid rgba(214, 177, 95, 0.13);
+
+      figcaption {
+        max-width: 62rem;
+        margin-top: 0.9rem;
+        padding-left: 1rem;
+        border-left: 2px solid rgba(214, 177, 95, 0.56);
+        color: var(--color-text-muted);
+        font-family: var(--font-serif);
+        font-size: 0.88rem;
+        font-style: italic;
+        line-height: 1.55;
+      }
+    }
+
+    &__image-frame {
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 0.9rem;
       background: var(--color-background-deep);
-      box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.22);
+      box-shadow: 0 1.2rem 3.5rem rgba(0, 0, 0, 0.24);
 
       img {
         display: block;
@@ -342,194 +397,283 @@ main.how-i-work-page {
         height: auto;
       }
     }
+  }
 
-    figcaption {
-      margin-top: 0.8rem;
-      color: var(--color-text-muted);
-      font-family: var(--font-serif);
-      font-size: 0.86rem;
-      font-style: italic;
-      line-height: 1.55;
+  .journey-workflow {
+    &__heading {
+      display: grid;
+      grid-template-columns: minmax(8rem, 0.28fr) minmax(0, 1fr);
+      gap: 1.25rem;
+      align-items: end;
+      margin-bottom: 1.75rem;
+
+      p {
+        margin: 0 0 0.2rem;
+        color: var(--color-accent);
+        font-family: var(--font-sans);
+        font-size: 0.66rem;
+        font-weight: 800;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+      }
+
+      h3 {
+        margin: 0;
+        color: var(--color-text-main);
+        font-size: clamp(1.5rem, 3vw, 2.15rem);
+      }
     }
 
-    &__substeps {
+    &__steps {
+      position: relative;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
-      gap: 0.85rem;
-      padding: 0 clamp(1.5rem, 3vw, 2.5rem) clamp(1.5rem, 3vw, 2.5rem);
+      gap: 1rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: 1.65rem;
+        bottom: 1.65rem;
+        left: 0.62rem;
+        width: 1px;
+        background: linear-gradient(
+                to bottom,
+                rgba(214, 177, 95, 0.36),
+                rgba(117, 215, 208, 0.18)
+        );
+      }
     }
   }
 
-  .process-substep {
+  .journey-substep {
     position: relative;
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 0.8rem;
+    grid-template-columns: 1.25rem minmax(0, 1fr);
+    gap: 1rem;
     align-items: start;
-    padding: 1.1rem;
-    border: 1px solid rgba(214, 177, 95, 0.12);
-    border-radius: 0.8rem;
-    background: rgba(4, 9, 7, 0.22);
 
-    &__marker {
-      width: 0.55rem;
-      height: 0.55rem;
-      margin-top: 0.42rem;
-      border: 1px solid var(--color-secondary);
-      border-radius: 50%;
-      box-shadow: 0 0 0 0.25rem rgba(214, 177, 95, 0.06);
+    .journey-substep__content {
+      ul,
+      ol {
+        padding-left: 1.75rem;
+        margin: 0.85rem 0;
+      }
+
+      ul {
+        list-style: disc;
+      }
+
+      ol {
+        list-style: decimal;
+      }
+
+      li {
+        display: list-item;
+      }
+
+      li + li {
+        margin-top: 0.45rem;
+      }
+
+      ul li::marker,
+      ol li::marker {
+        color: var(--color-secondary);
+      }
     }
 
-    h3 {
-      margin: 0 0 0.45rem;
-      color: var(--color-secondary);
-      font-size: 1.1rem;
-      line-height: 1.22;
+    &__marker {
+      position: relative;
+      z-index: 1;
+      width: 0.75rem;
+      height: 0.75rem;
+      margin-top: 1.45rem;
+      border: 1px solid var(--color-secondary);
+      border-radius: 50%;
+      background: var(--color-background-deep);
+      box-shadow: 0 0 0 0.35rem rgba(7, 21, 18, 0.95);
+    }
+
+    &__body {
+      min-width: 0;
+      padding: 1.15rem 1.25rem;
+      border: 1px solid rgba(214, 177, 95, 0.12);
+      border-radius: 0.85rem;
+      background: rgba(15, 36, 29, 0.42);
+
+      h4 {
+        margin: 0 0 0.6rem;
+        color: var(--color-secondary);
+        font-size: clamp(1.15rem, 2vw, 1.35rem);
+        line-height: 1.2;
+      }
     }
 
     &__content {
       color: var(--color-text-muted);
       font-family: var(--font-serif);
-      font-size: 0.92rem;
-      line-height: 1.55;
+      font-size: 0.97rem;
+      line-height: 1.65;
 
-      p {
-        margin: 0;
+      p,
+      blockquote,
+      ul,
+      ol {
+        margin-top: 0;
       }
 
-      p + p {
-        margin-top: 0.65rem;
+      p,
+      blockquote,
+      ul,
+      ol {
+        margin-bottom: 0.85rem;
+      }
+
+      > :last-child {
+        margin-bottom: 0;
+      }
+
+      ul,
+      ol {
+        padding-left: 1.35rem;
+      }
+
+      li + li {
+        margin-top: 0.45rem;
+      }
+
+      strong {
+        color: var(--color-text-main);
+      }
+
+      blockquote {
+        padding: 0.2rem 0 0.2rem 1rem;
+        border-left: 2px solid rgba(214, 177, 95, 0.48);
+        color: var(--color-text-main);
+        font-style: italic;
       }
     }
   }
 
-  @media (min-width: 960px) {
-    .process-step--has-image {
-      .process-step__card {
-        grid-column: 1 / -1;
-        margin-inline: 5.5rem;
+  @media (max-width: 799.98px) {
+    .journey-step {
+      grid-template-columns: 3.1rem minmax(0, 1fr);
 
-        &::after {
-          display: none;
+      &__node {
+        width: 2.5rem;
+        font-size: 0.76rem;
+
+        img {
+          width: 1.25rem;
+          height: 1.25rem;
         }
       }
 
-      .process-step__waypoint {
-        position: absolute;
-        top: -2.1rem;
-        left: 50%;
-        transform: translateX(-50%);
-        padding: 0;
+      &__card {
+        margin-left: 0.35rem;
       }
 
-      &.process-step--reverse .process-step__card {
-        grid-column: 1 / -1;
+      &__summary {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
       }
-    }
-  }
 
-  @media (max-width: 959.98px) {
-    .process-flow {
-      gap: 4rem;
-      padding-left: 3.5rem;
-
-      &::before {
-        left: 1.55rem;
+      &__reasoning {
+        max-width: 36rem;
       }
     }
 
-    .process-step,
-    .process-step--reverse {
+    .journey-workflow__heading {
       display: block;
 
-      &__waypoint {
-        position: absolute;
-        top: 0;
-        left: -3.5rem;
-        display: block;
-        padding: 0;
+      p {
+        margin-bottom: 0.4rem;
       }
-
-      .process-step__card {
-        grid-column: auto;
-
-        &::after {
-          display: none;
-        }
-      }
-    }
-
-    .process-step__icon {
-      width: 3.1rem;
-      box-shadow:
-              0 0 0 0.45rem var(--color-background),
-              0 0.75rem 2rem rgba(0, 0, 0, 0.22);
-    }
-
-    .process-step__body--split {
-      grid-template-columns: 1fr;
     }
   }
 
-  @media (max-width: 639.98px) {
-    .how-i-work-hero__lede {
-      max-width: 30rem;
-    }
-
+  @media (max-width: 519.98px) {
     .how-i-work-shell {
       padding-inline: 1rem;
     }
 
-    .process-flow {
-      padding-left: 2.55rem;
+    .how-i-work-standard--journey-intro {
+      padding-left: 1rem;
+    }
 
-      &::before {
-        left: 1rem;
+    .journey-step {
+      grid-template-columns: 2.2rem minmax(0, 1fr);
+
+      &:not(:last-child) {
+        padding-bottom: 2.5rem;
+      }
+
+      &__node {
+        width: 1.9rem;
+        font-size: 0.66rem;
+        box-shadow:
+                0 0 0 0.3rem var(--color-background),
+                0 0.6rem 1.8rem rgba(0, 0, 0, 0.2);
+
+        img {
+          width: 1rem;
+          height: 1rem;
+        }
+      }
+
+      &__card {
+        margin-left: 0.2rem;
+        border-radius: 0.9rem;
+      }
+
+      &__header,
+      &__summary,
+      &__expanded {
+        padding-left: 1.05rem;
+        padding-right: 1.05rem;
+      }
+
+      &__details > summary {
+        padding-left: 1.05rem;
+        padding-right: 1.05rem;
       }
     }
 
-    .process-step,
-    .process-step--reverse {
-      &__waypoint {
-        left: -2.55rem;
+    .journey-substep {
+      grid-template-columns: 0.85rem minmax(0, 1fr);
+      gap: 0.7rem;
+
+      &__marker {
+        width: 0.58rem;
+        height: 0.58rem;
+        margin-top: 1.35rem;
+      }
+
+      &__body {
+        padding: 1rem;
       }
     }
 
-    .process-step__icon {
-      width: 2.2rem;
-      font-size: 0.78rem;
-
-      img {
-        width: 1.2rem;
-        height: 1.2rem;
-      }
-    }
-
-    .process-step__header,
-    .process-step__body,
-    .process-step__substeps {
-      padding-left: 1.15rem;
-      padding-right: 1.15rem;
-    }
-
-    .process-step__substeps {
-      grid-template-columns: 1fr;
+    .journey-workflow__steps::before {
+      left: 0.46rem;
     }
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .process-step__card {
+    .journey-step__card {
       transition:
               transform 180ms ease,
               border-color 180ms ease,
               box-shadow 180ms ease;
     }
 
-    .process-step__card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(214, 177, 95, 0.28);
+    .journey-step__card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(214, 177, 95, 0.26);
       box-shadow:
-              0 1.8rem 4.5rem rgba(0, 0, 0, 0.24),
+              0 1.6rem 4rem rgba(0, 0, 0, 0.22),
               inset 0 1px rgba(255, 255, 255, 0.03);
     }
   }
