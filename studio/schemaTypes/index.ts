@@ -33,5 +33,6 @@ import web3Form from './web3Form'
 import mailerliteForm from './mailerliteForm'
 import mailerliteSection from './mailerliteSection'
 import mailerliteCTA from './mailerliteCTA'
+import expandableImage from './expandableImage'
 
-export const schemaTypes = [book, chapter, home, series, pillar, metadata, cta, navigation, link, layout, standardPage, listItem, richTextSection, listSection, artist, galleryItem, artistsPage, galleryPage, siteMetadata, stepItem, toolItem, howIWorkPage, newsletter, newsletters, newsletterThankYou, thankYouPage, card, cardsSection, footer, web3FormsSection, web3Form, mailerliteForm, mailerliteSection, mailerliteCTA]
+export const schemaTypes = [book, chapter, home, series, pillar, metadata, cta, navigation, link, layout, standardPage, listItem, richTextSection, listSection, artist, galleryItem, artistsPage, galleryPage, siteMetadata, stepItem, toolItem, howIWorkPage, newsletter, newsletters, newsletterThankYou, thankYouPage, card, cardsSection, footer, web3FormsSection, web3Form, mailerliteForm, mailerliteSection, mailerliteCTA, expandableImage]
