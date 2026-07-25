@@ -228,9 +228,6 @@ main.how-i-work-page {
     }
 
     &__summary {
-      display: grid;
-      grid-template-columns: minmax(0, 1.35fr) minmax(16rem, 0.65fr);
-      gap: clamp(1.5rem, 4vw, 3rem);
       padding: 0 clamp(1.4rem, 3vw, 2.25rem) clamp(1.5rem, 3vw, 2.2rem);
     }
 
@@ -250,39 +247,6 @@ main.how-i-work-page {
 
       em {
         color: inherit;
-      }
-    }
-
-    &__reasoning {
-      align-self: start;
-      padding: 1rem 1.1rem 1.05rem 1.25rem;
-      border-left: 3px solid rgba(117, 215, 208, 0.5);
-      border-radius: 0 0.75rem 0.75rem 0;
-      background: var(--hiw-panel-deep);
-    }
-
-    &__reasoning-label {
-      margin: 0 0 0.5rem;
-      color: var(--color-accent);
-      font-family: var(--font-sans);
-      font-size: 0.64rem;
-      font-weight: 800;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-    }
-
-    &__reasoning-content {
-      color: var(--color-text-muted);
-      font-family: var(--font-serif);
-      font-size: 0.94rem;
-      line-height: 1.62;
-
-      p {
-        margin: 0;
-      }
-
-      p + p {
-        margin-top: 0.75rem;
       }
     }
 
@@ -576,12 +540,7 @@ main.how-i-work-page {
       }
 
       &__summary {
-        grid-template-columns: 1fr;
-        gap: 1.25rem;
-      }
-
-      &__reasoning {
-        max-width: 36rem;
+        max-width: 48rem;
       }
     }
 

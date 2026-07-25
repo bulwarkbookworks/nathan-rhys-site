@@ -52,12 +52,6 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'reasoning',
-      title: 'Reasoning / Why this matters',
-      type: 'array',
-      of: [{type: 'block'}],
-    }),
-    defineField({
       name: 'screenshot',
       title: 'Screenshot',
       type: 'image',

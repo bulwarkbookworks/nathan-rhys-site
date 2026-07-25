@@ -56,15 +56,6 @@ const hasDetails = (step: any) =>
               )}
             </div>
           )}
-
-          {step.reasoning && (
-            <aside class="journey-step__reasoning">
-              <p class="journey-step__reasoning-label">Why this matters</p>
-              <div class="journey-step__reasoning-content">
-                <PortableText value={step.reasoning} />
-              </div>
-            </aside>
-          )}
         </div>
 
         {hasDetails(step) && (
