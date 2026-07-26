@@ -4,6 +4,7 @@ import { resolveLink } from '../lib/sanity';
 import CardsSection from './CardsSection.astro';
 import Web3FormsSection from './Web3FormsSection.astro';
 import MailerliteSection from './MailerliteSection.astro';
+import ExpandableImageSection from './ExpandableImageSection.astro';
 import MailerliteCTA from './MailerliteCTA.astro';
 
 interface Props {
@@ -91,6 +92,10 @@ const { section } = Astro.props;
     
     {section._type === 'mailerliteSection' && (
       <MailerliteSection section={section} />
+    )}
+
+    {section._type === 'expandableImageSection' && (
+      <ExpandableImageSection section={section} />
     )}
   </div>
 

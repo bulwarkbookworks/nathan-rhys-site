@@ -52,15 +52,10 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'screenshot',
-      title: 'Screenshot',
-      type: 'image',
-    }),
-    defineField({
-      name: 'screenshotCaption',
-      title: 'Screenshot Caption',
-      type: 'string',
-      hidden: ({parent}) => !parent?.screenshot,
+      name: 'images',
+      title: 'Images',
+      type: 'array',
+      of: [{type: 'reference', to: [{type: 'expandableImage'}]}],
     }),
     defineField({
       name: 'substeps',

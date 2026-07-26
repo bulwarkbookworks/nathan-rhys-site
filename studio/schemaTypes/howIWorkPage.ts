@@ -7,6 +7,7 @@ const pageSections = [
   {type: 'cardsSection'},
   {type: 'web3FormsSection'},
   {type: 'mailerliteSection'},
+  {type: 'expandableImageSection'},
 ]
 
 export default defineType({

@@ -1,0 +1,289 @@
+---
+import { urlFor, generateSrcset } from '../lib/sanity';
+
+interface Props {
+  images: any[];
+  class?: string;
+}
+
+const { images, class: className } = Astro.props;
+---
+
+{images && images.length > 0 && (
+  <div class:list={["expandable-gallery", className]}>
+    <div class="row g-4 justify-content-center">
+      {images.map((img: any) => (
+        <div class="col-12 col-lg-6">
+          <div class="expandable-card" data-expandable-image>
+            <div class="expandable-card__image-frame" data-trigger-lightbox>
+              <img
+                src={urlFor(img.image).width(800).auto('format').url()}
+                srcset={generateSrcset(img.image, [400, 600, 800, 1200])}
+                sizes="(max-width: 991px) 95vw, 600px"
+                alt={img.imageAlt || img.title}
+                loading="lazy"
+                decoding="async"
+                class="expandable-card__img"
+                data-full-src={urlFor(img.image).width(2000).auto('format').url()}
+                data-caption={img.caption || ''}
+              />
+              <div class="expandable-card__overlay">
+                <i class="bi bi-arrows-angle-expand"></i>
+              </div>
+            </div>
+            
+            {(img.caption || img.actionText || img.title) && (
+              <div class="expandable-card__content">
+                {img.caption && <p class="expandable-card__caption">{img.caption}</p>}
+                <a href="#" class="expandable-card__expand-link" data-trigger-lightbox>
+                  {img.actionText || 'Expand to see full image'}
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
+<style lang="scss">
+  .expandable-gallery {
+    margin-block: 1rem;
+  }
+
+  .expandable-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    &__image-frame {
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+      border-radius: 0.75rem;
+      background: rgba(0, 0, 0, 0.2);
+      aspect-ratio: 16 / 10;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      
+      &:hover {
+        .expandable-card__img {
+          transform: scale(1.04);
+        }
+        .expandable-card__overlay {
+          opacity: 1;
+        }
+      }
+    }
+
+    &__img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    &__overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      
+      i {
+        color: white;
+        font-size: 1.75rem;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+      }
+    }
+
+    &__content {
+      padding: 1.25rem 0.5rem 0.5rem;
+      text-align: center;
+    }
+
+    &__caption {
+      margin-bottom: 0.75rem;
+      font-size: 1rem;
+      line-height: 1.5;
+      color: var(--color-text-muted, #a0a0a0);
+    }
+
+    &__expand-link {
+      color: var(--color-accent, #d6b15f);
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+
+      &:hover {
+        color: white;
+        text-decoration-color: transparent;
+      }
+    }
+  }
+
+  /* Lightbox Styles */
+  :global(.lightbox-overlay) {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(4, 9, 7, 0.96);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1rem, 5vw, 4rem);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    backdrop-filter: blur(12px);
+
+    &.is-active {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  :global(.lightbox-close) {
+    position: absolute;
+    top: clamp(1rem, 3vw, 2rem);
+    right: clamp(1rem, 3vw, 2rem);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 2rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+    
+    &:hover {
+      background: var(--color-accent);
+      color: var(--background-deep);
+      transform: rotate(90deg);
+    }
+  }
+
+  :global(.lightbox-content) {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  :global(.lightbox-image) {
+    max-width: 100%;
+    max-height: calc(100% - 6rem);
+    object-fit: contain;
+    border-radius: 0.25rem;
+    box-shadow: 0 2rem 5rem rgba(0, 0, 0, 0.6);
+  }
+
+  :global(.lightbox-caption) {
+    color: white;
+    text-align: center;
+    max-width: 700px;
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    line-height: 1.6;
+    margin: 0;
+    font-family: var(--font-serif);
+    opacity: 0.9;
+  }
+</style>
+
+<script>
+  function setupExpandableGallery() {
+    let lightbox = document.querySelector('.lightbox-overlay');
+    
+    if (!lightbox) {
+      lightbox = document.createElement('div');
+      lightbox.className = 'lightbox-overlay';
+      lightbox.innerHTML = `
+        <button class="lightbox-close" aria-label="Close lightbox" title="Close (Esc)">&times;</button>
+        <div class="lightbox-content">
+          <img src="" alt="" class="lightbox-image">
+          <p class="lightbox-caption"></p>
+        </div>
+      `;
+      document.body.appendChild(lightbox);
+
+      const closeBtn = lightbox.querySelector('.lightbox-close');
+      closeBtn.addEventListener('click', closeLightbox);
+      
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox || (e.target as HTMLElement).classList.contains('lightbox-content')) {
+          closeLightbox();
+        }
+      });
+
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeLightbox();
+      });
+    }
+
+    const triggers = document.querySelectorAll('[data-trigger-lightbox]');
+    triggers.forEach(trigger => {
+      if ((trigger as HTMLElement).dataset.lightboxInitialized) return;
+      
+      trigger.addEventListener('click', (e) => {
+        e.preventDefault();
+        const card = trigger.closest('[data-expandable-image]');
+        if (!card) return;
+        
+        const img = card.querySelector('.expandable-card__img');
+        if (!img) return;
+        
+        const fullSrc = img.getAttribute('data-full-src');
+        const alt = img.getAttribute('alt');
+        const caption = img.getAttribute('data-caption');
+
+        if (fullSrc) openLightbox(fullSrc, alt, caption);
+      });
+      (trigger as HTMLElement).dataset.lightboxInitialized = 'true';
+    });
+
+    function openLightbox(src: string, alt: string | null, caption: string | null) {
+      if (!lightbox) return;
+      const lbImg = lightbox.querySelector('.lightbox-image') as HTMLImageElement;
+      const lbCaption = lightbox.querySelector('.lightbox-caption');
+      
+      if (lbImg) {
+        lbImg.src = src;
+        lbImg.alt = alt || '';
+      }
+      if (lbCaption) {
+        lbCaption.textContent = caption || '';
+      }
+      
+      lightbox.classList.add('is-active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      if (!lightbox) return;
+      lightbox.classList.remove('is-active');
+      document.body.style.overflow = '';
+    }
+  }
+
+  // Run on initial load
+  setupExpandableGallery();
+
+  // Run on view transitions
+  document.addEventListener('astro:after-swap', setupExpandableGallery);
+</script>

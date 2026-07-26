@@ -1,0 +1,33 @@
+---
+import { PortableText } from 'astro-portabletext';
+import ExpandableImageGallery from './ExpandableImageGallery.astro';
+
+interface Props {
+  section: any;
+}
+
+const { section } = Astro.props;
+---
+
+<div class="expandable-image-section-wrapper">
+  {section.preImagesContent && (
+    <div class="rich-text-content mb-12 text-center max-w-4xl mx-auto px-4">
+      <PortableText value={section.preImagesContent} />
+    </div>
+  )}
+
+  <ExpandableImageGallery images={section.images} />
+
+  {section.postImagesContent && (
+    <div class="rich-text-content mt-12 text-center max-w-4xl mx-auto px-4">
+      <PortableText value={section.postImagesContent} />
+    </div>
+  )}
+</div>
+
+<style lang="scss">
+  .expandable-image-section-wrapper {
+    /* Standard padding is usually handled by PageSection.astro wrapper */
+    width: 100%;
+  }
+</style>

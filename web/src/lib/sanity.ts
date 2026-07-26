@@ -186,6 +186,11 @@ export const SECTION_FIELDS = `
       form->{
         ...
       }
+    },
+    _type == "expandableImageSection" => {
+      preImagesContent,
+      images[]->,
+      postImagesContent
     }
 `;
 
@@ -203,6 +208,7 @@ export const HOW_I_WORK_QUERY = `
     },
     journeySteps[]->{
       ...,
+      images[]->,
       substeps[]{
         ...
       }
