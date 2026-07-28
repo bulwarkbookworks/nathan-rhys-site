@@ -129,8 +129,11 @@ const { images, class: className } = Astro.props;
     }
   }
 
+</style>
+
+<style is:global lang="scss">
   /* Lightbox Styles */
-  :global(.lightbox-overlay) {
+  .lightbox-overlay {
     position: fixed;
     inset: 0;
     z-index: 10000;
@@ -151,7 +154,7 @@ const { images, class: className } = Astro.props;
     }
   }
 
-  :global(.lightbox-close) {
+  .lightbox-close {
     position: absolute;
     top: clamp(1rem, 3vw, 2rem);
     right: clamp(1rem, 3vw, 2rem);
@@ -170,13 +173,13 @@ const { images, class: className } = Astro.props;
     z-index: 10;
     
     &:hover {
-      background: var(--color-accent);
-      color: var(--background-deep);
+      background: var(--color-accent, #d6b15f);
+      color: #040907;
       transform: rotate(90deg);
     }
   }
 
-  :global(.lightbox-content) {
+  .lightbox-content {
     width: 100%;
     height: 100%;
     display: flex;
@@ -186,7 +189,7 @@ const { images, class: className } = Astro.props;
     gap: 2rem;
   }
 
-  :global(.lightbox-image) {
+  .lightbox-image {
     max-width: 100%;
     max-height: calc(100% - 6rem);
     object-fit: contain;
@@ -194,59 +197,105 @@ const { images, class: className } = Astro.props;
     box-shadow: 0 2rem 5rem rgba(0, 0, 0, 0.6);
   }
 
-  :global(.lightbox-caption) {
+  .lightbox-caption {
     color: white;
     text-align: center;
     max-width: 700px;
     font-size: clamp(1rem, 2vw, 1.25rem);
     line-height: 1.6;
     margin: 0;
-    font-family: var(--font-serif);
+    font-family: var(--font-serif, serif);
     opacity: 0.9;
   }
 </style>
 
 <script>
-  function setupExpandableGallery() {
-    let lightbox = document.querySelector('.lightbox-overlay');
-    
-    if (!lightbox) {
-      lightbox = document.createElement('div');
-      lightbox.className = 'lightbox-overlay';
-      lightbox.innerHTML = `
-        <button class="lightbox-close" aria-label="Close lightbox" title="Close (Esc)">&times;</button>
-        <div class="lightbox-content">
-          <img src="" alt="" class="lightbox-image">
-          <p class="lightbox-caption"></p>
-        </div>
-      `;
-      document.body.appendChild(lightbox);
+  let lightbox = null;
+  let lbImg = null;
+  let lbCaption = null;
 
-      const closeBtn = lightbox.querySelector('.lightbox-close');
+  function createLightbox() {
+    // Avoid double creation
+    if (document.querySelector('.lightbox-overlay')) {
+      lightbox = document.querySelector('.lightbox-overlay');
+      return;
+    }
+
+    lightbox = document.createElement('div');
+    lightbox.className = 'lightbox-overlay';
+    lightbox.innerHTML = `
+      <button class="lightbox-close" aria-label="Close lightbox" title="Close (Esc)">&times;</button>
+      <div class="lightbox-content">
+        <img src="" alt="" class="lightbox-image">
+        <p class="lightbox-caption"></p>
+      </div>
+    `;
+    document.body.appendChild(lightbox);
+
+    const closeBtn = lightbox.querySelector('.lightbox-close');
+    if (closeBtn) {
       closeBtn.addEventListener('click', closeLightbox);
-      
-      lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox || (e.target as HTMLElement).classList.contains('lightbox-content')) {
-          closeLightbox();
-        }
-      });
+    }
+    
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox || (e.target instanceof HTMLElement && e.target.classList.contains('lightbox-content'))) {
+        closeLightbox();
+      }
+    });
 
-      window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeLightbox();
-      });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeLightbox();
+    });
+  }
+
+  function openLightbox(src, alt, caption) {
+    if (!lightbox || !document.body.contains(lightbox)) {
+      createLightbox();
+    }
+    
+    if (!lbImg) lbImg = lightbox.querySelector('.lightbox-image');
+    if (!lbCaption) lbCaption = lightbox.querySelector('.lightbox-caption');
+
+    if (lbImg) {
+      lbImg.src = src;
+      lbImg.alt = alt || '';
+    }
+    if (lbCaption) {
+      lbCaption.textContent = caption || '';
+    }
+    
+    lightbox.classList.add('is-active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    const lb = lightbox || document.querySelector('.lightbox-overlay');
+    if (lb) {
+      lb.classList.remove('is-active');
+      document.body.style.overflow = '';
+    }
+  }
+
+  function setupExpandableGallery() {
+    // Refresh references
+    lightbox = document.querySelector('.lightbox-overlay');
+    if (lightbox) {
+      lbImg = lightbox.querySelector('.lightbox-image');
+      lbCaption = lightbox.querySelector('.lightbox-caption');
     }
 
     const triggers = document.querySelectorAll('[data-trigger-lightbox]');
     triggers.forEach(trigger => {
-      if ((trigger as HTMLElement).dataset.lightboxInitialized) return;
+      const htmlTrigger = trigger as HTMLElement;
+      if (htmlTrigger.dataset.lightboxInitialized) return;
       
-      trigger.addEventListener('click', (e) => {
+      htmlTrigger.addEventListener('click', (e) => {
         e.preventDefault();
-        const card = trigger.closest('[data-expandable-image]');
+        const card = htmlTrigger.closest('[data-expandable-image]');
         if (!card) return;
         
         const img = card.querySelector('.expandable-card__img');
-        if (!img) return;
+        if (!(img instanceof HTMLImageElement)) return;
         
         const fullSrc = img.getAttribute('data-full-src');
         const alt = img.getAttribute('alt');
@@ -254,36 +303,15 @@ const { images, class: className } = Astro.props;
 
         if (fullSrc) openLightbox(fullSrc, alt, caption);
       });
-      (trigger as HTMLElement).dataset.lightboxInitialized = 'true';
+      htmlTrigger.dataset.lightboxInitialized = 'true';
     });
-
-    function openLightbox(src: string, alt: string | null, caption: string | null) {
-      if (!lightbox) return;
-      const lbImg = lightbox.querySelector('.lightbox-image') as HTMLImageElement;
-      const lbCaption = lightbox.querySelector('.lightbox-caption');
-      
-      if (lbImg) {
-        lbImg.src = src;
-        lbImg.alt = alt || '';
-      }
-      if (lbCaption) {
-        lbCaption.textContent = caption || '';
-      }
-      
-      lightbox.classList.add('is-active');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeLightbox() {
-      if (!lightbox) return;
-      lightbox.classList.remove('is-active');
-      document.body.style.overflow = '';
-    }
   }
 
-  // Run on initial load
+  // Initial load
   setupExpandableGallery();
 
-  // Run on view transitions
-  document.addEventListener('astro:after-swap', setupExpandableGallery);
+  // View Transitions support
+  document.addEventListener('astro:after-swap', () => {
+    setupExpandableGallery();
+  });
 </script>
