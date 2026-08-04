@@ -25,7 +25,6 @@ const { tools } = Astro.props;
         )}
         <div class="tool-card__title-group">
           <h3 class="tool-card__name">{tool.name}</h3>
-          {tool.category && <span class="tool-card__category">{tool.category}</span>}
         </div>
       </div>
       
@@ -40,54 +39,42 @@ const { tools } = Astro.props;
           </div>
         )}
         
-        <div class="tool-card__rationale">
-          {tool.problemSolved && (
-            <div class="tool-card__rationale-item">
-              <span class="tool-card__rationale-label">Problem Solved</span>
-              <div class="tool-card__rationale-text">
-                {Array.isArray(tool.problemSolved) ? (
-                  <PortableText value={tool.problemSolved} />
+        <div class="tool-card__usage">
+          {tool.whatIUseItFor && (
+            <div class="tool-card__usage-item">
+              <span class="tool-card__usage-label">What I use it for</span>
+              <div class="tool-card__usage-text">
+                {Array.isArray(tool.whatIUseItFor) ? (
+                  <PortableText value={tool.whatIUseItFor} />
                 ) : (
-                  <p>{tool.problemSolved}</p>
-                )}
-              </div>
-            </div>
-          )}
-          {tool.whyIChoseThisTool && (
-            <div class="tool-card__rationale-item">
-              <span class="tool-card__rationale-label">Why I chose {tool.name}</span>
-              <div class="tool-card__rationale-text">
-                {Array.isArray(tool.whyIChoseThisTool) ? (
-                  <PortableText value={tool.whyIChoseThisTool} />
-                ) : (
-                  <p>{tool.whyIChoseThisTool}</p>
+                  <p>{tool.whatIUseItFor}</p>
                 )}
               </div>
             </div>
           )}
         </div>
         
-        {tool.alternatives && (
-          <details class="tool-card__alternatives">
-            <summary class="tool-card__alternatives-summary">
-              <span>Alternatives considered</span>
+        {tool.moreDetails && (
+          <details class="tool-card__details">
+            <summary class="tool-card__details-summary">
+              <span>More details</span>
               <i class="bi bi-chevron-down" aria-hidden="true"></i>
             </summary>
-            <div class="tool-card__alternatives-content">
-              {Array.isArray(tool.alternatives) ? (
-                <PortableText value={tool.alternatives} />
+            <div class="tool-card__details-content">
+              {Array.isArray(tool.moreDetails) ? (
+                <PortableText value={tool.moreDetails} />
               ) : (
-                <p>{tool.alternatives}</p>
+                <p>{tool.moreDetails}</p>
               )}
             </div>
           </details>
         )}
       </div>
       
-      {tool.externalWebsite && (
+      {tool.officialWebsite && (
         <div class="tool-card__footer">
-          <a href={tool.externalWebsite} target="_blank" rel="noopener noreferrer" class="tool-card__link">
-            <span>Visit {tool.name}</span>
+          <a href={tool.officialWebsite} target="_blank" rel="noopener noreferrer" class="tool-card__link">
+            <span>Official Website</span>
             <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
           </a>
         </div>
@@ -152,26 +139,19 @@ const { tools } = Astro.props;
     display: flex;
     flex-direction: column;
     min-width: 0;
+      border-bottom: 1px solid rgba(214, 177, 95, 0.4);
+      /*width: 100%;*/
+
   }
 
   .tool-card__name {
     margin: 0;
     font-size: 1.5rem;
-    color: var(--color-text-main);
+    color: var(--color-secondary);
     line-height: 1.2;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-
-  .tool-card__category {
-    font-size: 0.75rem;
-    font-family: var(--font-sans);
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--color-accent);
-    font-weight: 800;
-    margin-top: 0.25rem;
   }
 
   .tool-card__body {
@@ -187,19 +167,19 @@ const { tools } = Astro.props;
     opacity: 0.9;
   }
 
-  .tool-card__rationale {
+  .tool-card__usage {
     display: grid;
     gap: 1.5rem;
     margin-bottom: 2rem;
   }
 
-  .tool-card__rationale-item {
+  .tool-card__usage-item {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
   }
 
-  .tool-card__rationale-label {
+  .tool-card__usage-label {
     color: var(--color-secondary);
     font-family: var(--font-sans);
     text-transform: uppercase;
@@ -208,7 +188,7 @@ const { tools } = Astro.props;
     letter-spacing: 0.15em;
   }
 
-  .tool-card__rationale-text {
+  .tool-card__usage-text {
     margin: 0;
     font-family: var(--font-serif);
     font-size: 0.95rem;
@@ -216,13 +196,13 @@ const { tools } = Astro.props;
     line-height: 1.5;
   }
 
-  .tool-card__alternatives {
+  .tool-card__details {
     margin-top: 1.5rem;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     padding-top: 1rem;
   }
 
-  .tool-card__alternatives-summary {
+  .tool-card__details-summary {
     cursor: pointer;
     list-style: none;
     display: flex;
@@ -238,29 +218,29 @@ const { tools } = Astro.props;
     transition: color 0.2s ease;
   }
   
-  .tool-card__alternatives-summary::-webkit-details-marker {
+  .tool-card__details-summary::-webkit-details-marker {
     display: none;
   }
 
-  .tool-card__alternatives-summary:hover {
+  .tool-card__details-summary:hover {
     color: var(--color-accent);
   }
 
-  .tool-card__alternatives[open] .tool-card__alternatives-summary {
+  .tool-card__details[open] .tool-card__details-summary {
     color: var(--color-accent);
     margin-bottom: 1rem;
   }
   
-  .tool-card__alternatives[open] .bi-chevron-down {
+  .tool-card__details[open] .bi-chevron-down {
     transform: rotate(180deg);
   }
 
-  .tool-card__alternatives-summary i {
+  .tool-card__details-summary i {
     font-size: 0.75rem;
     transition: transform 0.3s ease;
   }
 
-  .tool-card__alternatives-content {
+  .tool-card__details-content {
     font-family: var(--font-serif);
     font-size: 0.9rem;
     color: var(--color-text-muted);

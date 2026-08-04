@@ -24,7 +24,7 @@ const { images, class: className } = Astro.props;
                 loading="lazy"
                 decoding="async"
                 class="expandable-card__img"
-                data-full-src={urlFor(img.image).width(2000).auto('format').url()}
+                data-full-src={urlFor(img.image.asset).auto('format').url()}
                 data-caption={img.caption || ''}
               />
               <div class="expandable-card__overlay">

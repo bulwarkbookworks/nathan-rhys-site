@@ -165,7 +165,7 @@ const fullWidths = [800, 1200, 1600, 2000, 2400];
   <dialog id="zoom-dialog" class="zoom-dialog">
     <div class="zoom-dialog__wrapper">
       <img 
-        src={urlFor(item.image).width(3000).auto('format').url()} 
+        src={urlFor(item.image.asset).auto('format').url()}
         alt={item.title}
         class="zoom-dialog__image"
       />
