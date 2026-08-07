@@ -4,7 +4,8 @@ on:
   push:
     branches: ["main"] # Change to your default branch
   workflow_dispatch:
-
+  repository_dispatch:
+    types: [sanity_update]
 permissions:
   contents: read
   pages: write
