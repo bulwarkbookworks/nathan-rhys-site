@@ -1,5 +1,5 @@
 ---
-import { client, urlFor, generateSrcset, getBookUrl, LAYOUT_QUERY_FRAGMENT } from '../../lib/sanity';
+import { client, urlFor, generateSrcset, getBookUrl, LAYOUT_QUERY_FRAGMENT, resolveLink } from '../../lib/sanity';
 import Layout from '../../layouts/Layout.astro';
 import { PortableText } from 'astro-portabletext';
 
@@ -32,7 +32,7 @@ const item = await client.fetch(`*[_type == "galleryItem" && slug.current == $sl
 }`, { slug });
 
 if (!item) {
-  return Astro.redirect('/404');
+  return Astro.redirect(resolveLink('/404'));
 }
 
 // Extract text for description

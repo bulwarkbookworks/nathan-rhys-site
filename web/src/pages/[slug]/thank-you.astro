@@ -1,5 +1,5 @@
 ---
-import { client, SECTION_QUERY } from '../../lib/sanity';
+import { client, SECTION_QUERY, resolveLink } from '../../lib/sanity';
 import Layout from '../../layouts/Layout.astro';
 import PageSection from '../../components/PageSection.astro';
 import MailerliteUniversal from '../../components/MailerliteUniversal.astro';
@@ -19,7 +19,7 @@ const data = await client.fetch(`*[_type == "thankYouPage" && slug.current == $s
 }`, { slug });
 
 if (!data) {
-  return Astro.redirect('/404');
+  return Astro.redirect(resolveLink('/404'));
 }
 
 const metadata = {

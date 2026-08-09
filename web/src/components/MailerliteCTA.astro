@@ -4,6 +4,7 @@ interface Props {
     label: string;
     form?: {
       formId: string;
+      formType?: 'popup' | 'embedded';
     };
     style?: 'primary' | 'secondary' | 'ghost';
   };
@@ -11,6 +12,7 @@ interface Props {
 
 const { cta } = Astro.props;
 const form = cta.form;
+const formType = form?.formType || 'popup';
 
 const styleClasses = {
   primary: 'bg-secondary text-background-deep hover:bg-accent',
@@ -19,13 +21,42 @@ const styleClasses = {
 };
 
 const currentStyle = cta.style || 'primary';
+const baseClasses = 'inline-block px-10 py-4 rounded-full font-bold transition-all cursor-pointer';
+
+// Unique id so multiple embedded CTAs on the same page each get their own modal.
+const dialogId = `ml-embedded-dialog-${crypto.randomUUID()}`;
 ---
 
-{form && (
-  <button 
+{form && formType === 'embedded' && (
+  <>
+    <button
+      type="button"
+      data-ml-embedded-trigger
+      data-target={dialogId}
+      class:list={[baseClasses, styleClasses[currentStyle]]}
+    >
+      {cta.label}
+    </button>
+
+    <dialog id={dialogId} class="ml-embedded-dialog">
+      <div class="ml-embedded-dialog__wrapper">
+        <button type="button" class="ml-embedded-dialog__close" data-ml-embedded-close aria-label="Close">
+          <i class="bi bi-x-lg"></i>
+        </button>
+        <div class="ml-embedded" data-form={form.formId}></div>
+      </div>
+    </dialog>
+  </>
+)}
+
+{form && formType !== 'embedded' && (
+  <button
+    type="button"
     data-ml-form={form.formId}
+    onclick={`ml('show', '${form.formId}', true)`}
     class:list={[
-      "mailerlite-cta inline-block px-10 py-4 rounded-full font-bold transition-all cursor-pointer",
+      "ml-onclick-form mailerlite-cta",
+      baseClasses,
       styleClasses[currentStyle]
     ]}
   >
@@ -34,17 +65,87 @@ const currentStyle = cta.style || 'primary';
 )}
 
 <script>
-  function setupMailerLiteCTA(button: HTMLButtonElement) {
-    button.addEventListener('click', () => {
-      const formId = button.getAttribute('data-ml-form');
-      
-      if (typeof window !== 'undefined' && (window as any).ml && formId) {
-        (window as any).ml('show', formId, true);
-      }
+  document.querySelectorAll('[data-ml-embedded-trigger]').forEach((btn) => {
+    const targetId = btn.getAttribute('data-target');
+    if (!targetId) return;
+    const dialog = document.getElementById(targetId) as HTMLDialogElement | null;
+    if (!dialog) return;
+
+    const closeDialog = () => {
+      dialog.close();
+      document.body.style.overflow = '';
+    };
+
+    btn.addEventListener('click', () => {
+      dialog.showModal();
+      document.body.style.overflow = 'hidden';
     });
+
+    dialog.querySelector('[data-ml-embedded-close]')?.addEventListener('click', closeDialog);
+
+    // Close when clicking the backdrop (outside the wrapper).
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) closeDialog();
+    });
+
+    dialog.addEventListener('close', () => {
+      document.body.style.overflow = '';
+    });
+  });
+</script>
+
+<style is:global>
+  .ml-embedded-dialog {
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    max-width: 100%;
+    max-height: 100%;
   }
 
-  // Initialize buttons
-  const buttons = document.querySelectorAll('.mailerlite-cta');
-  buttons.forEach(button => setupMailerLiteCTA(button as HTMLButtonElement));
-</script>
+  .ml-embedded-dialog[open] {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .ml-embedded-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+  }
+
+  .ml-embedded-dialog__wrapper {
+    position: relative;
+    background: var(--color-surface, #1a1a1a);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    padding: 2.5rem 1.5rem 1.5rem;
+    max-width: 32rem;
+    width: min(92vw, 32rem);
+    box-shadow: var(--shadow-lifted, 0 20px 50px rgba(0, 0, 0, 0.5));
+  }
+
+  .ml-embedded-dialog__close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted, #888);
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0.25rem;
+    transition: color 0.2s ease;
+  }
+
+  .ml-embedded-dialog__close:hover {
+    color: var(--color-accent, #fff);
+  }
+
+  .ml-embedded-dialog .ml-embedded {
+    margin: 0 auto;
+  }
+</style>

@@ -1,5 +1,5 @@
 import rss from '@astrojs/rss';
-import { client, NEWSLETTERS_SLUG } from '../lib/sanity';
+import { client, NEWSLETTERS_SLUG, resolveLink } from '../lib/sanity';
 
 export async function GET(context) {
   const newsletters = await client.fetch(`*[_type == "newsletter"] | order(publishDate desc) {
@@ -24,7 +24,7 @@ export async function GET(context) {
         title: newsletter.heading || newsletter.title,
         pubDate: new Date(newsletter.publishDate),
         description: newsletter.description || newsletter.kicker || '',
-        link: `/${NEWSLETTERS_SLUG}/${year}/${month}/${newsletter.slug}`,
+        link: resolveLink(`/${NEWSLETTERS_SLUG}/${year}/${month}/${newsletter.slug}`),
       };
     }),
     customData: `<language>en-us</language>`,

@@ -25,7 +25,7 @@ const artist = await client.fetch(`*[_type == "artist" && slug.current == $slug]
 }`, { slug });
 
 if (!artist) {
-  return Astro.redirect('/404');
+  return Astro.redirect(resolveLink('/404'));
 }
 const iconMap: Record<string, string> = {
   web: 'bi-globe',
@@ -39,7 +39,7 @@ const iconMap: Record<string, string> = {
 <Layout title={artist.name} metadata={artist.metadata} displayLastUpdated={artist.displayLastUpdated} updatedAt={artist._updatedAt}>
   <div class="container py-20">
     <div class="mb-12">
-      <a href="/artists" class="button button--ghost">
+      <a href={resolveLink('/artists')} class="button button--ghost">
         <i class="bi bi-arrow-left me-2"></i> Back to Artists
       </a>
     </div>

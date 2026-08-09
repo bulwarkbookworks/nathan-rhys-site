@@ -1,5 +1,5 @@
 ---
-import { client, LAYOUT_QUERY_FRAGMENT, SECTION_QUERY, NEWSLETTERS_SLUG } from '../../lib/sanity';
+import { client, LAYOUT_QUERY_FRAGMENT, SECTION_QUERY, NEWSLETTERS_SLUG, resolveLink } from '../../lib/sanity';
 import Layout from '../../layouts/Layout.astro';
 import PageSection from '../../components/PageSection.astro';
 import MailerliteUniversal from '../../components/MailerliteUniversal.astro';
@@ -48,7 +48,7 @@ const metadata = newslettersPage?.metadata;
           <h1 class="text-5xl md:text-7xl mb-4">{heading}</h1>
         </div>
         <div class="pb-2">
-          <a href="/rss.xml" class="button button--ghost inline-flex items-center">
+          <a href={resolveLink('/rss.xml')} class="button button--ghost inline-flex items-center">
             <i class="bi bi-rss-fill me-2"></i> RSS Feed
           </a>
         </div>
@@ -63,7 +63,7 @@ const metadata = newslettersPage?.metadata;
            const date = new Date(newsletter.publishDate);
            const year = date.getFullYear();
            const month = String(date.getMonth() + 1).padStart(2, '0');
-           const href = `/${newslettersSlug}/${year}/${month}/${newsletter.slug}`;
+           const href = resolveLink(`/${newslettersSlug}/${year}/${month}/${newsletter.slug}`);
            
            return (
              <article class="border-b border-white/10 pb-12 last:border-0">
@@ -87,7 +87,7 @@ const metadata = newslettersPage?.metadata;
       {page.url.prev || page.url.next ? (
         <nav class="mt-20 flex justify-between items-center border-t border-white/10 pt-12">
           {page.url.prev ? (
-            <a href={page.url.prev} class="button button--ghost">
+            <a href={resolveLink(page.url.prev)} class="button button--ghost">
               <i class="bi bi-arrow-left me-2"></i> Newer
             </a>
           ) : <div />}
@@ -95,7 +95,7 @@ const metadata = newslettersPage?.metadata;
           <span class="text-muted">Page {page.currentPage} of {page.lastPage}</span>
 
           {page.url.next ? (
-            <a href={page.url.next} class="button button--ghost">
+            <a href={resolveLink(page.url.next)} class="button button--ghost">
               Older <i class="bi bi-arrow-right ms-2"></i>
             </a>
           ) : <div />}

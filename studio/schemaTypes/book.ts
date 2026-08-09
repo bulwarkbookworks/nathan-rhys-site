@@ -154,6 +154,15 @@ export default defineType({
       fieldset: 'ctas',
     }),
     defineField({
+      name: 'summaryCardCtas',
+      title: 'Summary Card CTAs',
+      type: 'array',
+      description: 'These CTAs ONLY appear when this book is displayed as a card on other pages (like the home page).',
+      of: [{type: 'cta'}, {type: 'mailerliteCTA'}],
+      group: 'ctas',
+      fieldset: 'ctas',
+    }),
+    defineField({
       name: 'chapters',
       title: 'Chapters',
       type: 'array',

@@ -20,6 +20,22 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'formType',
+      title: 'Form Type',
+      type: 'string',
+      description:
+        'How this form is triggered from a CTA button. "Pop-up" opens a MailerLite pop-up form directly. "Embedded" opens an embedded form inside a modal (use this when you need the form to redirect to a success page after signup).',
+      options: {
+        list: [
+          {title: 'Pop-up', value: 'popup'},
+          {title: 'Embedded (modal)', value: 'embedded'},
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'popup',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
       name: 'description',
       title: 'Description',
       type: 'text',

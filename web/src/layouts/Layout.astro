@@ -1,5 +1,5 @@
 ---
-import { client, urlFor, resolveLink, NAVIGATION_FIELDS, GLOBAL_LAYOUT_QUERY, FOOTER_QUERY } from '../lib/sanity';
+import { client, urlFor, resolveLink, getSiteUrl, NAVIGATION_FIELDS, GLOBAL_LAYOUT_QUERY, FOOTER_QUERY } from '../lib/sanity';
 import Navigation from '../components/Navigation.astro';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import '../styles/global.css';
@@ -40,7 +40,7 @@ const footerCopyright = footer?.copyrightArea?.copyrightText || footer?.siteInfo
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     {layout?.faviconIcoUrl && <link rel="icon" href={layout.faviconIcoUrl} sizes="any" />}
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={resolveLink('/favicon.svg')} />
     {layout?.favicon16 && <link rel="icon" type="image/png" sizes="16x16" href={urlFor(layout.favicon16).width(16).height(16).auto('format').url()} />}
     {layout?.favicon32 && <link rel="icon" type="image/png" sizes="32x32" href={urlFor(layout.favicon32).width(32).height(32).auto('format').url()} />}
     {layout?.logoAppleTouch && <link rel="apple-touch-icon" href={urlFor(layout.logoAppleTouch).width(180).height(180).auto('format').url()} />}
@@ -62,7 +62,7 @@ const footerCopyright = footer?.copyrightArea?.copyrightText || footer?.siteInfo
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,650;14..32,750&family=Literata:opsz,wght@7..72,400;7..72,500;7..72,650&family=Marcellus&display=swap" rel="stylesheet" />
-    <link rel="alternate" type="application/rss+xml" title="Nathan Rhys Newsletter" href="/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Nathan Rhys Newsletter" href={resolveLink('/rss.xml')} />
     <style>
       .last-updated-container {
         padding-top: 2rem;

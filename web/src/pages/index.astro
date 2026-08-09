@@ -1,31 +1,11 @@
 ---
-import { client, urlFor, resolveLink, getBookUrl, generateSrcset, LAYOUT_QUERY_FRAGMENT, SECTION_QUERY } from '../lib/sanity';
+import { client, urlFor, resolveLink, getBookUrl, generateSrcset, LAYOUT_QUERY_FRAGMENT, SECTION_QUERY, CTAS_FIELDS, SUMMARY_CARD_CTAS_FIELDS } from '../lib/sanity';
 import { PortableText } from 'astro-portabletext';
 import Navigation from '../components/Navigation.astro';
 import Layout from '../layouts/Layout.astro';
 import PageSection from '../components/PageSection.astro';
 import MailerliteUniversal from '../components/MailerliteUniversal.astro';
-
-const linkField = `
-  link {
-    ...,
-    internal->{ 
-      _type, 
-      slug,
-      _type == "book" => {
-        "seriesSlug": series->slug.current
-      }
-    }
-  }
-`;
-
-const ctasField = `
-  ctas[]{
-    label,
-    style,
-    ${linkField}
-  }
-`;
+import MailerliteCTA from '../components/MailerliteCTA.astro';
 
 const bookFields = `
   title,
@@ -37,14 +17,15 @@ const bookFields = `
   projectedRelease,
   releaseDateTbd,
   blurb,
-  ${ctasField},
+  ${CTAS_FIELDS},
+  ${SUMMARY_CARD_CTAS_FIELDS},
   featureKicker,
   "seriesSlug": series->slug.current
 `;
 
 const home = await client.fetch(`*[_type == "home"][0]{
   ...,
-  ${ctasField},
+  ${CTAS_FIELDS},
   ${SECTION_QUERY},
   featuredBook->{
     ${bookFields}
@@ -61,7 +42,16 @@ const home = await client.fetch(`*[_type == "home"][0]{
 const navigation = await client.fetch(`*[_type == "navigation"][0]{ 
   items[]{
     label,
-    ${linkField}
+    link {
+      ...,
+      internal->{ 
+        _type, 
+        slug,
+        _type == "book" => {
+          "seriesSlug": series->slug.current
+        }
+      }
+    }
   } 
 }`);
 
@@ -115,7 +105,11 @@ const hasMailerlite = home?.sections?.some((s: any) =>
   s._type === 'mailerliteSection' || 
   s.ctas?.some((c: any) => c._type === 'mailerliteCTA')
 ) || home?.featuredBook?.ctas?.some((c: any) => c._type === 'mailerliteCTA')
-  || home?.series?.some((ser: any) => ser.books?.some((b: any) => b.ctas?.some((c: any) => c._type === 'mailerliteCTA')));
+  || home?.featuredBook?.summaryCardCtas?.some((c: any) => c._type === 'mailerliteCTA')
+  || home?.series?.some((ser: any) => ser.books?.some((b: any) => 
+       b.ctas?.some((c: any) => c._type === 'mailerliteCTA') || 
+       b.summaryCardCtas?.some((c: any) => c._type === 'mailerliteCTA')
+     ));
 ---
 
 <Layout 
@@ -148,7 +142,11 @@ const hasMailerlite = home?.sections?.some((s: any) =>
         {homeCtas.length > 0 && (
           <div class="cta-row" aria-label="Primary actions">
             {homeCtas.filter((cta: any) => cta.label).map((cta: any) => (
-              <a class={`button button--${cta.style || 'primary'}`} href={cta.link}>{cta.label}</a>
+              cta._type === 'mailerliteCTA' ? (
+                <MailerliteCTA cta={cta} />
+              ) : (
+                <a class={`button button--${cta.style || 'primary'}`} href={cta.link}>{cta.label}</a>
+              )
             ))}
           </div>
         )}
@@ -184,11 +182,18 @@ const hasMailerlite = home?.sections?.some((s: any) =>
                     {Array.isArray(fallbackBook.blurb) ? <PortableText value={fallbackBook.blurb} /> : <p>{fallbackBook.blurb}</p>}
                   </div>
                 )}
-                {fallbackBook.ctas?.length > 0 && (
+                {((fallbackBook.summaryCardCtas?.length > 0) || (fallbackBook.ctas?.length > 0)) && (
                   <div class="cta-row cta-row--compact">
-                    {fallbackBook.ctas.filter((cta: any) => cta.label).map((cta: any) => (
-                      <a class={`button button--${cta.style || 'primary'}`} href={resolveLink(cta.link)}>{cta.label}</a>
-                    ))}
+                    {(fallbackBook.summaryCardCtas?.length > 0 ? fallbackBook.summaryCardCtas : fallbackBook.ctas)
+                      .filter((cta: any) => cta.label)
+                      .map((cta: any) => (
+                        cta._type === 'mailerliteCTA' ? (
+                          <MailerliteCTA cta={cta} />
+                        ) : (
+                          <a class={`button button--${cta.style || 'primary'}`} href={resolveLink(cta.link)}>{cta.label}</a>
+                        )
+                      ))
+                    }
                   </div>
                 )}
               </div>

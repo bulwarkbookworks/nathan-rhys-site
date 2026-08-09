@@ -20,6 +20,7 @@ function resolveMode() {
 // Order of precedence: real process env (CI/host) -> .env.[mode] file -> production default.
 const env = loadEnv(resolveMode(), process.cwd(), '');
 const SITE_URL = process.env.SITE_URL || env.SITE_URL || 'https://nathan-rhys.github.io'; // Update the production default when the real domain is live.
+const BASE_URL = new URL(SITE_URL).pathname.replace(/\/$/, '') || '/';
 
 // Minimal build-time Sanity client (mirrors src/lib/sanity.ts).
 // useCdn is disabled so the sitemap reflects the latest exclusion flags at build time.
@@ -102,12 +103,12 @@ try {
 // https://astro.build/config
 export default defineConfig({
   site: SITE_URL,
-  base: '/',
+  base: BASE_URL,
   outDir: '../dist/web',
   integrations: [sitemap({
     // Relative so it resolves against `site` -> always same-origin as the sitemap,
     // which is required for browsers to actually apply the XSL styling.
-    xslURL: '/sitemap.xsl',
+    xslURL: `${BASE_URL.endsWith('/') ? BASE_URL : BASE_URL + '/'}sitemap.xsl`,
     filter: (page) => !excludedPaths.has(normalizePath(page)),
   }), mcp()],
   vite: {

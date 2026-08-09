@@ -1,5 +1,5 @@
 ---
-import { client, LAYOUT_QUERY_FRAGMENT, SECTION_QUERY, NEWSLETTERS_SLUG } from '../../lib/sanity';
+import { client, LAYOUT_QUERY_FRAGMENT, SECTION_QUERY, NEWSLETTERS_SLUG, resolveLink } from '../../lib/sanity';
 import Layout from '../../layouts/Layout.astro';
 import PageSection from '../../components/PageSection.astro';
 import MailerliteUniversal from '../../components/MailerliteUniversal.astro';
@@ -16,7 +16,7 @@ const page = await client.fetch(`*[_type == "newsletterThankYou"][0]{
 }`);
 
 if (!page) {
-  return Astro.redirect('/404');
+  return Astro.redirect(resolveLink('/404'));
 }
 
 const hasMailerlite = page.sections?.some((s: any) => 

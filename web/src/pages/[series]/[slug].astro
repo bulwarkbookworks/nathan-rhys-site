@@ -1,5 +1,5 @@
 ---
-import { client, LAYOUT_QUERY_FRAGMENT, SECTION_QUERY } from '../../lib/sanity';
+import { client, LAYOUT_QUERY_FRAGMENT, SECTION_QUERY, resolveLink, CTAS_FIELDS } from '../../lib/sanity';
 import BookTemplate from '../../components/BookTemplate.astro';
 
 export async function getStaticPaths() {
@@ -24,11 +24,12 @@ const data = await client.fetch(`*[_type == "book" && slug.current == $slug && s
   series->{ name, slug }, 
   "seriesSlug": series->slug.current,
   chapters[]->{ title, slug },
+  ${CTAS_FIELDS},
   ${SECTION_QUERY}
 }`, { series, slug });
 
 if (!data) {
-  return Astro.redirect('/404');
+  return Astro.redirect(resolveLink('/404'));
 }
 ---
 

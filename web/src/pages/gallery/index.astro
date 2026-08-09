@@ -1,5 +1,5 @@
 ---
-import { client, urlFor, LAYOUT_QUERY_FRAGMENT } from '../../lib/sanity';
+import { client, urlFor, LAYOUT_QUERY_FRAGMENT, resolveLink } from '../../lib/sanity';
 import Layout from '../../layouts/Layout.astro';
 import { PortableText } from 'astro-portabletext';
 
@@ -34,7 +34,7 @@ const metadata = pageData?.metadata;
       <div class="gallery-grid">
         {galleryItems.map((item: any) => (
           <article class="gallery-card">
-            <a href={`/gallery/${item.slug}`} class="gallery-card__link">
+            <a href={resolveLink(`/gallery/${item.slug}`)} class="gallery-card__link">
               <div class="gallery-card__image-wrapper">
                 <img 
                   src={urlFor(item.image).width(600).auto('format').url()} 

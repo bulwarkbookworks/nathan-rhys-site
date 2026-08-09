@@ -8,6 +8,15 @@ export const client = createClient({
   apiVersion: "2024-03-12", // use current date (YYYY-MM-DD) to target the latest API version
 });
 
+/**
+ * Gets the site URL from environment variables and ensures it has a trailing slash.
+ */
+export function getSiteUrl(): string {
+  const siteUrl = import.meta.env.SITE_URL || import.meta.env.SITE || '';
+  if (!siteUrl) return '/';
+  return siteUrl.endsWith('/') ? siteUrl : `${siteUrl}/`;
+}
+
 // Fetch newsletters slug once for link resolution
 const newslettersData = await client.fetch(`*[_type == "newsletters"][0]{ "slug": slug.current }`).catch(() => null);
 export const NEWSLETTERS_SLUG = newslettersData?.slug || 'newsletters';
@@ -134,20 +143,34 @@ export const FOOTER_QUERY = `
   }
 `;
 
+export const CTA_FIELDS = `
+  ...,
+  link{
+    ${LINK_OBJECT_FIELDS}
+  },
+  _type == "mailerliteCTA" => {
+    form->{
+      ...
+    }
+  }
+`;
+
+export const CTAS_FIELDS = `
+  ctas[]{
+    ${CTA_FIELDS}
+  }
+`;
+
+export const SUMMARY_CARD_CTAS_FIELDS = `
+  summaryCardCtas[]{
+    ${CTA_FIELDS}
+  }
+`;
+
 export const SECTION_FIELDS = `
     ...,
     cssClasses,
-    ctas[]{
-      ...,
-      link{
-        ${LINK_OBJECT_FIELDS}
-      },
-      _type == "mailerliteCTA" => {
-        form->{
-          ...
-        }
-      }
-    },
+    ${CTAS_FIELDS},
     _type == "listSection" => {
       style,
       columns,
@@ -245,10 +268,13 @@ export function getBookUrl(book: any): string {
     book.seriesSlug || 
     (typeof book.series === 'string' ? book.series : undefined);
     
+  const siteUrl = getSiteUrl();
+  const base = siteUrl.endsWith('/') ? siteUrl.slice(0, -1) : siteUrl;
+
   if (seriesSlug) {
-    return `/${seriesSlug}/${slug}`;
+    return `${base}/${seriesSlug}/${slug}`;
   }
-  return `/${slug}`;
+  return `${base}/${slug}`;
 }
 
 /**
@@ -259,15 +285,16 @@ export function getBookUrl(book: any): string {
  */
 export function resolveLink(link: any): string {
   if (!link) return '';
-  if (typeof link === 'string') return link;
   
-  if (link.type === 'external') {
+  let url = '';
+  
+  if (typeof link === 'string') {
+    url = link;
+  } else if (link.type === 'external') {
     return link.external || '';
-  }
-  
-  if (link.type === 'internal' && link.internal) {
+  } else if (link.type === 'internal' && link.internal) {
     const doc = link.internal;
-    let url = '/';
+    url = '/';
     
     if (doc._type === 'book') {
       url = getBookUrl(doc);
@@ -305,9 +332,15 @@ export function resolveLink(link: any): string {
       const anchor = link.anchor.startsWith('#') ? link.anchor : `#${link.anchor}`;
       url += anchor;
     }
-    
-    return url;
+  }
+
+  // If the URL is internal (starts with /) and not a protocol-relative URL (//)
+  // we prepend the site URL to ensure it works correctly even when hosted on a subpath.
+  if (url.startsWith('/') && !url.startsWith('//')) {
+    const siteUrl = getSiteUrl();
+    // siteUrl always ends with / per getSiteUrl(), so we remove it before prepending to url which starts with /
+    return siteUrl.slice(0, -1) + url;
   }
   
-  return '';
+  return url;
 }

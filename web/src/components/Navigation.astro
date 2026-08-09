@@ -1,5 +1,5 @@
 ---
-import { resolveLink, urlFor } from '../lib/sanity';
+import { resolveLink, urlFor, getSiteUrl } from '../lib/sanity';
 
 interface Props {
   items: Array<{ label: string; link: any }>;
@@ -13,7 +13,7 @@ const { items, variant = 'top', logo } = Astro.props;
 <nav class={`site-nav site-nav--${variant}`}>
   <div class="container site-nav__container">
     <div class="site-nav__brand">
-      <a href="/" class="site-nav__logo-link">
+      <a href={getSiteUrl()} class="site-nav__logo-link">
         {logo ? (
           <img 
             src={urlFor(logo).height(80).auto('format').url()} 

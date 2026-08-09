@@ -1,5 +1,5 @@
 ---
-import { client, LAYOUT_QUERY_FRAGMENT, SECTION_QUERY, NEWSLETTERS_SLUG } from '../../../../lib/sanity';
+import { client, LAYOUT_QUERY_FRAGMENT, SECTION_QUERY, NEWSLETTERS_SLUG, resolveLink } from '../../../../lib/sanity';
 import Layout from '../../../../layouts/Layout.astro';
 import PageSection from '../../../../components/PageSection.astro';
 import MailerliteUniversal from '../../../../components/MailerliteUniversal.astro';
@@ -33,7 +33,7 @@ const data = await client.fetch(`*[_type == "newsletter" && slug.current == $slu
 }`, { slug });
 
 if (!data) {
-  return Astro.redirect('/404');
+  return Astro.redirect(resolveLink('/404'));
 }
 
 const title = data.title;

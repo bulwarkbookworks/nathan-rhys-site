@@ -14,7 +14,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="robots" content="noindex, follow" />
         <title>XML Sitemap &#8212; Nathan Rhys</title>
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="icon" type="image/svg+xml" href="favicon.svg" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,650;14..32,750&amp;family=Literata:opsz,wght@7..72,400;7..72,500;7..72,650&amp;family=Marcellus&amp;display=swap" rel="stylesheet" />
@@ -228,7 +228,7 @@
                   <strong><xsl:value-of select="count(sm:sitemapindex/sm:sitemap)" /></strong>
                   sitemap<xsl:if test="count(sm:sitemapindex/sm:sitemap) != 1">s</xsl:if>,
                   for search engines. You were probably looking for the
-                  <a href="/">home page</a>.
+                  <a href="./">home page</a>.
                 </p>
               </xsl:when>
               <xsl:otherwise>
@@ -238,7 +238,7 @@
                   <strong><xsl:value-of select="count(sm:urlset/sm:url)" /></strong>
                   page<xsl:if test="count(sm:urlset/sm:url) != 1">s</xsl:if>
                   for search engines. You were probably looking for the
-                  <a href="/">home page</a>.
+                  <a href="./">home page</a>.
                 </p>
               </xsl:otherwise>
             </xsl:choose>
