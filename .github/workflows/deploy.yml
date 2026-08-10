@@ -43,6 +43,7 @@ jobs:
           git config --global user.email "ci@github.com"
           git config --global user.name "GitHub Actions"
           cd dist/web
+          touch .nojekyll
           git init
           git add .
           git commit -m "Deploy to GitHub Pages"
