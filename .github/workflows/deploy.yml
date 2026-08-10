@@ -46,4 +46,4 @@ jobs:
           git init
           git add .
           git commit -m "Deploy to GitHub Pages"
-          git push --force https://x-access-token:${{ secrets.NATHAN_RHYS_PUBLIC_SITE__DEPLOY_PAT }}@github.com/bulwarkbookworks/nathan-rhys-site-public.git HEAD:gh-pages
+          git push --force https://x-access-token:${{ secrets.NATHAN_RHYS_PUBLIC_SITE__DEPLOY_PAT }}@github.com/bulwarkbookworks/nathan-rhys-site-public.git HEAD:main
