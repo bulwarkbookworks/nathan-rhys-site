@@ -152,7 +152,7 @@ const fullWidths = [400, 600, 800, 1200];
                     <div class="artist-card__bio mb-4 line-clamp-3">
                        {item.artist.description && <PortableText value={item.artist.description} />}
                     </div>
-                    <a href={`/artists/${item.artist.slug.current}`} class="button button--secondary w-100">View Artist Profile</a>
+                    <a href={resolveLink(`/artists/${item.artist.slug.current}`)} class="button button--secondary w-100">View Artist Profile</a>
                   </div>
                 </div>
               </div>
