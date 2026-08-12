@@ -1,5 +1,5 @@
 ---
-import { client, urlFor, generateSrcset, getBookUrl, LAYOUT_QUERY_FRAGMENT, resolveLink } from '../../lib/sanity';
+import { client, urlFor, generateSrcset, getEnlargedImageUrl, getBookUrl, LAYOUT_QUERY_FRAGMENT, resolveLink } from '../../lib/sanity';
 import Layout from '../../layouts/Layout.astro';
 import { PortableText } from 'astro-portabletext';
 
@@ -51,7 +51,7 @@ const metadata = {
   twitterCard: 'summary_large_image'
 };
 
-const fullWidths = [800, 1200, 1600, 2000, 2400];
+const fullWidths = [400, 600, 800, 1200];
 ---
 
 <Layout title={item.title} metadata={metadata} displayLastUpdated={item.displayLastUpdated} updatedAt={item._updatedAt}>
@@ -60,14 +60,16 @@ const fullWidths = [800, 1200, 1600, 2000, 2400];
       <!-- Zoomable Image Control -->
       <div class="gallery-detail__image-container">
         <div class="gallery-detail__image-wrapper">
-          <button id="zoom-trigger" class="zoom-trigger" aria-label="Zoom image">
+          <button id="zoom-trigger" class="zoom-trigger" aria-label="Enlarge image">
             <img 
-              src={urlFor(item.image).width(2000).auto('format').url()} 
+              src={urlFor(item.image).width(1200).auto('format').quality(80).url()} 
               srcset={generateSrcset(item.image, fullWidths)}
-              sizes="(max-width: 800px) 800px, (max-width: 1600px) 1600px, 2400px"
+              sizes="(max-width: 800px) 95vw, 1200px"
               alt={item.title} 
               class="gallery-detail__image"
               decoding="async"
+              draggable="false"
+              oncontextmenu="return false"
             />
             <div class="zoom-icon-overlay">
               <i class="bi bi-zoom-in"></i>
@@ -75,7 +77,7 @@ const fullWidths = [800, 1200, 1600, 2000, 2400];
           </button>
         </div>
         <p class="text-muted text-center mt-4 small fw-medium">
-          <i class="bi bi-info-circle me-1"></i> Click the image to view in full resolution
+          <i class="bi bi-info-circle me-1"></i> Click the image for a larger view
         </p>
       </div>
 
@@ -165,9 +167,11 @@ const fullWidths = [800, 1200, 1600, 2000, 2400];
   <dialog id="zoom-dialog" class="zoom-dialog">
     <div class="zoom-dialog__wrapper">
       <img 
-        src={urlFor(item.image.asset).auto('format').url()}
+        src={getEnlargedImageUrl(item.image)}
         alt={item.title}
         class="zoom-dialog__image"
+        draggable="false"
+        oncontextmenu="return false"
       />
       <button id="close-zoom" class="zoom-dialog__close" aria-label="Close zoom">
         <i class="bi bi-x-lg"></i>
@@ -227,6 +231,8 @@ const fullWidths = [800, 1200, 1600, 2000, 2400];
       border-radius: 8px;
       box-shadow: 0 20px 50px rgba(0,0,0,0.5);
       transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
+      -webkit-user-drag: none;
     }
 
     .zoom-trigger {
@@ -357,19 +363,23 @@ const fullWidths = [800, 1200, 1600, 2000, 2400];
     &__wrapper {
       width: 100%;
       height: 100%;
-      overflow: auto;
+      overflow: hidden;
       display: flex;
       justify-content: center;
-      align-items: flex-start;
+      align-items: center;
       cursor: zoom-out;
-      padding: 2rem;
+      padding: clamp(1rem, 5vw, 3rem);
     }
 
     &__image {
-      max-width: none;
+      max-width: min(90vw, 1100px);
+      max-height: 85vh;
       width: auto;
       height: auto;
+      object-fit: contain;
       cursor: zoom-out;
+      user-select: none;
+      -webkit-user-drag: none;
       box-shadow: 0 0 100px rgba(0,0,0,0.8);
     }
 

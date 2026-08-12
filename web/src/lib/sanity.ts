@@ -58,6 +58,29 @@ export function generateSrcset(image: any, widths: number[], ratio?: number) {
     .join(', ');
 }
 
+/**
+ * Maximum pixel width served for any user-facing image, including zoom and lightbox views.
+ * Originals are never linked so that displayed resolution stays good enough to view,
+ * but not high enough to be re-used elsewhere without permission.
+ */
+export const MAX_IMAGE_WIDTH = 1600;
+
+/**
+ * Generates a URL for the enlarged (zoom / lightbox) view of an image, capped to MAX_IMAGE_WIDTH.
+ *
+ * @param {any} image - The image object used to generate the URL.
+ * @param {number} [width] - Desired width, clamped to MAX_IMAGE_WIDTH.
+ * @return {string} The generated, resolution-capped image URL.
+ */
+export function getEnlargedImageUrl(image: any, width: number = MAX_IMAGE_WIDTH) {
+  if (!image) return '';
+  return urlFor(image)
+    .width(Math.min(width, MAX_IMAGE_WIDTH))
+    .auto('format')
+    .quality(80)
+    .url();
+}
+
 export const BOOK_URL_PROJECTION = `
   _type == "book" => {
     "seriesSlug": series->slug.current

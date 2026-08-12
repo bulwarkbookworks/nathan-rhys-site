@@ -1,5 +1,5 @@
 ---
-import { urlFor, generateSrcset } from '../lib/sanity';
+import { urlFor, generateSrcset, getEnlargedImageUrl } from '../lib/sanity';
 
 interface Props {
   images: any[];
@@ -24,7 +24,9 @@ const { images, class: className } = Astro.props;
                 loading="lazy"
                 decoding="async"
                 class="expandable-card__img"
-                data-full-src={urlFor(img.image.asset).auto('format').url()}
+                draggable="false"
+                oncontextmenu="return false"
+                data-full-src={getEnlargedImageUrl(img.image, 1400)}
                 data-caption={img.caption || ''}
               />
               <div class="expandable-card__overlay">
@@ -36,7 +38,7 @@ const { images, class: className } = Astro.props;
               <div class="expandable-card__content">
                 {img.caption && <p class="expandable-card__caption">{img.caption}</p>}
                 <a href="#" class="expandable-card__expand-link" data-trigger-lightbox>
-                  {img.actionText || 'Expand to see full image'}
+                  {img.actionText || 'Expand image'}
                 </a>
               </div>
             )}
@@ -82,6 +84,8 @@ const { images, class: className } = Astro.props;
       height: 100%;
       object-fit: cover;
       transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+      user-select: none;
+      -webkit-user-drag: none;
     }
 
     &__overlay {
@@ -190,10 +194,14 @@ const { images, class: className } = Astro.props;
   }
 
   .lightbox-image {
-    max-width: 100%;
-    max-height: calc(100% - 6rem);
+    max-width: min(90%, 1100px);
+    max-height: min(calc(100% - 6rem), 80vh);
+    width: auto;
+    height: auto;
     object-fit: contain;
     border-radius: 0.25rem;
+    user-select: none;
+    -webkit-user-drag: none;
     box-shadow: 0 2rem 5rem rgba(0, 0, 0, 0.6);
   }
 
@@ -226,7 +234,7 @@ const { images, class: className } = Astro.props;
     lightbox.innerHTML = `
       <button class="lightbox-close" aria-label="Close lightbox" title="Close (Esc)">&times;</button>
       <div class="lightbox-content">
-        <img src="" alt="" class="lightbox-image">
+        <img src="" alt="" class="lightbox-image" draggable="false" oncontextmenu="return false">
         <p class="lightbox-caption"></p>
       </div>
     `;
@@ -259,6 +267,7 @@ const { images, class: className } = Astro.props;
     if (lbImg) {
       lbImg.src = src;
       lbImg.alt = alt || '';
+      lbImg.draggable = false;
     }
     if (lbCaption) {
       lbCaption.textContent = caption || '';
