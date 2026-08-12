@@ -214,6 +214,12 @@ export const SECTION_FIELDS = `
       preImagesContent,
       images[]->,
       postImagesContent
+    },
+    _type == "characterCardsSection" => {
+      ...,
+      cards[]{
+        ...
+      }
     }
 `;
 

@@ -6,6 +6,7 @@ import Web3FormsSection from './Web3FormsSection.astro';
 import MailerliteSection from './MailerliteSection.astro';
 import ExpandableImageSection from './ExpandableImageSection.astro';
 import MailerliteCTA from './MailerliteCTA.astro';
+import CharacterCardsSection from './CharacterCardsSection.astro';
 
 interface Props {
   section: any;
@@ -96,6 +97,10 @@ const { section } = Astro.props;
 
     {section._type === 'expandableImageSection' && (
       <ExpandableImageSection section={section} />
+    )}
+
+    {section._type === 'characterCardsSection' && (
+      <CharacterCardsSection section={section} />
     )}
   </div>
 

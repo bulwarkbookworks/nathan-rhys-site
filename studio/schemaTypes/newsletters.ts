@@ -51,6 +51,8 @@ export default defineType({
         {type: 'cardsSection'},
         {type: 'web3FormsSection'},
         {type: 'mailerliteSection'},
+        {type: 'expandableImageSection'},
+        {type: 'characterCardsSection'},
       ],
       group: 'content',
     }),
